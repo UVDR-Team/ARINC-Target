@@ -1,0 +1,88 @@
+{
+  "log_level" : "warning",
+  "arinc_615a" : {
+    "local_tftp_address" : "0.0.0.0",
+    "dlp_retries" : 1,
+    "tftp" : {
+      "timeout" : 1,
+      "retries" : 1,
+      "port" : 59
+    },
+    "tftp_options" : {
+      "transfer_size" : true,
+      "block_size" : 1500,
+      "timeout" : 1
+    },
+    "protocol_file_logging": true
+  },
+  "arinc_615a_find" : {
+    "local_find_address" : "0.0.0.0",
+    "find_port" : 1001
+  },
+  "find_information" : [
+    {
+      "thwId" : "ABCDEF",
+      "thwTypeName" : "TEST THA",
+      "thwPosition" : "123",
+      "literalName" : "TEST THA App",
+      "manufacturerCode" : "Thomas Vogt"
+    },
+    {
+      "thwId" : "ABCDEF",
+      "thwTypeName" : "TEST THA",
+      "thwPosition" : "456",
+      "literalName" : "TEST THA App",
+      "manufacturerCode" : "Thomas Vogt"
+    }
+  ],
+  "targets_configuration": [
+    {
+      "target_id": "ABCDEF_123",
+      "information_operation": {
+        "enabled": "true",
+        "list_check_value": "NotUsed",
+        "targets_hardware": {
+          "target_hardware": {
+            "literal_name": "THC:12345",
+            "serial_number": "SN:12345",
+            "part_numbers": [
+              {
+                "part_number": "PNp1:12345",
+                "amendment": "",
+                "part_designation": "PDTp1:12345"
+              },
+              {
+                "part_number": "PNp2:12345",
+                "amendment": "AMp2:12345",
+                "part_designation": "PDTp2:12345"
+              }
+            ]
+          }
+        }
+      },
+      "upload_operation": {
+        "enabled": true,
+        "directory": ".\/UPLOAD",
+        "checksum_option" : true
+      },
+      "media_defined_download_operation": {
+        "enabled": true,
+        "directories": {
+          "directory": ".\/DOWNLOAD"
+        },
+        "part_number_option" : false,
+        "checksum_option" : "NotUsed"
+      },
+      "operator_defined_download_operation": {
+        "enabled": true,
+        "directories": {
+          "directory": ".\/DOWNLOAD"
+        },
+        "part_number_option" : false,
+        "checksum_option" : "NotUsed"
+      }
+    }
+  ],
+  "version" : "Arinc615a34",
+  "status_transmission_rate": 10
+}

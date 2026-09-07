@@ -1,0 +1,114 @@
+[glossary]
+== Glossary
+
+[glossary]
+
+Amendment:: Revision/amendment information associated with a Part Number.
+
+ARINC:: **Aeronautical Radio, Incorporated**
+
+ARINC 615A Port Option:: Option for the host to use a dynamically selected local TFTP port to support parallel loads and avoid privileged ports.
+
+ARINC 645 Check Value:: Integrity value defined by ARINC 645 used to verify transferred files or lists.
+
+ARINC 665 Media Set::
+Group of files and metadata organized per ARINC 665 specifications.
+
+ARINC 665 XML Description::
+A structured representation of the media set contents and attributes.
+
+Att.:: **Attachment**
+
+Blocksize Option:: TFTP option to negotiate larger data blocks to reduce transfer overhead.
+
+CLI:: **C**ommand-**L**ine **I**nterface
+
+GUI:: **G**raphical **U**ser **I**nterface
+
+Download Request File:: File provided by the host in Media Defined Download listing files to retrieve and optional user-defined data.
+
+DLP:: **D**ata **L**oader **P**rotocol
+
+DLP Timeout:: Maximum allowed time between successive protocol/status file exchanges during an operation.
+
+DLP Retries:: Number of retries of failed TFTP transfers during DLP exchanges before aborting the operation.
+
+Dynamic Source Port Option:: Option for FIND to use an ephemeral source port instead of the default well-known port.
+
+FIND:: **F**ind **I**dentification of **N**etwork **D**evices
+
+FIND Timeout:: Time the FIND client waits for responses before presenting results.
+
+Host Data Loader:: The host-side application performing ARINC 615A operations (FIND, Information, Upload, Download) and serving TFTP.
+
+ID:: **I**dentifier
+
+Information Operation:: Operation to retrieve the Load Configuration List from the target.
+
+IP:: **I**nternet **P**rotocol
+
+IPv4:: **I**nternet **P**rotocol version 4
+
+Literal Name:: Human-readable name for a target or component reported by FIND or Information.
+
+Load (ARINC 665 Load):: A loadable software/data item conforming to ARINC 665, referenced by a Load Upload Header.
+
+Load Configuration List:: File transferred during the Information operation describing installed hardware and associated part-number data.
+
+Load Upload Header:: Header file representing a specific ARINC 665 load selected during Upload.
+
+LSP:: **L**oadable **S**oftware **P**art
+
+Manufacturer Code:: Code indicating the equipment manufacturer as reported by FIND.
+
+Media Defined Download Operation:: Download operation where the host supplies a predefined list of files to fetch.
+
+MSP:: **M**edia **S**et **P**art
+
+MTU:: **M**aximum **T**ransmission **U**nit
+
+NAT:: **N**etwork **A**ddress **T**ranslation
+
+Operator Defined Download Operation:: Download operation where the target advertises available files and the operator selects which to fetch.
+
+OS:: **O**perating **S**ystem
+
+Part Number:: Identifier for a load or file item; may be used to disambiguate files during Upload/Download.
+
+Part Designation:: Descriptive text associated with a Part Number reported by Information.
+
+Position:: The target’s position within the aircraft/system as reported by FIND, used together with Target Hardware Identification.
+
+RFC:: **R**equest **f**or **C**omments
+
+Serial Number:: Unique serial number of a hardware item reported by Information.
+
+Source IP Address:: The local interface/address used to originate requests and bind the TFTP server.
+
+Target Hardware Data Loader:: The target-side implementation that responds to operations, provides status, and pulls/pushes files via TFTP.
+
+Target Hardware Identification:: The target’s hardware identification as defined by the ARINC 615A standard.
+
+Target ID:: Identifier of a concrete target hardware instance composed of Target Hardware Identification and Position (from FIND).
+
+Target IP Address:: The destination address of the target for FIND and ARINC 615A operations.
+
+Target Port:: The UDP port used for FIND requests (default 1001).
+
+TFTP Well-known Port:: The default UDP port used by ARINC 615A data loaders for TFTP (typically 59).
+
+TFTP:: **T**rivial **F**ile **T**ransfer **P**rotocol
+
+THW:: **T**arget **H**ard**w**are
+
+Timeout Option:: TFTP option to negotiate the retransmission timeout.
+
+Transfer Size Option:: TFTP option to communicate total transfer size.
+
+UDP:: **U**ser **D**atagram **P**rotocol
+
+UI:: **U**ser **I**nterface
+
+Upload Operation:: Operation to transfer loads from the host to the target; target requests files as needed.
+
+User Defined Data:: Target-specific data included in a Download Request File to guide download behavior.

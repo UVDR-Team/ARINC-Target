@@ -1,0 +1,101 @@
+# ARINC 615A Tool Suite
+
+This projects provides libraries and application implementing the ARINC 615A Data Loading Protocol.
+
+The ARINC 615A is a standard used in the aviation industry for the transfer of software and data between avionics
+systems.
+It defines the format and structure of messages exchanged between the systems, as well as the procedures for initiating
+and terminating transfers.
+The protocol includes error detection and correction mechanisms to ensure data integrity.
+The ARINC 615A Data Loading Protocol is used by avionics equipment for:
+ - Reporting Equipment version information (Part Numbers, Versions, etc.),
+ - Software/ Data Upload (SW Updates), and
+ - Software/ Data Download.
+
+## Key Features
+ - Library for handling ARINC 615A data loader protocol Supplement 2, 3, and 4
+ - Qt Libraries providing widgets for software loading operations
+ - Applications implementing:
+   - Data loading protocol via CLI,
+   - Data loading protocol via GUI, and
+   - Example Target Data Loader Application.
+
+## Dependencies
+First level dependencies:
+- [Helper Library](https://git.thomas-vogt.de/thomas-vogt/helper)
+- [Qt Icon Resources](https://git.thomas-vogt.de/thomas-vogt/qt_icon_resources)
+- [ARINC 645 Tool Suite](https://git.thomas-vogt.de/thomas-vogt/arinc_645)
+- [ARINC 665 Tool Suite](https://git.thomas-vogt.de/thomas-vogt/arinc_665)
+- [TFTP Library](https://git.thomas-vogt.de/thomas-vogt/tftp)
+- [Commands Library](https://git.thomas-vogt.de/thomas-vogt/commands)
+- [Boost Libraries](https://www.boost.org/)
+- libxml++
+- [spdlog](https://github.com/gabime/spdlog)
+- Optionally [Qt 6](https://www.qt.io/)
+
+## Building
+The library uses [CMake](https://cmake.org/) to handle build configuration.
+CMake Presets are provided to generate builds compiling with:
+- GNU GCC,
+- Clang, and
+- MSVC.
+
+For each compiler and environment, the following variants can be built:
+- Static debug,
+- Static release,
+- Shared debug, and
+- Shared release.
+
+Test Environments are:
+- Linux,
+- Windows MinGW, and
+- Windows MSVC.
+
+**Note:**
+For managing dependencies, i.e. Windows MSVC, a VCPKG configuration is provided.
+
+## License
+This project is licensed under the terms of the [*Mozilla Public License Version 2.0* (MPL)](LICENSE).
+
+## References
+- ARINC 615A-4 - Software Data Loader Using Ethernet Interface
+- ARINC 665-5 - Loadable Software Standards
+- ARINC 645-1 - Common Terminology and Functions for Software Distribution and Loading
+
+## Protocol Changes
+This section only contains changes within the standards, which are respected within this library.
+
+### ARINC 615A-1
+- Protocol Filenames are all uppercase
+- Explicit state UDP Port 59 for data loading
+- Max Value for WAIT Message is 65535 (seconds)
+- Host DL shall implement _TFTP block size option_ - THA may implement _TFTP block size option_
+- Transfer size option shall not be used
+- Definition of block number overflow
+- timeout option shall not be used
+- Limit text fields to 255/ 80 characters
+- Set Protocol version to A2
+- Add exception timer to status files
+- Add reference to Sorcerer’s Apprentice Syndrome
+### ARINC 615A-2
+- Rename SNIP to FIND Protocol (FIND Identification of Network Devices)
+- FIND is optional before transfer operation
+- Set protocol version to A3
+- Status description ignored for 0001 and 1002
+- Change LCL file
+  - Add multiple Target Hardware (Target Hardware Code and Serial Number)
+  - For Part Numbers add Amendment
+- Precisely describe exception timer
+- Precisely describe estimated time
+- Description length can be longer than actual text (null-terminated)
+### ARINC 615A-3
+- Set protocol version to A3
+- TFTP Transfer size option is optional
+- TFTP Timeout option is optional
+- Add _Part Number Option_ (but copy-paste error and not usable)
+- Add _Checksum Option_
+- Add _Port Option_
+- Add Status 0004 (in progress with status description)
+### ARINC 615A-4
+- _Part Number Option_ is described correctly
+- _Checksum Option_ description is updated

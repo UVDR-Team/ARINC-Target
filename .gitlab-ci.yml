@@ -1,0 +1,78 @@
+---
+default:
+  image: $docker_image
+  interruptible: true
+  retry:
+    max: 1
+    when:
+      - unknown_failure
+      - api_failure
+      - stuck_or_timeout_failure
+      - runner_system_failure
+      - stale_schedule
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+.cmake_build:
+  stage: build
+  variables:
+    CCACHE_BASEDIR: $CI_PROJECT_DIR
+    CCACHE_DIR: $CI_PROJECT_DIR/ccache
+    CMAKE_C_COMPILER_LAUNCHER: ccache
+    CMAKE_CXX_COMPILER_LAUNCHER: ccache
+  cache:
+    key: ccache-$CI_JOB_NAME
+    paths:
+      - $CCACHE_DIR
+  before_script:
+    - ccache --zero-stats
+  script:
+    - cmake --workflow --preset ${CMAKE_PRESET}
+    - ctest --preset ${CMAKE_PRESET} --output-junit test-log.junit.xml
+  after_script:
+    - ccache --show-stats
+  artifacts:
+    reports:
+      junit: cmake-build-*/*.junit.xml
+
+GCC Static Debug:
+  extends: .cmake_build
+  variables:
+    CMAKE_PRESET: "gcc-static-debug"
+
+GCC Static Release:
+  extends: .cmake_build
+  variables:
+    CMAKE_PRESET: "gcc-static-release"
+
+GCC Shared Debug:
+  extends: .cmake_build
+  variables:
+    CMAKE_PRESET: "gcc-shared-debug"
+
+GCC Shared Release:
+  extends: .cmake_build
+  variables:
+    CMAKE_PRESET: "gcc-shared-release"
+
+Clang Static Debug:
+  extends: .cmake_build
+  variables:
+    CMAKE_PRESET: "clang-static-debug"
+
+Clang Static Release:
+  extends: .cmake_build
+  variables:
+    CMAKE_PRESET: "clang-static-release"
+
+Clang Shared Debug:
+  extends: .cmake_build
+  variables:
+    CMAKE_PRESET: "clang-shared-debug"
+
+Clang Shared Release:
+  extends: .cmake_build
+  variables:
+    CMAKE_PRESET: "clang-shared-release"

@@ -1,0 +1,8 @@
+== ARINC 615A Download Request File Generator
+
+The _ARINC 615A Download Request File Generator_ is a small CLI tool that generates ARINC 615A _Download Request Files_ for the ARINC 615A _Media-Defined Download_ operation.
+These files are used to request predefined files from a target hardware data loader.
+The tool can generate files for different ARINC 615A versions to ensure compatibility with the corresponding loading protocols.
+
+For a detailed usage description, see <<man_arinc_615a_download_request_file>>.
+For the ARINC 615A reference, see <<arinc_615a_4>>, Section 6.4.6.

@@ -1,0 +1,62 @@
+== ARINC 615A Data Loader
+
+The ARINC 615A Data Loader is a graphical application to perform all ARINC 615A
+operations:
+
+* Target management (including FIND Query),
+* ARINC 615A Information Operation
+* ARINC 615A Upload Operation,
+* ARINC 615A Operator Defined Download Operation, and
+* ARINC 615A Media Defined Download Operation.
+
+Additionally, a _ARINC 665 Media Set Manager_ is included to manage ARINC 665 Media
+Sets.
+Refer to ARINC 665 User Manual for ARINC 665 Media Set handling.
+
+=== Configuration
+
+Configuration of:
+
+* ARINC 615A FIND Query parameters
+* ARINC 615A Operation parameters, and
+* ARINC 665 Media Set Manager parameters.
+
+=== Target Management and FIND Query
+The _ARINC 615A Data Loader_ maintains a list of target hardware.
+This target list ca be maintained by manually:
+
+* edit,
+* add, or
+* delete
+
+target hardware.
+
+It is also possible to perform a _FIND Query_ to get a list of available targets
+and add them to the list of known target hardware.
+
+=== Information Operation
+
+* select target hardware,
+* wait for transmission of target hardware load configuration list,
+* optional export or copy target hardware load configuration list.
+
+=== Upload Operation
+
+* select target hardware,
+* select media sets and loads to be transmitted,
+* wait for completion of operation.
+
+NOTE: Loads to be transferred to a target hardware must be contained on the same media set.
+
+=== Media Defined Download Operation
+
+* select target hardware,
+* define files to be downloaded and optional target specific user defined data,
+* wait for completion of operation.
+
+=== Operator Defined Download Operation
+
+* select target hardware,
+* wait for target provided list of downloadable files,
+* select files to be downloaded,
+* wait for completion of operation.

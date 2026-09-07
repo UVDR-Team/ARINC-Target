@@ -1,0 +1,23 @@
+== ARINC 615A Operation Command Line Tool
+
+The _ARINC 615A Operation Tool_ is a command line client (CLI) tool to perform
+ARINC 615A operations.
+
+=== FIND Query
+* Query Targets
+* Store Target List for further usage
+
+=== Information Operation
+* Query Target Information.
+
+=== Upload Operation
+* Upload Software to Targets
+* Depend on Media Sets registered to the ARINC 665 Media Set Manager.
+
+=== Operator Defined Download Operation
+* List of advertised Files is printed
+* Provide Files to be download or aborts operation after list transmission.
+* Allow to download all advertised files
+
+=== Media Defined Download Operation
+* Provide Files to download and user defined data

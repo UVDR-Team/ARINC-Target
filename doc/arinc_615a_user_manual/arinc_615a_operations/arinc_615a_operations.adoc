@@ -1,0 +1,15 @@
+== ARINC 615A Operations
+
+include::arinc_615a_operations_find.adoc[leveloffset=+1]
+
+include::arinc_615a_operations_common_configuration.adoc[leveloffset=+1]
+
+include::arinc_615a_operations_information.adoc[leveloffset=+1]
+
+include::arinc_615a_operations_upload.adoc[leveloffset=+1]
+
+include::arinc_615a_operations_download.adoc[leveloffset=+1]
+
+include::arinc_615a_operations_media_defined_download.adoc[leveloffset=+1]
+
+include::arinc_615a_operations_operator_defined_download.adoc[leveloffset=+1]

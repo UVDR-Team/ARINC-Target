@@ -1,0 +1,21 @@
+= arinc_615a_operation-list-targets(1)
+Thomas Vogt
+
+== Name
+
+arinc_615a_operation-list-targets - Lists known ARINC 615A targets.
+
+== Synopsis
+
+*arinc_615a_operation*
+--operation=_Targets_
+--targets-list=_targets list file_
+
+== Options
+
+// tag::options[]
+*--targets-list*=_targets list file_::
+Path to the _Targets List_ JSON file.
+
+link:[arinc_615a_operation(1)]
+link:[arinc_615a_operation-find(1)]

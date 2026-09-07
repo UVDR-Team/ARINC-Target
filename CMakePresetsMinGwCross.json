@@ -1,0 +1,266 @@
+{
+  "version": 10,
+
+  "configurePresets": [
+    {
+      "name": "mingw-cross-base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "cmake-build-${presetName}",
+      "installDir": "cmake-install-${presetName}",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_COMPILE_WARNING_AS_ERROR": "True",
+        "VCPKG_APPLOCAL_DEPS": "OFF",
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/mingw64-cross-toolchain.cmake"
+      },
+      "vendor": {
+        "jetbrains.com/clion": {
+          "toolchain": "Docker GCC Clang CMake"
+        }
+      }
+    },
+    {
+      "name": "mingw-cross-static-debug",
+      "displayName": "MinGW Cross Static Debug",
+      "description": "MinGW Cross Static Debug",
+      "inherits": "mingw-cross-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-static"
+      }
+    },
+    {
+      "name": "mingw-cross-static-release",
+      "displayName": "MinGW Cross Static Release",
+      "description": "MinGW Cross Static Release",
+      "inherits": "mingw-cross-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-static"
+      }
+    },
+    {
+      "name": "mingw-cross-shared-debug",
+      "displayName": "MinGW Cross Shared Debug",
+      "description": "MinGW Cross Shared Debug",
+      "inherits": "mingw-cross-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "BUILD_SHARED_LIBS": true,
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic"
+      }
+    },
+    {
+      "name": "mingw-cross-shared-release",
+      "displayName": "MinGW Cross Shared Release",
+      "description": "MinGW Cross Shared Release",
+      "inherits": "mingw-cross-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "BUILD_SHARED_LIBS": true,
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic"
+      }
+    }
+  ],
+
+  "buildPresets": [
+    {
+      "name": "mingw-cross-static-debug",
+      "displayName": "MinGW Cross Static Debug",
+      "configurePreset": "mingw-cross-static-debug"
+    },
+    {
+      "name": "mingw-cross-static-debug-doc",
+      "displayName": "MinGW Cross Static Debug Documentation",
+      "configurePreset": "mingw-cross-static-debug",
+      "targets": [ "doc" ]
+    },
+    {
+      "name": "mingw-cross-static-release",
+      "displayName": "MinGW Cross Static Release",
+      "configurePreset": "mingw-cross-static-release"
+    },
+    {
+      "name": "mingw-cross-static-release-doc",
+      "displayName": "MinGW Cross Static Release Documentation",
+      "configurePreset": "mingw-cross-static-release",
+      "targets": [ "doc" ]
+    },
+    {
+      "name": "mingw-cross-shared-debug",
+      "displayName": "MinGW Cross Shared Debug",
+      "configurePreset": "mingw-cross-shared-debug"
+    },
+    {
+      "name": "mingw-cross-shared-debug-doc",
+      "displayName": "MinGW Cross Shared Debug Documentation",
+      "configurePreset": "mingw-cross-shared-debug",
+      "targets": [ "doc" ]
+    },
+    {
+      "name": "mingw-cross-shared-release",
+      "displayName": "MinGW Cross Shared Release",
+      "configurePreset": "mingw-cross-shared-release"
+    },
+    {
+      "name": "mingw-cross-shared-release-doc",
+      "displayName": "MinGW Cross Shared Release Documentation",
+      "configurePreset": "mingw-cross-shared-release",
+      "targets": [ "doc" ]
+    }
+  ],
+
+  "testPresets": [
+    {
+      "name": "mingw-cross-static-debug",
+      "displayName": "MinGW Cross Static Debug",
+      "configurePreset": "mingw-cross-static-debug"
+    },
+    {
+      "name": "mingw-cross-static-release",
+      "displayName": "MinGW Cross Static Release",
+      "configurePreset": "mingw-cross-static-release"
+    },
+    {
+      "name": "mingw-cross-shared-debug",
+      "displayName": "MinGW Cross Shared Debug",
+      "configurePreset": "mingw-cross-shared-debug"
+    },
+    {
+      "name": "mingw-cross-shared-release",
+      "displayName": "MinGW Cross Shared Release",
+      "configurePreset": "mingw-cross-shared-release"
+    }
+  ],
+
+  "packagePresets": [
+    {
+      "name": "mingw-cross-static-debug",
+      "displayName": "MinGW Cross Static Debug",
+      "configurePreset": "mingw-cross-static-debug"
+    },
+    {
+      "name": "mingw-cross-static-release",
+      "displayName": "MinGW Cross Static Release",
+      "configurePreset": "mingw-cross-static-release"
+    },
+    {
+      "name": "mingw-cross-shared-debug",
+      "displayName": "MinGW Cross Shared Debug",
+      "configurePreset": "mingw-cross-shared-debug"
+    },
+    {
+      "name": "mingw-cross-shared-release",
+      "displayName": "MinGW Cross Shared Release",
+      "configurePreset": "mingw-cross-shared-release"
+    }
+  ],
+
+  "workflowPresets": [
+    {
+      "name": "mingw-cross-static-debug",
+      "displayName": "MinGW Cross Static Debug",
+      "description": "Build and package MinGW Cross Static Debug Configuration",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "mingw-cross-static-debug"
+        },
+        {
+          "type": "build",
+          "name": "mingw-cross-static-debug"
+        },
+        {
+          "type": "build",
+          "name": "mingw-cross-static-debug-doc"
+        },
+        {
+          "type": "test",
+          "name": "mingw-cross-static-debug"
+        },
+        {
+          "type": "package",
+          "name": "mingw-cross-static-debug"
+        }
+      ]
+    },
+    {
+      "name": "mingw-cross-static-release",
+      "displayName": "MinGW Cross Static Release",
+      "description": "Build and package MinGW Cross Static Release Configuration",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "mingw-cross-static-release"
+        },
+        {
+          "type": "build",
+          "name": "mingw-cross-static-release"
+        },
+        {
+          "type": "build",
+          "name": "mingw-cross-static-release-doc"
+        },
+        {
+          "type": "test",
+          "name": "mingw-cross-static-release"
+        },
+        {
+          "type": "package",
+          "name": "mingw-cross-static-release"
+        }
+      ]
+    },
+    {
+      "name": "mingw-cross-shared-debug",
+      "displayName": "MinGW Cross Shared Debug",
+      "description": "Build and package MinGW Cross Shared Debug Configuration",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "mingw-cross-shared-debug"
+        },
+        {
+          "type": "build",
+          "name": "mingw-cross-shared-debug"
+        },
+        {
+          "type": "build",
+          "name": "mingw-cross-shared-debug-doc"
+        },
+        {
+          "type": "package",
+          "name": "mingw-cross-shared-debug"
+        }
+      ]
+    },
+    {
+      "name": "mingw-cross-shared-release",
+      "displayName": "MinGW Cross Shared Release",
+      "description": "Build and package MinGW Cross Shared Release Configuration",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "mingw-cross-shared-release"
+        },
+        {
+          "type": "build",
+          "name": "mingw-cross-shared-release"
+        },
+        {
+          "type": "build",
+          "name": "mingw-cross-shared-release-doc"
+        },
+        {
+          "type": "package",
+          "name": "mingw-cross-shared-release"
+        }
+      ]
+    }
+  ]
+}

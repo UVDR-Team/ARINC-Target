@@ -1,0 +1,137 @@
+= arinc_615a_operation-media-defined-download(1)
+Thomas Vogt
+
+== Name
+
+arinc_615a_operation-media-defined-download - executes ARINC 615A Media Defined Download operation.
+
+== Synopsis
+
+*arinc_615a_operation*
+--operation=_MedDownload_
+[-l|--log-level=_log-level_]
+[-a|--target-address=_IP-Address_]
+[-l|--targets-list=_File_]
+[-i|--target-id=_Target ID_]
+[--dlp-timeout=_Timeout_]
+[--port-option]
+{--file=_File_}
+[--user-defined-data=_User Defined Data_]
+[--download-base-directory=_Directory_]
+[--no-check-validity]
+[--no-download-directory]
+[--local-tftp-address=_IP-Address_]
+[--dlp-retries=_Retries_]
+[--log-protocol-files[=true|false]]
+[-p|--server-port=_Port_]
+[-t|--tftp-timeout=_Timeout_]
+[-d|--dally[=*true*|*false*]]
+[-b|--block-size-option[=_Block Size_]]
+[-i|--timeout-option[=_Timeout_]]
+[-s|--handle-transfer-size-option[=*true*|*false*]]
+
+== Description
+Initiates the _ARINC 615A Media Defined Download Operation_ to the given target.
+The provided list of Files is advertised to the target and downloaded from it.
+
+== Options
+
+// tag::options[]
+
+.ARINC 615A Media Defined Download Operation Options
+*-l, --log-level*=_log-level_::
+The verbosity of the logging information:
++
+--
+- trace
+- debug
+- info
+- warn
+- err
+- critical
+- off
+--
+Defaults to `warn`.
+
+*-a, --target-address*=_IP_::
+IP address of target hardware.
+
+*-l, --targets-list*=_File_::
+List of targets JSON file to map Target IDs to IP addresses.
+
+*-i, --target-id*=_Target ID_::
+ARINC 615A Target ID.
+
+*--dlp-timeout*=_Timeout_::
+The Timeout in seconds, when the protocol expects the transmission of a status information.
+Defaults to `13` seconds.
+
+*--port-option*::
+Enables the ARINC 615A-3 Port Option.
+If set, the host uses a dynamic TFTP port.
+
+*--file*=_File_::
+File to be requested by the target.
+Can be repeated multiple times.
+
+*--user-defined-data*=_User Defined Data_::
+Additional _User Defined Data_, which is supplied on the request.
+
+*--download-base-directory*=_Directory_::
+Base directory, where the downloaded files should be placed.
+If not given, the _current directory_ is used.
+
+*--no-check-validity*::
+Disables the validity check of the downloaded files.
+
+*--no-download-directory*::
+Don't create specific directory for downloaded files.
+In this case _download-base-directory_ is used as the target download directory.
+
+.ARINC 615A Options
+*--local-tftp-address*=_IP-Address_::
+Local interface IP address where the TFTP server binds to.
+Defaults to `0.0.0.0`.
+
+*--dlp-retries*=_Retries_::
+DLP retries.
+Defaults to `2`.
+
+*--log-protocol-files*=[true|false]::
+Enables logging of received and transmitted protocol files.
+
+.TFTP Options
+*-p|--server-port*=_Port_::
+UDP port where the TFTP server is listen on.
+Defaults to `59`.
+
+*-t|--tftp-timeout*=_Timeout_::
+Default TFTP packet timeout in seconds, when no timeout option is negotiated.
+Defaults to `2` seconds.
+
+*-d|--dally*=[*true*|*false*]::
+TFTP dally option.
+Wait when the last _ACK_ has been sent to prevent aborts on packet transmission errors on last packets.
+If the parameter value is not provided, _true_ is assumed.
+
+.TFTP Option Negotiation Options
+*-b|--block-size-option*=[_Block Size_]::
+Negotiates the TFTP block size for transfers.
+Valid values must be between [8,65464].
+If the _Block Size_ parameter is not provided, the block-size option is set to `1486` bytes.
+
+*-i|--timeout-option*=[_Timeout_]::
+Handles the TFTP timeout option negotiation with the given timeout in seconds.
+Valid values must be between [1,255].
+If the _timeout_ parameter is not provided, the timeout option is set to ``2`` seconds.
+
+*-s|--handle-transfer-size-option*=[{*true*|*false*}]::
+Handles the TFTP transfer size option negotiation.
+Defaults to `true`.
+
+// end::options[]
+
+== See Also
+
+link:[arinc_615a_operation(1)]
+link:[arinc_615a_operation-operator-defined-download(1)]
