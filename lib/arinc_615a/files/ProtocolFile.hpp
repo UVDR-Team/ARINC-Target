@@ -15,7 +15,7 @@
 
 #include <arinc_615a/files/Files.hpp>
 
-#include <helper/RawData.hpp>
+#include <arinc_support/RawData.hpp>
 
 namespace Arinc615a::Files {
 
@@ -78,7 +78,7 @@ class ARINC_615A_EXPORT ProtocolFile
      *
      * @return the protocol file as raw data.
      **/
-    explicit operator Helper::RawData() const;
+    explicit operator ArincSupport::RawData() const;
 
     /**
      * @name Protocol Version
@@ -138,7 +138,7 @@ class ARINC_615A_EXPORT ProtocolFile
      *
      * @return Binary packet data
      **/
-    [[nodiscard]] virtual Helper::RawData encode() const = 0;
+    [[nodiscard]] virtual ArincSupport::RawData encode() const = 0;
 
     /**
      * @brief Insert the header data to the raw file.
@@ -152,7 +152,7 @@ class ARINC_615A_EXPORT ProtocolFile
      * @param[in,out] rawData
      *   Raw packet, which will be filled with the appropriate data.
      **/
-    void insertHeader( Helper::RawDataSpan rawData ) const;
+    void insertHeader( ArincSupport::RawDataSpan rawData ) const;
 
     /**
      * @brief Decodes the header.
@@ -171,7 +171,7 @@ class ARINC_615A_EXPORT ProtocolFile
      * @throw Arinc615aException
      *   If the data size is unequal to the size stored in the header.
      **/
-    Helper::ConstRawDataSpan decodeHeader( Helper::ConstRawDataSpan rawData );
+    ArincSupport::ConstRawDataSpan decodeHeader( ArincSupport::ConstRawDataSpan rawData );
 
   private:
     //! Protocol Version

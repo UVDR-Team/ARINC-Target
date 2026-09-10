@@ -15,7 +15,7 @@
 
 #include <arinc_615a/Arinc615a.hpp>
 
-#include <helper/Description.hpp>
+#include <arinc_support/Description.hpp>
 
 #include <iosfwd>
 
@@ -32,7 +32,7 @@ namespace Arinc615a {
  * @sa @ref OperationType
  **/
 class ARINC_615A_EXPORT OperationTypeDescription final :
-  public Helper::Description< OperationTypeDescription, OperationType >
+  public ArincSupport::Description< OperationTypeDescription, OperationType >
 {
   public:
     //! Initialises Instance

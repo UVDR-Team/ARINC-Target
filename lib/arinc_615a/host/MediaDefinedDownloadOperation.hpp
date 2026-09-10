@@ -18,7 +18,7 @@
 
 #include <arinc_615a/information/Information.hpp>
 
-#include <helper/RawData.hpp>
+#include <arinc_support/RawData.hpp>
 
 namespace Arinc615a::Host {
 
@@ -49,7 +49,7 @@ class ARINC_615A_EXPORT MediaDefinedDownloadOperation : public DownloadOperation
      * @param[in] userDefinedData
      *   User Defined Data.
      **/
-    virtual void request( Information::DownloadFiles files, Helper::RawData userDefinedData = {} ) = 0;
+    virtual void request( Information::DownloadFiles files, ArincSupport::RawData userDefinedData = {} ) = 0;
 };
 
 }

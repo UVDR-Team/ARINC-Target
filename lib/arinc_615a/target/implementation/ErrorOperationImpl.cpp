@@ -23,7 +23,7 @@
 
 #include <tftp/packets/TftpOptions.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 namespace Arinc615a::Target {
 
@@ -55,7 +55,7 @@ void ErrorOperationImpl::start(
   assert( initialisationFileOperationV );
 
   const auto file{
-    std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< Helper::RawData >( initialisationFile ) ) };
+    std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< ArincSupport::RawData >( initialisationFile ) ) };
   assert( file );
 
   protocolFileLoggerV.transmitProtocolFile( std::format( "{}.INIT", configurationV.targetId ), file->data() );
@@ -72,7 +72,7 @@ void ErrorOperationImpl::start(
       Tftp::Arinc615aOptions{
         .port = port,
         .partNumber = {},
-        .checksum = Arinc645::CheckValue::NoCheckValue } );
+        .checksum = ArincChecksum::CheckValue::NoCheckValue } );
 
   initialisationFileOperationV->start();
 }
@@ -83,11 +83,11 @@ void ErrorOperationImpl::initialisationFileCompleted( const ::Tftp::TransferStat
 
   if ( ::Tftp::TransferStatus::Successful != status )
   {
-    SPDLOG_ERROR( "Initialisation file could not be transmitted" );
+    ARINC_LOG_ERROR( "Initialisation file could not be transmitted" );
     return;
   }
 
-  SPDLOG_INFO( "Error operation completed" );
+  ARINC_LOG_INFO( "Error operation completed" );
 
   // call completion handler
   if ( configurationV.completionHandler )

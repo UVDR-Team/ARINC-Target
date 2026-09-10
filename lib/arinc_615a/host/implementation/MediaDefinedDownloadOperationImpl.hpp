@@ -54,7 +54,7 @@ class MediaDefinedDownloadOperationImpl final : public MediaDefinedDownloadOpera
       boost::asio::ip::udp::endpoint remote,
       ::Tftp::Packets::TftpOptions clientTftpOptions,
       std::string partNumber,
-      Arinc645::CheckValue checkValue ) override;
+      ArincChecksum::CheckValue checkValue ) override;
 
     //! @copydoc DownloadOperation::waitOperation()
     void waitOperation(
@@ -68,7 +68,7 @@ class MediaDefinedDownloadOperationImpl final : public MediaDefinedDownloadOpera
       std::string errorMessage ) override;
 
     //! @copydoc MediaDefinedDownloadOperation::request
-    void request( Information::DownloadFiles files, Helper::RawData userDefinedData = {} ) override;
+    void request( Information::DownloadFiles files, ArincSupport::RawData userDefinedData = {} ) override;
 
   private:
     /**

@@ -16,11 +16,11 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <helper/Exception.hpp>
-#include <helper/RawData.hpp>
-#include <helper/SafeCast.hpp>
+#include <arinc_support/Exception.hpp>
+#include <arinc_support/RawData.hpp>
+#include <arinc_support/SafeCast.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/throw_exception.hpp>
 
@@ -34,12 +34,12 @@ DownloadOperationAnswerFile::DownloadOperationAnswerFile(
 {
 }
 
-DownloadOperationAnswerFile::DownloadOperationAnswerFile( Helper::ConstRawDataSpan rawData )
+DownloadOperationAnswerFile::DownloadOperationAnswerFile( ArincSupport::ConstRawDataSpan rawData )
 {
   decode( rawData );
 }
 
-DownloadOperationAnswerFile& DownloadOperationAnswerFile::operator=( Helper::ConstRawDataSpan rawData )
+DownloadOperationAnswerFile& DownloadOperationAnswerFile::operator=( ArincSupport::ConstRawDataSpan rawData )
 {
   decode( rawData );
   return *this;
@@ -60,22 +60,22 @@ void DownloadOperationAnswerFile::files( Information::DownloadFiles files )
   filesV = std::move( files );
 }
 
-Helper::RawData DownloadOperationAnswerFile::encode() const
+ArincSupport::RawData DownloadOperationAnswerFile::encode() const
 {
-  Helper::RawData rawData( MinimumSize );
+  ArincSupport::RawData rawData( MinimumSize );
 
   // skip header - it is filled finally
-  auto nextData{ Helper::RawDataSpan{ rawData }.subspan( HeaderSize ) };
+  auto nextData{ ArincSupport::RawDataSpan{ rawData }.subspan( HeaderSize ) };
 
   // the number of files must not exceed the field maximum value
   if ( filesV.size() > std::numeric_limits< uint16_t >::max() )
   {
     BOOST_THROW_EXCEPTION( Arinc615aException()
-      << Helper::AdditionalInfo{ "More files than allowed" } );
+      << ArincSupport::AdditionalInfo{ "More files than allowed" } );
   }
 
   // number of files
-  nextData = Helper::RawData_setInt( nextData, Helper::safeCast< uint16_t >( filesV.size() ) );
+  nextData = ArincSupport::RawData_setInt( nextData, ArincSupport::safeCast< uint16_t >( filesV.size() ) );
   assert( nextData.empty() );
 
   // iterate over files
@@ -94,23 +94,23 @@ Helper::RawData DownloadOperationAnswerFile::encode() const
   return rawData;
 }
 
-void DownloadOperationAnswerFile::decode( Helper::ConstRawDataSpan rawData )
+void DownloadOperationAnswerFile::decode( ArincSupport::ConstRawDataSpan rawData )
 {
   // check minimum data size
   if ( rawData.size() < MinimumSize )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Protocol file to small" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Protocol file to small" } );
   }
 
   auto remainingData{ decodeHeader( rawData ) };
 
   // number of files
   uint16_t numberOfFiles;
-  std::tie( remainingData, numberOfFiles ) = Helper::RawData_getInt< uint16_t >( remainingData );
+  std::tie( remainingData, numberOfFiles ) = ArincSupport::RawData_getInt< uint16_t >( remainingData );
 
   if ( 0U == numberOfFiles )
   {
-    SPDLOG_WARN( "Invalid number of files (0)" );
+    ARINC_LOG_WARN( "Invalid number of files (0)" );
   }
 
   // iterate over files
@@ -121,7 +121,7 @@ void DownloadOperationAnswerFile::decode( Helper::ConstRawDataSpan rawData )
     std::tie( remainingData, filename ) = String_decode( remainingData );
     if ( filename.empty() )
     {
-      SPDLOG_WARN( "filename is empty" );
+      ARINC_LOG_WARN( "filename is empty" );
     }
 
     filesV.emplace_back( std::move( filename ) );
@@ -130,7 +130,7 @@ void DownloadOperationAnswerFile::decode( Helper::ConstRawDataSpan rawData )
   // Final Check for additional data
   if ( !remainingData.empty() )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "More data then expected" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "More data then expected" } );
   }
 }
 

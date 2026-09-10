@@ -18,7 +18,7 @@
 
 #include <arinc_615a/information/Information.hpp>
 
-#include <arinc_645/Arinc645.hpp>
+#include <arinc_checksum/Arinc645.hpp>
 
 #include <tftp/packets/Packets.hpp>
 
@@ -84,7 +84,7 @@ class UploadOperationHandler : public OperationHandler
       std::string_view filename,
       const ::Tftp::Packets::TftpOptions &clientTftpOptions,
       std::string_view loadPartNumber,
-      const Arinc645::CheckValue &checkValue ) = 0;
+      const ArincChecksum::CheckValue &checkValue ) = 0;
 };
 
 }

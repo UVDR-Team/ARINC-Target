@@ -15,7 +15,7 @@
 
 #include <arinc_615a/files/Files.hpp>
 
-#include <helper/RawData.hpp>
+#include <arinc_support/RawData.hpp>
 
 #include <filesystem>
 #include <string_view>
@@ -86,7 +86,7 @@ class ProtocolFileLogger final
      * @param[in] file
      *   Received Protocol File.
      **/
-    void receivedProtocolFile( std::string_view filename, Helper::ConstRawDataSpan file );
+    void receivedProtocolFile( std::string_view filename, ArincSupport::ConstRawDataSpan file );
 
     /**
      * @brief Logs a Transmitted Protocol File.
@@ -96,7 +96,7 @@ class ProtocolFileLogger final
      * @param[in] file
      *   Transmitted Protocol File.
      **/
-    void transmitProtocolFile( std::string_view filename, Helper::ConstRawDataSpan file );
+    void transmitProtocolFile( std::string_view filename, ArincSupport::ConstRawDataSpan file );
 
   private:
     /**
@@ -109,7 +109,7 @@ class ProtocolFileLogger final
      * @param[in] file
      *   Transmitted Protocol File.
      */
-    void logProtocolFile( std::string_view prefix, std::string_view filename, Helper::ConstRawDataSpan file );
+    void logProtocolFile( std::string_view prefix, std::string_view filename, ArincSupport::ConstRawDataSpan file );
 
     //! Logging Directory
     std::filesystem::path loggingDirectoryV{ std::filesystem::temp_directory_path() };

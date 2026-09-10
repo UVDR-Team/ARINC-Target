@@ -12,7 +12,7 @@
 
 #include <arinc_615a/files/download/DownloadOperationRequestFile.hpp>
 
-#include <helper/RawData.hpp>
+#include <arinc_support/RawData.hpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -45,7 +45,7 @@ static const uint8_t rawDownloadOperationRequestFile[]{
 
 BOOST_AUTO_TEST_CASE( constructor)
 {
-  using Helper::operator ""_b;
+  using ArincSupport::operator ""_b;
 
   DownloadOperationRequestFile file( std::as_bytes( std::span{ rawDownloadOperationRequestFile } ) );
 
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE( constructor)
 
   BOOST_CHECK( *downloadInfo == "FILE_2");
 
-  Helper::RawData udata{ 'T'_b, 'E'_b, 'S'_b, 'T'_b };
+  ArincSupport::RawData udata{ 'T'_b, 'E'_b, 'S'_b, 'T'_b };
   BOOST_CHECK( file.userDefinedData() == udata );
 }
 

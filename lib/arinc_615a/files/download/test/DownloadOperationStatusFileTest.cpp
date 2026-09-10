@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE( constructor2 )
   BOOST_CHECK( fileInfo->code() == StatusCode::OperationCompleted );
   BOOST_CHECK( fileInfo->description() == "ZZZ" );
 
-  BOOST_CHECK( std::ranges::equal( std::as_bytes( std::span{ rawFile } ), static_cast< Helper::RawData >( file ) ) );
+  BOOST_CHECK( std::ranges::equal( std::as_bytes( std::span{ rawFile } ), static_cast< ArincSupport::RawData >( file ) ) );
 }
 
 BOOST_AUTO_TEST_SUITE_END()

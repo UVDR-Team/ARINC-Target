@@ -69,7 +69,7 @@ class ARINC_615A_EXPORT BatchUploadOperationProxy final : public UploadOperation
       std::string_view filename,
       const ::Tftp::Packets::TftpOptions &clientTftpOptions,
       std::string_view loadPartNumber,
-      const Arinc645::CheckValue &checkValue ) override;
+      const ArincChecksum::CheckValue &checkValue ) override;
 
   private:
     //! Target ID to be used for callbacks.

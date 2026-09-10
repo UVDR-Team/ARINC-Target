@@ -36,7 +36,7 @@
 
 #include <tftp/packets/TftpOptions.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/all.hpp>
 
@@ -84,7 +84,7 @@ Tftp::Servers::WriteOperationPtr OperatorDefinedDownloadOperationImpl::fileTrans
   boost::asio::ip::udp::endpoint remote,
   ::Tftp::Packets::TftpOptions clientTftpOptions,
   std::string partNumber,
-  Arinc645::CheckValue checkValue )
+  ArincChecksum::CheckValue checkValue )
 {
   return doFileTransfer(
     std::move( dataHandler ),
@@ -113,13 +113,13 @@ void OperatorDefinedDownloadOperationImpl::answer( Information::DownloadFiles fi
 {
   if ( answerSentV )
   {
-    SPDLOG_WARN( "Answer can be only transmitted once" );
+    ARINC_LOG_WARN( "Answer can be only transmitted once" );
     return;
   }
 
   Files::DownloadOperationAnswerFile answerFile{ protocolVersion(), std::move( files ) };
 
-  const auto file{ std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< Helper::RawData >( answerFile ) ) };
+  const auto file{ std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< ArincSupport::RawData >( answerFile ) ) };
   assert( file );
 
   protocolFileLogger().transmitProtocolFile(
@@ -170,7 +170,7 @@ void OperatorDefinedDownloadOperationImpl::tftpRequest(
     using enum ::Tftp::RequestType;
 
     case Read:
-      SPDLOG_ERROR( "Unexpected read request" );
+      ARINC_LOG_ERROR( "Unexpected read request" );
       tftpServer().errorOperation( remote, ::Tftp::Packets::ErrorCode::IllegalTftpOperation, "Unexpected read request" );
       break;
 
@@ -198,7 +198,7 @@ void OperatorDefinedDownloadOperationImpl::tftpRequest(
 
         default:
           // All other files are handled as data files
-          SPDLOG_INFO(
+          ARINC_LOG_INFO(
             "Data File Request '{}' Part Number '{}' Checksum '{}'",
             filename,
             clientArinc615aOptions.partNumber,
@@ -216,7 +216,7 @@ void OperatorDefinedDownloadOperationImpl::tftpRequest(
       break;
 
     default:
-      SPDLOG_ERROR( "Invalid request" );
+      ARINC_LOG_ERROR( "Invalid request" );
       break;
   }
 }
@@ -226,13 +226,13 @@ void OperatorDefinedDownloadOperationImpl::listFileRequest(
   ::Tftp::Packets::TftpOptions clientTftpOptions,
   Tftp::Arinc615aOptions clientArinc615aOptions )
 {
-  SPDLOG_INFO( "List file request" );
+  ARINC_LOG_INFO( "List file request" );
 
   try
   {
     if ( listFileOperationV )
     {
-      SPDLOG_INFO( "List File request, when list file reception is active" );
+      ARINC_LOG_INFO( "List File request, when list file reception is active" );
 
       listFileOperationV->gracefulAbort( ::Tftp::Packets::ErrorCode::NotDefined, "New list file received" );
     }
@@ -240,7 +240,7 @@ void OperatorDefinedDownloadOperationImpl::listFileRequest(
     // no ARINC 615A Options (Part Number, Checksum or port) expected - discard
     if ( clientArinc615aOptions )
     {
-      SPDLOG_INFO( "Received unexpected ARINC 615A options: {}", Arinc615aOptions_toString( clientArinc615aOptions ) );
+      ARINC_LOG_INFO( "Received unexpected ARINC 615A options: {}", Arinc615aOptions_toString( clientArinc615aOptions ) );
     }
 
     // Create TFTP Server Read Operation, to receive the List File.
@@ -264,7 +264,7 @@ void OperatorDefinedDownloadOperationImpl::listFileRequest(
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Error receiving list file: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Error receiving list file: {}", boost::diagnostic_information( e ) );
   }
 }
 
@@ -276,7 +276,7 @@ void OperatorDefinedDownloadOperationImpl::listFileCompleted(
 
   if ( ::Tftp::TransferStatus::Successful != status )
   {
-    SPDLOG_ERROR( "List file could not be received" );
+    ARINC_LOG_ERROR( "List file could not be received" );
 
     abort( AbortReason::Protocol );
     return;
@@ -294,7 +294,7 @@ void OperatorDefinedDownloadOperationImpl::listFileCompleted(
     // Validate protocol version (only check and warn but no abort
     if ( listFile.protocolVersion() != protocolVersion() )
     {
-      SPDLOG_WARN( "List file protocol version differs from expected" );
+      ARINC_LOG_WARN( "List file protocol version differs from expected" );
     }
 
     // call handler
@@ -302,7 +302,7 @@ void OperatorDefinedDownloadOperationImpl::listFileCompleted(
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "decoding/ handling list file: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "decoding/ handling list file: {}", boost::diagnostic_information( e ) );
 
     abort( AbortReason::Protocol );
   }
@@ -313,7 +313,7 @@ bool OperatorDefinedDownloadOperationImpl::answerOptionsNegotiation( const Tftp:
   if ( serverOptions )
   {
     // no ARINC 615A Options (Checksum or port) expected - reject
-    SPDLOG_ERROR( "Received unexpected ARINC 615A options: {}", Arinc615aOptions_toString( serverOptions ) );
+    ARINC_LOG_ERROR( "Received unexpected ARINC 615A options: {}", Arinc615aOptions_toString( serverOptions ) );
     return false;
   }
 
@@ -324,11 +324,11 @@ void OperatorDefinedDownloadOperationImpl::answerCompleted( const Tftp::Transfer
 {
   answerOperationV.reset();
 
-  SPDLOG_INFO( "Answer file transmission completed" );
+  ARINC_LOG_INFO( "Answer file transmission completed" );
 
   if ( Tftp::TransferStatus::Successful != status )
   {
-    SPDLOG_ERROR( "Download answer file could not be transmitted" );
+    ARINC_LOG_ERROR( "Download answer file could not be transmitted" );
     abort( AbortReason::Protocol );
     return;
   }

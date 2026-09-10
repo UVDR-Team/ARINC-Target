@@ -14,7 +14,7 @@
 
 #include <arinc_615a/tftp/clients/Clients.hpp>
 
-#include <arinc_645/Arinc645.hpp>
+#include <arinc_checksum/Arinc645.hpp>
 
 #include <tftp/clients/Clients.hpp>
 
@@ -167,15 +167,15 @@ class ARINC_615A_EXPORT Operation
      * Provides a Check Value to the TFTP Server during TFTP option negotiation.
      * The meaning of this option depends on the ARINC 615A operation.
      * By default, no checksum option is transmitted.
-     * If this option is set to @p Arinc645::NoCheckValue, no checksum option is transmitted.
+     * If this option is set to @p ArincChecksum::NoCheckValue, no checksum option is transmitted.
      *
      * @param[in] checksumOption
      *   ARINC 615A Checksum Option.
-     *   Set to @p Arinc645::NoCheckValue for deactivation.
+     *   Set to @p ArincChecksum::NoCheckValue for deactivation.
      *
      * @return @p *this for chaining.
      **/
-    virtual Operation& checksumOption( Arinc645::CheckValue checksumOption ) = 0;
+    virtual Operation& checksumOption( ArincChecksum::CheckValue checksumOption ) = 0;
 
     /**
      * @brief Updates the remote (server address).

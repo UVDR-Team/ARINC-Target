@@ -38,7 +38,7 @@
 
 #include <tftp/packets/TftpOptions.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/all.hpp>
 
@@ -194,20 +194,20 @@ Tftp::Clients::OperationPtr UploadOperationImpl::transferFile(
   Tftp::ReceiveDataHandlerPtr dataHandler,
   std::string filename,
   std::string partNumber,
-  Arinc645::CheckValue checkValue )
+  ArincChecksum::CheckValue checkValue )
 {
-  SPDLOG_INFO( "Receive file '{}'", filename );
+  ARINC_LOG_INFO( "Receive file '{}'", filename );
 
   // check for the part number option
   if ( ( !partNumber.empty() ) && ( Arinc615aVersion::Arinc615a34 != protocolVersion() ) )
   {
-    SPDLOG_INFO( "Part Number option requested when not in ARINC 615A-3/4 mode" );
+    ARINC_LOG_INFO( "Part Number option requested when not in ARINC 615A-3/4 mode" );
   }
 
   // check for the checksum option
-  if ( ( Arinc645::CheckValue::NoCheckValue != checkValue ) && ( Arinc615aVersion::Arinc615a34 != protocolVersion() ) )
+  if ( ( ArincChecksum::CheckValue::NoCheckValue != checkValue ) && ( Arinc615aVersion::Arinc615a34 != protocolVersion() ) )
   {
-    SPDLOG_INFO( "Checksum option requested when not in ARINC 615A-3/4 mode" );
+    ARINC_LOG_INFO( "Checksum option requested when not in ARINC 615A-3/4 mode" );
   }
 
   return tftpClientReadOperation(
@@ -239,7 +239,7 @@ void UploadOperationImpl::tftpRequest(
   // validate host address against received request
   if ( hostAddress() != remote.address() )
   {
-    SPDLOG_WARN(
+    ARINC_LOG_WARN(
       "TFTP request from unknown remote: {}:{} expected {}",
       remote.address().to_string(),
       remote.port(),
@@ -264,7 +264,7 @@ void UploadOperationImpl::tftpRequest(
   // check file type - only protocol files are written to host TFTP server
   if ( Files::ProtocolFileType::UploadRequest != Files::ProtocolFilename{ filename }.fileType() )
   {
-    SPDLOG_WARN( "Unexpected file received" );
+    ARINC_LOG_WARN( "Unexpected file received" );
 
     tftpServerErrorOperation( remote, ::Tftp::Packets::ErrorCode::FileNotFound, "Wrong filename" );
 
@@ -292,20 +292,20 @@ void UploadOperationImpl::statusFile()
   // if status has not been sent previously, send accepted status, set Accepted Status
   if ( Arinc615a::StatusCode::Invalid == statusV.code() )
   {
-    SPDLOG_INFO( "Force sending of acceptance status" );
+    ARINC_LOG_INFO( "Force sending of acceptance status" );
     statusV.code( Arinc615a::StatusCode::OperationAccepted );
   }
 
   const Files::UploadOperationStatusFile statusFile{ protocolVersion(), statusV };
 
-  const auto file{ std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< Helper::RawData >( statusFile ) ) };
+  const auto file{ std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< ArincSupport::RawData >( statusFile ) ) };
   assert( file );
 
   protocolFileLogger().transmitProtocolFile( protocolFilename( Files::ProtocolFileType::UploadStatus ), file->data() );
 
   if ( statusOperation )
   {
-    SPDLOG_WARN( "Status Operation not empty" );
+    ARINC_LOG_WARN( "Status Operation not empty" );
   }
   lock.unlock();
 
@@ -331,7 +331,7 @@ void UploadOperationImpl::statusFileCompleted(
 {
   statusOperation.reset();
 
-  SPDLOG_INFO( "Send status completed" );
+  ARINC_LOG_INFO( "Send status completed" );
 
   switch ( transferStatus )
   {
@@ -349,7 +349,7 @@ void UploadOperationImpl::statusFileCompleted(
       return;
 
     default:
-      SPDLOG_ERROR( "Sending of status failed" );
+      ARINC_LOG_ERROR( "Sending of status failed" );
 
       // finalise operation
       finalise( FinalStatus::AbortedByTargetHardware, "Status transmission failed" );
@@ -383,14 +383,14 @@ void UploadOperationImpl::requestFileRequest(
   ::Tftp::Packets::TftpOptions clientTftpOptions,
   Tftp::Arinc615aOptions clientArinc615aOptions )
 {
-  SPDLOG_INFO( "Receive upload request file" );
+  ARINC_LOG_INFO( "Receive upload request file" );
 
   try
   {
     // no ARINC 615A Options (Checksum or port) expected - discard all
     if ( clientArinc615aOptions )
     {
-      SPDLOG_INFO(
+      ARINC_LOG_INFO(
         "Received unexpected ARINC 615A options: {}",
         Tftp::Arinc615aOptions_toString( clientArinc615aOptions ) );
     }
@@ -418,7 +418,7 @@ void UploadOperationImpl::requestFileRequest(
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Error receive request file: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Error receive request file: {}", boost::diagnostic_information( e ) );
   }
 }
 
@@ -428,7 +428,7 @@ void UploadOperationImpl::requestFileCompleted(
 {
   requestFileOperation.reset();
 
-  SPDLOG_INFO( "Receive upload request file completed" );
+  ARINC_LOG_INFO( "Receive upload request file completed" );
 
   if ( transferStatus != ::Tftp::TransferStatus::Successful )
   {
@@ -448,7 +448,7 @@ void UploadOperationImpl::requestFileCompleted(
     // Check Received Protocol Version
     if ( requestFile.protocolVersion() != protocolVersion() )
     {
-      SPDLOG_ERROR( "Receive upload request file protocol version invalid" );
+      ARINC_LOG_ERROR( "Receive upload request file protocol version invalid" );
 
       finished( FinalStatus::AbortedByTargetHardware, "Request file protocol version invalid" );
       return;
@@ -459,7 +459,7 @@ void UploadOperationImpl::requestFileCompleted(
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Receive upload request file format error: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Receive upload request file format error: {}", boost::diagnostic_information( e ) );
 
     finished( FinalStatus::AbortedByTargetHardware, "Request file format error" );
   }
@@ -471,7 +471,7 @@ bool UploadOperationImpl::fileOptionNegotiation(
 {
   if ( options.port )
   {
-    SPDLOG_ERROR( "Received unexpected ARINC 615A Port Option" );
+    ARINC_LOG_ERROR( "Received unexpected ARINC 615A Port Option" );
     return false;
   }
 

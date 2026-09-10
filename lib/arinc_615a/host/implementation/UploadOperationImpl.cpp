@@ -34,13 +34,13 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <arinc_645/CheckValue.hpp>
+#include <arinc_checksum/CheckValue.hpp>
 
 #include <tftp/files/MemoryFile.hpp>
 
 #include <tftp/packets/TftpOptions.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/all.hpp>
 
@@ -89,7 +89,7 @@ void UploadOperationImpl::loadList( Information::UploadLoads loads )
 {
   if ( loadListSentV )
   {
-    SPDLOG_WARN( "Load list can be only transmitted once" );
+    ARINC_LOG_WARN( "Load list can be only transmitted once" );
     return;
   }
 
@@ -97,7 +97,7 @@ void UploadOperationImpl::loadList( Information::UploadLoads loads )
   Files::UploadOperationRequestFile uploadOperationRequestFile{ protocolVersion(), std::move( loads ) };
 
   const auto file{
-    std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< Helper::RawData >( uploadOperationRequestFile ) ) };
+    std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< ArincSupport::RawData >( uploadOperationRequestFile ) ) };
   assert( file );
 
   protocolFileLogger().transmitProtocolFile( protocolFilename( Files::ProtocolFileType::UploadRequest ), file->data() );
@@ -130,7 +130,7 @@ Tftp::Servers::ReadOperationPtr UploadOperationImpl::fileTransfer(
   boost::asio::ip::udp::endpoint remote,
   ::Tftp::Packets::TftpOptions clientTftpOptions,
   std::string partNumber,
-  Arinc645::CheckValue checkValue )
+  ArincChecksum::CheckValue checkValue )
 {
   Tftp::Arinc615aOptions options{};
 
@@ -143,7 +143,7 @@ Tftp::Servers::ReadOperationPtr UploadOperationImpl::fileTransfer(
   }
 
   // Add ARINC 615A checksum option
-  if ( Arinc645::CheckValueType::NotUsed != checkValue.type() )
+  if ( ArincChecksum::CheckValueType::NotUsed != checkValue.type() )
   {
     options.checksum = std::move( checkValue );
   }
@@ -196,7 +196,7 @@ void UploadOperationImpl::tftpRequest(
     using enum ::Tftp::RequestType;
 
     case Read:
-      SPDLOG_INFO( "Received file request: {}", filename );
+      ARINC_LOG_INFO( "Received file request: {}", filename );
 
       // handlerV directly handles file request
       // (Must create TFTP operation and execute them)
@@ -212,7 +212,7 @@ void UploadOperationImpl::tftpRequest(
     {
       Files::ProtocolFilename file{ filename };
 
-      SPDLOG_INFO(
+      ARINC_LOG_INFO(
         "Received protocol file {}",
         Files::ProtocolFileTypeDescription::instance().name( file.fileType() ) );
 
@@ -227,7 +227,7 @@ void UploadOperationImpl::tftpRequest(
           break;
 
         default:
-          SPDLOG_ERROR( "Unexpected WRQ received" );
+          ARINC_LOG_ERROR( "Unexpected WRQ received" );
 
           tftpServer().errorOperation( remote, ::Tftp::Packets::ErrorCode::FileNotFound, "Wrong filename" );
 
@@ -237,7 +237,7 @@ void UploadOperationImpl::tftpRequest(
     }
 
     default:
-      SPDLOG_ERROR( "Invalid request" );
+      ARINC_LOG_ERROR( "Invalid request" );
       break;
   }
 }
@@ -247,7 +247,7 @@ bool UploadOperationImpl::loadListOptionNegotiation( const Tftp::Arinc615aOption
   if ( serverOptions )
   {
     // no ARINC 615A Options (Checksum or port) expected - reject
-    SPDLOG_ERROR( "Received unexpected ARINC 615A options: {}", Arinc615aOptions_toString( serverOptions ) );
+    ARINC_LOG_ERROR( "Received unexpected ARINC 615A options: {}", Arinc615aOptions_toString( serverOptions ) );
     return false;
   }
 
@@ -258,11 +258,11 @@ void UploadOperationImpl::loadListCompleted( const Tftp::TransferStatus status )
 {
   loadListOperationV.reset();
 
-  SPDLOG_INFO( "Load list file transmission completed" );
+  ARINC_LOG_INFO( "Load list file transmission completed" );
 
   if ( Tftp::TransferStatus::Successful != status )
   {
-    SPDLOG_ERROR( "Load list file could not be transmitted" );
+    ARINC_LOG_ERROR( "Load list file could not be transmitted" );
     abort( AbortReason::Protocol );
     return;
   }
@@ -287,7 +287,7 @@ void UploadOperationImpl::statusFileRequest(
     // no ARINC 615A Options (Part Number, Checksum or port) expected - discard
     if ( clientArinc615aOptions )
     {
-      SPDLOG_INFO(
+      ARINC_LOG_INFO(
         "Received unexpected ARINC 615A options: {}",
         Tftp::Arinc615aOptions_toString( clientArinc615aOptions ) );
     }
@@ -313,7 +313,7 @@ void UploadOperationImpl::statusFileRequest(
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Error receiving status file: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Error receiving status file: {}", boost::diagnostic_information( e ) );
   }
 }
 
@@ -324,13 +324,13 @@ void UploadOperationImpl::statusFileCompleted(
 {
   if ( 1U != statusFileOperationsV.remove( operation ) )
   {
-    SPDLOG_ERROR( "Status file operation completed, which was not initiated" );
+    ARINC_LOG_ERROR( "Status file operation completed, which was not initiated" );
     finished( StatusCode::OperationAbortedByDlp, "Status file operation completed, which was not initiated" );
   }
 
   if ( ::Tftp::TransferStatus::Successful != status )
   {
-    SPDLOG_ERROR( "Status file could not be received" );
+    ARINC_LOG_ERROR( "Status file could not be received" );
 
     finished( StatusCode::OperationAbortedByDlp, "Status file could not be received" );
     return;
@@ -349,7 +349,7 @@ void UploadOperationImpl::statusFileCompleted(
     // validate protocol version (only check and warn but no abort
     if ( statusFile.protocolVersion() != protocolVersion() )
     {
-      SPDLOG_WARN( "Status file protocol version differs from expected" );
+      ARINC_LOG_WARN( "Status file protocol version differs from expected" );
     }
 
     // call handler
@@ -380,14 +380,14 @@ void UploadOperationImpl::statusFileCompleted(
         break;
 
       default:
-        SPDLOG_WARN( "Invalid status - operation finished" );
+        ARINC_LOG_WARN( "Invalid status - operation finished" );
         finished( OperationAbortedByDlp );
         break;
     }
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Decoding/Handling status file: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Decoding/Handling status file: {}", boost::diagnostic_information( e ) );
   }
 }
 

@@ -15,7 +15,7 @@
 
 #include <arinc_615a/Arinc615a.hpp>
 
-#include <helper/Description.hpp>
+#include <arinc_support/Description.hpp>
 
 #include <iosfwd>
 
@@ -32,7 +32,7 @@ namespace Arinc615a {
  * @sa @ref Arinc615aVersion
  **/
 class ARINC_615A_EXPORT Arinc615aVersionDescription final :
-  public Helper::Description< Arinc615aVersionDescription, Arinc615aVersion >
+  public ArincSupport::Description< Arinc615aVersionDescription, Arinc615aVersion >
 {
   public:
     //! Initialises Instance

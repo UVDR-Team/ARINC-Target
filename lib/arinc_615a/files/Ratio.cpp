@@ -16,47 +16,47 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <helper/Exception.hpp>
+#include <arinc_support/Exception.hpp>
 
 #include <boost/throw_exception.hpp>
 
 namespace Arinc615a::Files {
 
-std::tuple< Helper::ConstRawDataSpan, Information::Ratio > Ratio_decode( const Helper::ConstRawDataSpan rawData )
+std::tuple< ArincSupport::ConstRawDataSpan, Information::Ratio > Ratio_decode( const ArincSupport::ConstRawDataSpan rawData )
 {
   if ( rawData.size() < 3U )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Ratio string size invalid" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Ratio string size invalid" } );
   }
 
   unsigned int ratio{};
-  auto [ remaining, ratioStr ]{ Helper::RawData_getString( rawData, 3U ) };
+  auto [ remaining, ratioStr ]{ ArincSupport::RawData_getString( rawData, 3U ) };
   try
   {
     ratio = static_cast< unsigned int >( std::stoul( std::string{ ratioStr } ) );
   }
   catch ( const std::exception &e )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ e.what() } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ e.what() } );
   }
 
   if ( ratio > 100U )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Ratio value out of range" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Ratio value out of range" } );
   }
 
   return { remaining, Information::Ratio{ ratio } };
 }
 
-[[nodiscard]] Helper::RawData Ratio_encode( const Information::Ratio &ratio )
+[[nodiscard]] ArincSupport::RawData Ratio_encode( const Information::Ratio &ratio )
 {
   assert( ratio.value() <= 100U );
 
   const auto ratioString{ std::format( "{:3}", ratio.value() ) };
   assert( ratioString.size() == 3U );
 
-  Helper::RawData rawRatio( 3 );
-  Helper::RawData_setString( rawRatio, ratioString );
+  ArincSupport::RawData rawRatio( 3 );
+  ArincSupport::RawData_setString( rawRatio, ratioString );
 
   return rawRatio;
 }

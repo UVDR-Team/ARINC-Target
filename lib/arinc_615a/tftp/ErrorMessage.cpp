@@ -14,7 +14,7 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <helper/Exception.hpp>
+#include <arinc_support/Exception.hpp>
 
 #include <boost/exception/all.hpp>
 
@@ -112,7 +112,7 @@ std::string ErrorMessage_wait( const std::chrono::seconds waitTime )
   if ( !std::in_range< uint16_t >( waitTime.count() ) )
   {
     BOOST_THROW_EXCEPTION( Arinc615aException()
-      << Helper::AdditionalInfo( "Value out of range" ) );
+      << ArincSupport::AdditionalInfo( "Value out of range" ) );
   }
 
   return std::format( "WAIT:{}", waitTime.count() );

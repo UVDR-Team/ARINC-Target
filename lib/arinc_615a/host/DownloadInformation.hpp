@@ -17,7 +17,7 @@
 
 #include <arinc_615a/TargetId.hpp>
 
-#include <arinc_645/CheckValue.hpp>
+#include <arinc_checksum/CheckValue.hpp>
 
 #include <boost/asio/ip/address.hpp>
 
@@ -67,7 +67,7 @@ class ARINC_615A_EXPORT DownloadInformation final
       //! File Part Number
       std::string partNumber{};
       //! Check Value
-      Arinc645::CheckValue checkValue{};
+      ArincChecksum::CheckValue checkValue{};
     };
 
     /**
@@ -149,7 +149,7 @@ class ARINC_615A_EXPORT DownloadInformation final
       std::string_view filename,
       std::filesystem::path filePath,
       std::string partNumber,
-      Arinc645::CheckValue checkValue );
+      ArincChecksum::CheckValue checkValue );
 
     /**
      * @brief File Download Finished indicator.

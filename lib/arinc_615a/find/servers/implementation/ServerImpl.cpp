@@ -20,9 +20,9 @@
 #include <arinc_615a/find/TargetInformation.hpp>
 #include <arinc_615a/find/FindConfiguration.hpp>
 
-#include <helper/Exception.hpp>
+#include <arinc_support/Exception.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/all.hpp>
 
@@ -47,7 +47,7 @@ ServerImpl::~ServerImpl() noexcept
   }
   catch ( const boost::system::system_error &err )
   {
-    SPDLOG_ERROR( "Error stopping FIND server: {}", err.what() );
+    ARINC_LOG_ERROR( "Error stopping FIND server: {}", err.what() );
 
     // do nothing - ignore error.
   }
@@ -67,7 +67,7 @@ Server& ServerImpl::localEndpoint( boost::asio::ip::udp::endpoint localEndpoint 
 
 void ServerImpl::start()
 {
-  SPDLOG_INFO( "Start FIND Server on {}:{}", localEndpointV.address().to_string(), localEndpointV.port() );
+  ARINC_LOG_INFO( "Start FIND Server on {}:{}", localEndpointV.address().to_string(), localEndpointV.port() );
 
   try
   {
@@ -85,13 +85,13 @@ void ServerImpl::start()
       socketV.close();
     }
 
-    BOOST_THROW_EXCEPTION( FindServerException() << Helper::AdditionalInfo{ err.what() } );
+    BOOST_THROW_EXCEPTION( FindServerException() << ArincSupport::AdditionalInfo{ err.what() } );
   }
 }
 
 void ServerImpl::stop()
 {
-  SPDLOG_INFO( "Stop FIND Server" );
+  ARINC_LOG_INFO( "Stop FIND Server" );
 
   // cancel receive operation and close socket
   socketV.cancel();
@@ -100,7 +100,7 @@ void ServerImpl::stop()
 
 void ServerImpl::response( const boost::asio::ip::udp::endpoint &remote, const TargetInformation &findInformation )
 {
-  SPDLOG_INFO( "Send FIND Response to {}:{}", remote.address().to_string(), remote.port() );
+  ARINC_LOG_INFO( "Send FIND Response to {}:{}", remote.address().to_string(), remote.port() );
 
   // generate response packet
   Packets::Packet answerPacket{
@@ -147,7 +147,7 @@ void ServerImpl::receiveHandler( const boost::system::error_code &error, const s
   }
   else
   {
-    SPDLOG_ERROR( "Error when receiving message: {}", error.message() );
+    ARINC_LOG_ERROR( "Error when receiving message: {}", error.message() );
   }
 
   // restart receive operation
@@ -158,11 +158,11 @@ void ServerImpl::informationRequestPacket(
   const boost::asio::ip::udp::endpoint &remote,
   const Packets::Packet &request )
 {
-  SPDLOG_INFO( "FIND Request from {}:{}", remote.address().to_string(), remote.port() );
+  ARINC_LOG_INFO( "FIND Request from {}:{}", remote.address().to_string(), remote.port() );
 
   if ( ( request.numberOfParameters() != 1 ) && ( !request.parameter( 0 ).empty() ) )
   {
-    SPDLOG_INFO( "Invalid FIND Request" );
+    ARINC_LOG_INFO( "Invalid FIND Request" );
     return;
   }
 
@@ -177,7 +177,7 @@ void ServerImpl::informationAnswerPacket(
   const boost::asio::ip::udp::endpoint &remote,
   [[maybe_unused]] const Packets::Packet &answer )
 {
-  SPDLOG_WARN(
+  ARINC_LOG_WARN(
       "FIND information answer packet from {}:{} received - IGNORE it",
       remote.address().to_string(),
       remote.port() );
@@ -185,9 +185,9 @@ void ServerImpl::informationAnswerPacket(
 
 void ServerImpl::invalidPacket(
   const boost::asio::ip::udp::endpoint &remote,
-  [[maybe_unused]] Helper::ConstRawDataSpan rawPacket )
+  [[maybe_unused]] ArincSupport::ConstRawDataSpan rawPacket )
 {
-  SPDLOG_WARN(
+  ARINC_LOG_WARN(
       "invalid packet received from {}:{} - IGNORE it",
       remote.address().to_string(),
       remote.port() );

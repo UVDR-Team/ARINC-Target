@@ -34,7 +34,7 @@
 
 #include <tftp/TftpException.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/all.hpp>
 
@@ -60,7 +60,7 @@ void ProtocolImpl::start()
 {
   assert( tftpServerV );
 
-  SPDLOG_INFO( "Start ARINC 615A Data Loader" );
+  ARINC_LOG_INFO( "Start ARINC 615A Data Loader" );
 
   try
   {
@@ -69,22 +69,22 @@ void ProtocolImpl::start()
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Unhandled ARINC 615A exception: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Unhandled ARINC 615A exception: {}", boost::diagnostic_information( e ) );
     throw;
   }
   catch ( const ::Tftp::TftpException &e )
   {
-    SPDLOG_ERROR( "Unhandled TFTP exception: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Unhandled TFTP exception: {}", boost::diagnostic_information( e ) );
     throw;
   }
   catch ( const boost::exception &e )
   {
-    SPDLOG_ERROR( "Unhandled exception: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Unhandled exception: {}", boost::diagnostic_information( e ) );
     throw;
   }
   catch ( ... )
   {
-    SPDLOG_ERROR( "Unhandled unknown exception" );
+    ARINC_LOG_ERROR( "Unhandled unknown exception" );
     throw;
   }
 }
@@ -93,7 +93,7 @@ void ProtocolImpl::stop()
 {
   assert( tftpServerV );
 
-  SPDLOG_INFO( "Stop ARINC 615A Data Loader" );
+  ARINC_LOG_INFO( "Stop ARINC 615A Data Loader" );
 
   tftpServerV->stop();
 }
@@ -179,12 +179,12 @@ void ProtocolImpl::receivedTftpRequest(
   const ::Tftp::Packets::TftpOptions &clientTftpOptions,
   const Tftp::Arinc615aOptions &clientArinc615aOptions )
 {
-  SPDLOG_INFO( "Received TFTP request" );
+  ARINC_LOG_INFO( "Received TFTP request" );
 
   // check for protocol filename
   if ( !Files::ProtocolFilename::isProtocolFilename( filename ) )
   {
-    SPDLOG_ERROR( "No protocol file requested" );
+    ARINC_LOG_ERROR( "No protocol file requested" );
 
     tftpServerV->errorOperation( remote, ::Tftp::Packets::ErrorCode::FileNotFound, "File not found" );
 
@@ -216,7 +216,7 @@ void ProtocolImpl::receivedTftpRequest(
   auto operation{ operationV.lock() };
   if ( !operation )
   {
-    SPDLOG_ERROR( "No operation registered" );
+    ARINC_LOG_ERROR( "No operation registered" );
 
     tftpServerV->errorOperation( remote, ::Tftp::Packets::ErrorCode::FileNotFound, "No registered operation" );
 
@@ -233,9 +233,9 @@ void ProtocolImpl::handleInitialisationFile(
   const ::Tftp::Packets::TftpOptions &clientTftpOptions,
   const Tftp::Arinc615aOptions &clientArinc615aOptions )
 {
-  if ( clientArinc615aOptions.checksum.type() != Arinc645::CheckValueType::NotUsed )
+  if ( clientArinc615aOptions.checksum.type() != ArincChecksum::CheckValueType::NotUsed )
   {
-    SPDLOG_INFO( "Ignore unexpected checksum option" );
+    ARINC_LOG_INFO( "Ignore unexpected checksum option" );
   }
 
   OperationType operationType{};
@@ -245,22 +245,22 @@ void ProtocolImpl::handleInitialisationFile(
     using enum Files::ProtocolFileType;
 
     case LoadConfigurationInitialization:
-      SPDLOG_INFO( "LOAD CONFIGURATION INITIALIZATION" );
+      ARINC_LOG_INFO( "LOAD CONFIGURATION INITIALIZATION" );
       operationType = OperationType::Information;
       break;
 
     case UploadInitialization:
-      SPDLOG_INFO( "UPLOAD INITIALIZATION" );
+      ARINC_LOG_INFO( "UPLOAD INITIALIZATION" );
       operationType = OperationType::Upload;
       break;
 
     case MediaDefinedDownloadInitialization:
-      SPDLOG_INFO( "MEDIA DEFINED DOWNLOAD INITIALIZATION" );
+      ARINC_LOG_INFO( "MEDIA DEFINED DOWNLOAD INITIALIZATION" );
       operationType = OperationType::MediaDefinedDownload;
       break;
 
     case OperatorDefinedDownloadInitialization:
-      SPDLOG_INFO( "OPERATOR DEFINED DOWNLOAD INITIALIZATION" );
+      ARINC_LOG_INFO( "OPERATOR DEFINED DOWNLOAD INITIALIZATION" );
       operationType = OperationType::OperatorDefinedDownload;
       break;
 

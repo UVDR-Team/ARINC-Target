@@ -32,7 +32,7 @@
 
 #include <tftp/packets/TftpOptions.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 namespace Arinc615a::Host {
 
@@ -78,7 +78,7 @@ Tftp::Servers::WriteOperationPtr MediaDefinedDownloadOperationImpl::fileTransfer
   boost::asio::ip::udp::endpoint remote,
   ::Tftp::Packets::TftpOptions clientTftpOptions,
   std::string partNumber,
-  Arinc645::CheckValue checkValue )
+  ArincChecksum::CheckValue checkValue )
 {
   return doFileTransfer(
     std::move( dataHandler ),
@@ -103,11 +103,11 @@ void MediaDefinedDownloadOperationImpl::errorOperation(
   doErrorOperation( remote, errorCode, std::move( errorMessage ) );
 }
 
-void MediaDefinedDownloadOperationImpl::request( Information::DownloadFiles files, Helper::RawData userDefinedData )
+void MediaDefinedDownloadOperationImpl::request( Information::DownloadFiles files, ArincSupport::RawData userDefinedData )
 {
   if ( requestSentV )
   {
-    SPDLOG_WARN( "Request can be only transmitted once" );
+    ARINC_LOG_WARN( "Request can be only transmitted once" );
     return;
   }
 
@@ -116,7 +116,7 @@ void MediaDefinedDownloadOperationImpl::request( Information::DownloadFiles file
     std::move( files ),
     std::move( userDefinedData ) };
 
-  const auto file{ std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< Helper::RawData >( requestFile ) ) };
+  const auto file{ std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< ArincSupport::RawData >( requestFile ) ) };
   assert( file );
 
   protocolFileLogger().transmitProtocolFile(
@@ -166,7 +166,7 @@ void MediaDefinedDownloadOperationImpl::tftpRequest(
     using enum ::Tftp::RequestType;
 
     case Read:
-      SPDLOG_ERROR( "Unexpected read request" );
+      ARINC_LOG_ERROR( "Unexpected read request" );
       tftpServer().errorOperation( remote, ::Tftp::Packets::ErrorCode::IllegalTftpOperation, "Unexpected read request" );
       break;
 
@@ -186,7 +186,7 @@ void MediaDefinedDownloadOperationImpl::tftpRequest(
 
         default:
           // All other files are handled as data files
-          SPDLOG_INFO(
+          ARINC_LOG_INFO(
             "Data File Request '{}' Part Number '{}' Checksum '{}'",
             filename,
             clientArinc615aOptions.partNumber,
@@ -204,7 +204,7 @@ void MediaDefinedDownloadOperationImpl::tftpRequest(
       break;
 
     default:
-      SPDLOG_ERROR( "Invalid request" );
+      ARINC_LOG_ERROR( "Invalid request" );
       break;
   }
 }
@@ -214,7 +214,7 @@ bool MediaDefinedDownloadOperationImpl::requestOptionsNegotiation( const Tftp::A
   if ( serverOptions )
   {
     // no ARINC 615A Options (Checksum or port) expected - reject
-    SPDLOG_ERROR( "Received unexpected ARINC 615A options: {}", Arinc615aOptions_toString( serverOptions ) );
+    ARINC_LOG_ERROR( "Received unexpected ARINC 615A options: {}", Arinc615aOptions_toString( serverOptions ) );
     return false;
   }
 
@@ -225,11 +225,11 @@ void MediaDefinedDownloadOperationImpl::requestCompleted( const Tftp::TransferSt
 {
   requestOperationV.reset();
 
-  SPDLOG_INFO( "Request file transmission completed" );
+  ARINC_LOG_INFO( "Request file transmission completed" );
 
   if ( Tftp::TransferStatus::Successful != status )
   {
-    SPDLOG_ERROR( "Download request file could not be transmitted" );
+    ARINC_LOG_ERROR( "Download request file could not be transmitted" );
     abort( AbortReason::Protocol );
     return;
   }

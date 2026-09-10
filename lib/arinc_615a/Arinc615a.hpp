@@ -20,7 +20,7 @@
 
 #include <arinc_615a/arinc_615a_export.h>
 
-#include <helper/Helper.hpp>
+#include <arinc_support/Support.hpp>
 
 #include <chrono>
 #include <cstdint>
@@ -240,7 +240,7 @@ class TargetId;
  *
  * @return %Version information.
  **/
-[[nodiscard]] ARINC_615A_EXPORT Helper::VersionsInformation::value_type arinc615aVersion();
+[[nodiscard]] ARINC_615A_EXPORT ArincSupport::VersionsInformation::value_type arinc615aVersion();
 
 }
 

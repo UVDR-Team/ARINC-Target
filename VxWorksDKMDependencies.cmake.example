@@ -1,39 +1,8 @@
-# Copy this file outside the source tree, replace the four locations and pass
-# it to CMake with -DARINC615A_DEPENDENCY_FILE=/absolute/path/to/that-file.
+# No external ARINC dependency file is required.
 #
-# These libraries implement protocol behaviour used by ARINC 615A.  They are
-# required, not optional runtime dependencies: removing TFTP would remove the
-# file-transfer protocol itself.  All paths must refer to artifacts compiled
-# with the same VxWorks 26.03 toolchain, CPU, ABI, C++23 language mode, and
-# C++ standard library as the DKM that links arinc_615a_tha_target.
-
-set( ARINC615A_VXWORKS_INCLUDE_DIR "/replace/with/vxworks/dependency/includes" )
-
-# If the VxWorks SDK integration does not already define Boost::boost, expose
-# its kernel-provided Boost headers as an imported interface target here.
-# add_library( Boost::boost INTERFACE IMPORTED GLOBAL )
-# set_target_properties( Boost::boost PROPERTIES
-#   INTERFACE_INCLUDE_DIRECTORIES "/replace/with/vxworks/boost/includes" )
-
-add_library( helper STATIC IMPORTED GLOBAL )
-set_target_properties( helper PROPERTIES
-  IMPORTED_LOCATION "/replace/with/libhelper.a"
-  INTERFACE_INCLUDE_DIRECTORIES "${ARINC615A_VXWORKS_INCLUDE_DIR}" )
-
-add_library( tftp STATIC IMPORTED GLOBAL )
-set_target_properties( tftp PROPERTIES
-  IMPORTED_LOCATION "/replace/with/libtftp.a"
-  INTERFACE_INCLUDE_DIRECTORIES "${ARINC615A_VXWORKS_INCLUDE_DIR}" )
-target_link_libraries( tftp INTERFACE helper )
-
-add_library( arinc_645 STATIC IMPORTED GLOBAL )
-set_target_properties( arinc_645 PROPERTIES
-  IMPORTED_LOCATION "/replace/with/libarinc_645.a"
-  INTERFACE_INCLUDE_DIRECTORIES "${ARINC615A_VXWORKS_INCLUDE_DIR}" )
-target_link_libraries( arinc_645 INTERFACE helper )
-
-add_library( arinc_665 STATIC IMPORTED GLOBAL )
-set_target_properties( arinc_665 PROPERTIES
-  IMPORTED_LOCATION "/replace/with/libarinc_665.a"
-  INTERFACE_INCLUDE_DIRECTORIES "${ARINC615A_VXWORKS_INCLUDE_DIR}" )
-target_link_libraries( arinc_665 INTERFACE arinc_645 helper )
+# The offline build compiles TFTP, ARINC 665, and checksum code from the local
+# source tree. Configure only the matching VxWorks Boost header location:
+#
+#   -DARINC_BOOST_INCLUDE_DIR=/absolute/path/containing/boost/version.hpp
+#
+# See VxWorksDKM.md for the complete VxWorks 26.03 DKM procedure.

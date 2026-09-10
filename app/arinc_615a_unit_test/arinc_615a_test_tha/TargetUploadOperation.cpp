@@ -35,7 +35,7 @@
 
 #include <tftp/clients/Operation.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/diagnostic_information.hpp>
 
@@ -76,15 +76,15 @@ void TargetUploadOperation::initialise(
   }
   catch ( const boost::exception &e )
   {
-    SPDLOG_ERROR( "Error during Upload operation: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Error during Upload operation: {}", boost::diagnostic_information( e ) );
   }
   catch ( const std::exception &e )
   {
-    SPDLOG_ERROR( "Error during Upload operation: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Error during Upload operation: {}", boost::diagnostic_information( e ) );
   }
   catch ( ... )
   {
-    SPDLOG_ERROR( "Error during Upload operation" );
+    ARINC_LOG_ERROR( "Error during Upload operation" );
   }
 }
 
@@ -119,7 +119,7 @@ void TargetUploadOperation::initialised()
 
 void TargetUploadOperation::finished( const Arinc615a::FinalStatus finalStatus, std::string_view description )
 {
-  SPDLOG_INFO(
+  ARINC_LOG_INFO(
     "Operation finished: {} '{}'",
     Arinc615a::StatusCodeDescription::instance().name( Arinc615a::statusCode( finalStatus ) ),
     description );
@@ -128,7 +128,7 @@ void TargetUploadOperation::finished( const Arinc615a::FinalStatus finalStatus, 
 
 void TargetUploadOperation::abortRequest( const Arinc615a::AbortRequest abortRequest )
 {
-  SPDLOG_INFO( "Abort Request from host" );
+  ARINC_LOG_INFO( "Abort Request from host" );
 
   operationV->loadsFinished( Arinc615a::FinalStatus::AbortedByTargetHardware, "Abort by Host" );
   operationV->inProgress( true, -1, "Host Abort in progress" );
@@ -149,7 +149,7 @@ void TargetUploadOperation::abortRequest( const Arinc615a::AbortRequest abortReq
 
 void TargetUploadOperation::status( const Arinc615a::Information::UploadStatus &status )
 {
-  SPDLOG_INFO(
+  ARINC_LOG_INFO(
     "Status:\n"
     "\tCounter:         {}\n"
     "\tStatus:          {} ({})\n"
@@ -166,7 +166,7 @@ void TargetUploadOperation::status( const Arinc615a::Information::UploadStatus &
 
 void TargetUploadOperation::loadList( const Arinc615a::Information::UploadLoads &loads )
 {
-  SPDLOG_INFO( "Upload Load List - {} load headers", loads.size() );
+  ARINC_LOG_INFO( "Upload Load List - {} load headers", loads.size() );
 
   if ( loads.empty() )
   {
@@ -190,7 +190,7 @@ void TargetUploadOperation::loadList( const Arinc615a::Information::UploadLoads 
 
 void TargetUploadOperation::receiveLoadHeader()
 {
-  SPDLOG_INFO( "Load '{}' '{}'", currentLoadV->headerFilename, currentLoadV->partNumber );
+  ARINC_LOG_INFO( "Load '{}' '{}'", currentLoadV->headerFilename, currentLoadV->partNumber );
 
   assert( currentLoadV != loadsV.end() );
 
@@ -204,7 +204,7 @@ void TargetUploadOperation::receiveLoadHeader()
     currentLoadV->headerFilename,
     partNumber,
     // We cannot know any check code of Load Header
-    Arinc645::CheckValue::NoCheckValue );
+    ArincChecksum::CheckValue::NoCheckValue );
 
   assert( loadHeaderOperationV );
 
@@ -214,13 +214,13 @@ void TargetUploadOperation::receiveLoadHeader()
 bool TargetUploadOperation::uploadHeaderFileOptionsNegotiation(
   std::string_view providedPartNumber,
   std::string_view partNumber,
-  const Arinc645::CheckValue &checksum )
+  const ArincChecksum::CheckValue &checksum )
 {
   if ( providedPartNumber.empty() )
   {
     if ( !partNumber.empty() )
     {
-      SPDLOG_ERROR( "Host sent Part Number Option which was not advertised" );
+      ARINC_LOG_ERROR( "Host sent Part Number Option which was not advertised" );
       return false;
     }
   }
@@ -228,11 +228,11 @@ bool TargetUploadOperation::uploadHeaderFileOptionsNegotiation(
   {
     if ( partNumber.empty() )
     {
-      SPDLOG_WARN( "Host has not acknowledged Part Number Option" );
+      ARINC_LOG_WARN( "Host has not acknowledged Part Number Option" );
     }
     else if ( partNumber != providedPartNumber )
     {
-      SPDLOG_ERROR( "Received Part Number Option differs from sent one" );
+      ARINC_LOG_ERROR( "Received Part Number Option differs from sent one" );
 
       return false;
     }
@@ -242,9 +242,9 @@ bool TargetUploadOperation::uploadHeaderFileOptionsNegotiation(
     }
   }
 
-  if ( Arinc645::CheckValue::NoCheckValue != checksum )
+  if ( ArincChecksum::CheckValue::NoCheckValue != checksum )
   {
-    SPDLOG_ERROR( "Received Checksum Option when no one sent" );
+    ARINC_LOG_ERROR( "Received Checksum Option when no one sent" );
 
     return false;
   }
@@ -260,7 +260,7 @@ void TargetUploadOperation::uploadHeaderFileCompleted(
 
   if ( Arinc615a::Tftp::TransferStatus::Successful != status )
   {
-    SPDLOG_ERROR( "Transfer Error" );
+    ARINC_LOG_ERROR( "Transfer Error" );
 
     operationV->finished( Arinc615a::FinalStatus::AbortedByTargetHardware, "File transfer Error" );
     return;
@@ -268,7 +268,7 @@ void TargetUploadOperation::uploadHeaderFileCompleted(
 
   Arinc665::Files::LoadHeaderFile loadHeaderFile{ loadHeader->data() };
 
-  SPDLOG_INFO( "Upload Load Header ", loadHeaderFile.partNumber() );
+  ARINC_LOG_INFO( "Upload Load Header ", loadHeaderFile.partNumber() );
 
   if ( loadHeaderFile.dataFiles().empty() )
   {
@@ -293,10 +293,10 @@ void TargetUploadOperation::receiveFile()
 
   if ( fileOperationV )
   {
-    SPDLOG_WARN( "File Operation not empty" );
+    ARINC_LOG_WARN( "File Operation not empty" );
   }
 
-  SPDLOG_INFO( "Receive file {}", currentFileV->filename );
+  ARINC_LOG_INFO( "Receive file {}", currentFileV->filename );
 
   auto file{ std::make_shared< Tftp::Files::StreamFile >(
     Tftp::Files::StreamFile::Operation::Receive,
@@ -306,8 +306,8 @@ void TargetUploadOperation::receiveFile()
   auto partNumber{ configurationV.partNumberOption ? currentLoadV->partNumber : std::string{} };
   auto checkValue{
     configurationV.checksumOption
-      ? Arinc645::CheckValue::crc16( currentFileV->crc )
-      : Arinc645::CheckValue::NoCheckValue };
+      ? ArincChecksum::CheckValue::crc16( currentFileV->crc )
+      : ArincChecksum::CheckValue::NoCheckValue };
 
   fileOperationV = operationV->transferFile(
     std::bind_front( &TargetUploadOperation::fileOptionsNegotiation, this, partNumber, checkValue ),
@@ -323,15 +323,15 @@ void TargetUploadOperation::receiveFile()
 
 bool TargetUploadOperation::fileOptionsNegotiation(
   std::string_view providedPartNumber,
-  const Arinc645::CheckValue &providedCheckValue,
+  const ArincChecksum::CheckValue &providedCheckValue,
   std::string_view partNumber,
-  const Arinc645::CheckValue &checksum )
+  const ArincChecksum::CheckValue &checksum )
 {
   if ( providedPartNumber.empty() )
   {
     if ( !partNumber.empty() )
     {
-      SPDLOG_ERROR( "Host sent Part Number Option wich was not advertised" );
+      ARINC_LOG_ERROR( "Host sent Part Number Option wich was not advertised" );
       return false;
     }
   }
@@ -339,11 +339,11 @@ bool TargetUploadOperation::fileOptionsNegotiation(
   {
     if ( partNumber.empty() )
     {
-      SPDLOG_WARN( "Host has not acknowledged Part Number Option" );
+      ARINC_LOG_WARN( "Host has not acknowledged Part Number Option" );
     }
     else if ( providedPartNumber != partNumber )
     {
-      SPDLOG_ERROR( "Received Part Number Option differs from sent one" );
+      ARINC_LOG_ERROR( "Received Part Number Option differs from sent one" );
 
       return false;
     }
@@ -353,23 +353,23 @@ bool TargetUploadOperation::fileOptionsNegotiation(
     }
   }
 
-  if ( Arinc645::CheckValue::NoCheckValue == providedCheckValue )
+  if ( ArincChecksum::CheckValue::NoCheckValue == providedCheckValue )
   {
-    if ( Arinc645::CheckValue::NoCheckValue != checksum )
+    if ( ArincChecksum::CheckValue::NoCheckValue != checksum )
     {
-      SPDLOG_ERROR( "Host sent Checksum Option wich was not advertised" );
+      ARINC_LOG_ERROR( "Host sent Checksum Option wich was not advertised" );
       return false;
     }
   }
   else
   {
-    if ( Arinc645::CheckValue::NoCheckValue == checksum )
+    if ( ArincChecksum::CheckValue::NoCheckValue == checksum )
     {
-      SPDLOG_WARN( "Host has not acknowledged Checksum Option" );
+      ARINC_LOG_WARN( "Host has not acknowledged Checksum Option" );
     }
     else if ( checksum != providedCheckValue )
     {
-      SPDLOG_ERROR(
+      ARINC_LOG_ERROR(
         "Received Checksum Option differs from sent one: RX: {} TX: {}",
         checksum.format(),
         providedCheckValue.format() );
@@ -393,7 +393,7 @@ void TargetUploadOperation::fileCompleted( Tftp::Files::StreamFilePtr file, Arin
 
   if ( Arinc615a::Tftp::TransferStatus::Successful != status )
   {
-    SPDLOG_ERROR( "Transfer Error" );
+    ARINC_LOG_ERROR( "Transfer Error" );
 
     operationV->loadFinished(
       currentLoadV->headerFilename,

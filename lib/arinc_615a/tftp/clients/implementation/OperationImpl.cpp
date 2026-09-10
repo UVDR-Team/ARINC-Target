@@ -21,7 +21,7 @@
 
 #include <tftp/packets/Options.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <cassert>
 
@@ -39,7 +39,7 @@ void OperationImpl::handleAbort( const bool handleAbort )
 
 void OperationImpl::request()
 {
-  SPDLOG_INFO( "Start ARINC 615A TFTP client operation" );
+  ARINC_LOG_INFO( "Start ARINC 615A TFTP client operation" );
 
   retriesV = 0;
 
@@ -109,7 +109,7 @@ try
 }
 catch ( const boost::system::system_error &err )
 {
-  SPDLOG_CRITICAL( "timer chancel error: {}", err.what() );
+  ARINC_LOG_CRITICAL( "timer chancel error: {}", err.what() );
 }
 
 bool OperationImpl::handleOptionNegotiation( ::Tftp::Packets::Options &serverOptions )
@@ -156,7 +156,7 @@ void OperationImpl::handleCompletion( const ::Tftp::TransferStatus status )
 {
   if ( ::Tftp::TransferStatus::Successful == status )
   {
-    SPDLOG_INFO( "TFTP client operation completed" );
+    ARINC_LOG_INFO( "TFTP client operation completed" );
 
     // cleanup TFTP operation
     operationV.reset();
@@ -178,7 +178,7 @@ void OperationImpl::handleCompletion( const ::Tftp::TransferStatus status )
 
   if ( ::Tftp::TransferStatus::Aborted == status )
   {
-    SPDLOG_INFO( "TFTP client operation aborted by local instance" );
+    ARINC_LOG_INFO( "TFTP client operation aborted by local instance" );
 
     // explicit user abort
     if ( operationCompletionHandlerV )
@@ -205,7 +205,7 @@ void OperationImpl::handleCompletion( const ::Tftp::TransferStatus status )
           const auto &errorMessage{ std::get< 1 >( *errorInformationV ) };
           const auto abortCode{ ErrorMessage_abort( errorMessage ) };
 
-          SPDLOG_INFO( "ABORT received" );
+          ARINC_LOG_INFO( "ABORT received" );
 
           switch ( abortCode )
           {
@@ -224,7 +224,7 @@ void OperationImpl::handleCompletion( const ::Tftp::TransferStatus status )
               return;
 
             default:
-              SPDLOG_WARN( "Invalid ABORT status code: {}", errorMessage );
+              ARINC_LOG_WARN( "Invalid ABORT status code: {}", errorMessage );
               break;
           }
         }
@@ -233,7 +233,7 @@ void OperationImpl::handleCompletion( const ::Tftp::TransferStatus status )
       case ErrorMessageType::Wait:
       {
         // Handle WAIT
-        SPDLOG_INFO( "WAIT received" );
+        ARINC_LOG_INFO( "WAIT received" );
 
         assert( errorInformationV );
         const auto &errorMessage{ std::get< 1 >( *errorInformationV ) };
@@ -241,7 +241,7 @@ void OperationImpl::handleCompletion( const ::Tftp::TransferStatus status )
 
         if ( !waitTime )
         {
-          SPDLOG_ERROR( "Error decoding Wait Message: {}", errorMessage );
+          ARINC_LOG_ERROR( "Error decoding Wait Message: {}", errorMessage );
           break;
         }
 
@@ -258,12 +258,12 @@ void OperationImpl::handleCompletion( const ::Tftp::TransferStatus status )
 
       default:
         // No ARINC 615A message.
-        SPDLOG_ERROR( "Received TFTP error" );
+        ARINC_LOG_ERROR( "Received TFTP error" );
         break;
     }
   }
 
-  SPDLOG_WARN( "Retry TFTP client operation" );
+  ARINC_LOG_WARN( "Retry TFTP client operation" );
 
   // increment retry counter and retry.
   ++retriesV;
@@ -271,7 +271,7 @@ void OperationImpl::handleCompletion( const ::Tftp::TransferStatus status )
   // Check exceeding retry counter
   if ( retriesV > dlpRetriesV )
   {
-    SPDLOG_ERROR( "DLP Retry counter reached" );
+    ARINC_LOG_ERROR( "DLP Retry counter reached" );
 
     if ( operationCompletionHandlerV )
     {
@@ -303,7 +303,7 @@ void OperationImpl::handleWaitTimeout( const boost::system::error_code errorCode
   // internal (timer) error occurred
   if ( errorCode )
   {
-    SPDLOG_ERROR( "timer error: {}", errorCode.message() );
+    ARINC_LOG_ERROR( "timer error: {}", errorCode.message() );
 
     if ( operationCompletionHandlerV )
     {

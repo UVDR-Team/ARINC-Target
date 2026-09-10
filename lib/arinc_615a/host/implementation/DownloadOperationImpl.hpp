@@ -68,7 +68,7 @@ class DownloadOperationImpl : public OperationImpl
       boost::asio::ip::udp::endpoint remote,
       ::Tftp::Packets::TftpOptions clientTftpOptions,
       std::string partNumber,
-      Arinc645::CheckValue checkValue );
+      ArincChecksum::CheckValue checkValue );
 
     //! @copydoc DownloadOperation::waitOperation()
     void doWaitOperation( const boost::asio::ip::udp::endpoint &remote, std::chrono::seconds waitTime );

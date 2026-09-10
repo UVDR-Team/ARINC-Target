@@ -18,7 +18,7 @@
 
 #include <arinc_615a/tftp/servers/Servers.hpp>
 
-#include <arinc_645/Arinc645.hpp>
+#include <arinc_checksum/Arinc645.hpp>
 
 #include <boost/asio/ip/udp.hpp>
 
@@ -69,7 +69,7 @@ class ARINC_615A_EXPORT DownloadOperation : public Operation
       boost::asio::ip::udp::endpoint remote,
       ::Tftp::Packets::TftpOptions clientTftpOptions,
       std::string partNumber,
-      Arinc645::CheckValue checkValue ) = 0;
+      ArincChecksum::CheckValue checkValue ) = 0;
 
     /**
      * @brief Performs a Wait Operation.

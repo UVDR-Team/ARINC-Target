@@ -67,7 +67,7 @@ class ARINC_615A_EXPORT InformationOperationStatusFile final : public ProtocolFi
      * @param[in] rawData
      *   Raw Status File.
      **/
-    explicit InformationOperationStatusFile( Helper::ConstRawDataSpan rawData );
+    explicit InformationOperationStatusFile( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @brief Assigns raw data to the file.
@@ -79,7 +79,7 @@ class ARINC_615A_EXPORT InformationOperationStatusFile final : public ProtocolFi
      *
      * @return *this
      **/
-    InformationOperationStatusFile& operator=( Helper::ConstRawDataSpan rawData );
+    InformationOperationStatusFile& operator=( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @name Status Information.
@@ -108,7 +108,7 @@ class ARINC_615A_EXPORT InformationOperationStatusFile final : public ProtocolFi
 
   protected:
     //! @copydoc ProtocolFile::encode
-    [[nodiscard]] Helper::RawData encode() const override;
+    [[nodiscard]] ArincSupport::RawData encode() const override;
 
     /**
      * @brief Decodes the Information Operations Status File from the raw data.
@@ -116,7 +116,7 @@ class ARINC_615A_EXPORT InformationOperationStatusFile final : public ProtocolFi
      * @param[in] rawData
      *   Raw data.
      **/
-    void decode( Helper::ConstRawDataSpan rawData );
+    void decode( ArincSupport::ConstRawDataSpan rawData );
 
   private:
     //! Information Operation Status

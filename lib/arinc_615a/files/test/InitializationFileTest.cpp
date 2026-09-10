@@ -14,7 +14,7 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <helper/RawData.hpp>
+#include <arinc_support/RawData.hpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE( constructorDefault)
 
 BOOST_AUTO_TEST_CASE( constructor1)
 {
-  using Helper::operator ""_b;
+  using ArincSupport::operator ""_b;
 
   InitializationFile file{ std::as_bytes( std::span{ initializationFileRaw } ) };
 
@@ -63,24 +63,24 @@ BOOST_AUTO_TEST_CASE( constructor1)
     "XXX" } ) );
 
   BOOST_CHECK_THROW(
-    (InitializationFile{ Helper::RawData{ 0_b, 0_b, 0_b, 4_b } } ),
+    (InitializationFile{ ArincSupport::RawData{ 0_b, 0_b, 0_b, 4_b } } ),
     Arinc615aException );
 
   BOOST_CHECK_THROW(
-    (InitializationFile{ Helper::RawData{
+    (InitializationFile{ ArincSupport::RawData{
       0_b, 0_b, 0_b, 7_b,
       0x41_b, 0x34_b } } ),
     Arinc615aException );
 
   BOOST_CHECK_THROW(
-    (InitializationFile{ Helper::RawData{
+    (InitializationFile{ ArincSupport::RawData{
       0_b, 0_b, 0_b, 8_b,
       0x41_b, 0x34_b,
       0x00_b, 0x01_b } } ),
     Arinc615aException);
 
   BOOST_CHECK_THROW(
-    (InitializationFile{ Helper::RawData{
+    (InitializationFile{ ArincSupport::RawData{
       0_b, 0_b, 0_b, 15_b,
 
       0x41_b, 0x34_b,
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE( constructor1)
 
 BOOST_AUTO_TEST_CASE( constructor2 )
 {
-  using Helper::operator ""_b;
+  using ArincSupport::operator ""_b;
 
   InitializationFile file{
     Arinc615aVersion::Arinc615a2,
@@ -109,8 +109,8 @@ BOOST_AUTO_TEST_CASE( constructor2 )
   BOOST_CHECK( file.response().description() == "XXX");
 
   BOOST_CHECK(
-    ( static_cast< Helper::RawData>( file)
-    == Helper::RawData{
+    ( static_cast< ArincSupport::RawData>( file)
+    == ArincSupport::RawData{
       0_b, 0_b, 0_b, 13_b,
 
       0x41_b, 0x33_b,

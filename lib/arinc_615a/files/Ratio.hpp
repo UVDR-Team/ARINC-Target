@@ -17,7 +17,7 @@
 
 #include <arinc_615a/information/Information.hpp>
 
-#include <helper/RawData.hpp>
+#include <arinc_support/RawData.hpp>
 
 namespace Arinc615a::Files {
 
@@ -38,8 +38,8 @@ namespace Arinc615a::Files {
  *
  * @sa @ref Ratio_encode()
  **/
-[[nodiscard]] ARINC_615A_EXPORT std::tuple< Helper::ConstRawDataSpan, Information::Ratio > Ratio_decode(
-  Helper::ConstRawDataSpan rawData );
+[[nodiscard]] ARINC_615A_EXPORT std::tuple< ArincSupport::ConstRawDataSpan, Information::Ratio > Ratio_decode(
+  ArincSupport::ConstRawDataSpan rawData );
 
 /**
  * @brief Encodes Ratio as Raw Data.
@@ -51,7 +51,7 @@ namespace Arinc615a::Files {
  *
  * @sa @ref Ratio_decode()
  **/
-[[nodiscard]] ARINC_615A_EXPORT Helper::RawData Ratio_encode( const Information::Ratio &ratio );
+[[nodiscard]] ARINC_615A_EXPORT ArincSupport::RawData Ratio_encode( const Information::Ratio &ratio );
 
 /** @} **/
 

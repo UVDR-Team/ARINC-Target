@@ -14,7 +14,7 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <helper/Exception.hpp>
+#include <arinc_support/Exception.hpp>
 
 #include <boost/exception/all.hpp>
 
@@ -27,7 +27,7 @@ Ratio::Ratio( const unsigned int ratio ) :
 {
   if ( ratioV > 100U )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Ratio  out of range" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Ratio  out of range" } );
   }
 }
 
@@ -45,7 +45,7 @@ Ratio& Ratio::operator =( const unsigned int ratio )
 {
   if ( ratio > 100U )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Ratio out of range" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Ratio out of range" } );
   }
 
   ratioV = ratio;

@@ -15,7 +15,7 @@
 
 #include <arinc_615a/find/packets/Packets.hpp>
 
-#include <helper/Description.hpp>
+#include <arinc_support/Description.hpp>
 
 #include <format>
 #include <iosfwd>
@@ -32,7 +32,7 @@ namespace Arinc615a::Find::Packets {
  *
  * @sa @ref Opcode
  **/
-class ARINC_615A_EXPORT OpcodeDescription final : public Helper::Description< OpcodeDescription, Opcode >
+class ARINC_615A_EXPORT OpcodeDescription final : public ArincSupport::Description< OpcodeDescription, Opcode >
 {
   public:
     //! Initialises Instance

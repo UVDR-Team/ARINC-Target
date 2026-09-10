@@ -69,7 +69,7 @@ class ARINC_615A_EXPORT DownloadOperationAnswerFile final : public ProtocolFile
      * @param[in] rawData
      *   Raw Answer File.
      **/
-    explicit DownloadOperationAnswerFile( Helper::ConstRawDataSpan rawData );
+    explicit DownloadOperationAnswerFile( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @brief Assigns raw data to the file.
@@ -81,7 +81,7 @@ class ARINC_615A_EXPORT DownloadOperationAnswerFile final : public ProtocolFile
      *
      * @return *this
      **/
-    DownloadOperationAnswerFile& operator=( Helper::ConstRawDataSpan rawData );
+    DownloadOperationAnswerFile& operator=( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @name Downloadable Files.
@@ -110,7 +110,7 @@ class ARINC_615A_EXPORT DownloadOperationAnswerFile final : public ProtocolFile
 
   protected:
     //! @copydoc ProtocolFile::encode
-    [[nodiscard]] Helper::RawData encode() const override;
+    [[nodiscard]] ArincSupport::RawData encode() const override;
 
     /**
      * @brief Decodes the body from the raw data.
@@ -121,7 +121,7 @@ class ARINC_615A_EXPORT DownloadOperationAnswerFile final : public ProtocolFile
      * @throw Arinc615aException
      *   When the number of files field is `0`.
      **/
-    void decode( Helper::ConstRawDataSpan rawData );
+    void decode( ArincSupport::ConstRawDataSpan rawData );
 
   private:
     //! Download Files

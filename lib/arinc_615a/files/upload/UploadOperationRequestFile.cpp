@@ -16,11 +16,11 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <helper/Exception.hpp>
-#include <helper/RawData.hpp>
-#include <helper/SafeCast.hpp>
+#include <arinc_support/Exception.hpp>
+#include <arinc_support/RawData.hpp>
+#include <arinc_support/SafeCast.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/throw_exception.hpp>
 
@@ -34,12 +34,12 @@ UploadOperationRequestFile::UploadOperationRequestFile(
 {
 }
 
-UploadOperationRequestFile::UploadOperationRequestFile( Helper::ConstRawDataSpan rawData )
+UploadOperationRequestFile::UploadOperationRequestFile( ArincSupport::ConstRawDataSpan rawData )
 {
   decode( rawData );
 }
 
-UploadOperationRequestFile& UploadOperationRequestFile::operator=( Helper::ConstRawDataSpan rawData )
+UploadOperationRequestFile& UploadOperationRequestFile::operator=( ArincSupport::ConstRawDataSpan rawData )
 {
   decode( rawData );
   return *this;
@@ -60,21 +60,21 @@ void UploadOperationRequestFile::loads( Information::UploadLoads loads )
   loadsV = std::move( loads );
 }
 
-Helper::RawData UploadOperationRequestFile::encode() const
+ArincSupport::RawData UploadOperationRequestFile::encode() const
 {
-  Helper::RawData rawData( MinimumSize );
+  ArincSupport::RawData rawData( MinimumSize );
 
   // skip header - it is filled finally
-  auto nextData{ Helper::RawDataSpan{ rawData }.subspan( HeaderSize ) };
+  auto nextData{ ArincSupport::RawDataSpan{ rawData }.subspan( HeaderSize ) };
 
   // the number of loads must not exceed the field maximum value
   if ( loadsV.size() > std::numeric_limits< uint16_t >::max() )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "More loads than allowed" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "More loads than allowed" } );
   }
 
   // number of header files
-  nextData = Helper::RawData_setInt( nextData, Helper::safeCast< uint16_t >( loadsV.size() ) );
+  nextData = ArincSupport::RawData_setInt( nextData, ArincSupport::safeCast< uint16_t >( loadsV.size() ) );
   assert( nextData.empty() );
 
   // iterate over header files
@@ -101,23 +101,23 @@ Helper::RawData UploadOperationRequestFile::encode() const
   return rawData;
 }
 
-void UploadOperationRequestFile::decode( Helper::ConstRawDataSpan rawData )
+void UploadOperationRequestFile::decode( ArincSupport::ConstRawDataSpan rawData )
 {
   // check minimum data size
   if ( rawData.size() < MinimumSize )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Protocol file to small" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Protocol file to small" } );
   }
 
   auto remainingData{ decodeHeader( rawData ) };
 
   // number of header files
   uint16_t numberOfHeaderFiles;
-  std::tie( remainingData, numberOfHeaderFiles ) = Helper::RawData_getInt< uint16_t >( remainingData );
+  std::tie( remainingData, numberOfHeaderFiles ) = ArincSupport::RawData_getInt< uint16_t >( remainingData );
 
   if ( 0U == numberOfHeaderFiles )
   {
-    SPDLOG_WARN( "Invalid number of header files (0)" );
+    ARINC_LOG_WARN( "Invalid number of header files (0)" );
   }
 
   // iterate over header files
@@ -128,7 +128,7 @@ void UploadOperationRequestFile::decode( Helper::ConstRawDataSpan rawData )
     std::tie( remainingData, headerFilename ) = String_decode( remainingData );
     if ( headerFilename.empty() )
     {
-      SPDLOG_WARN( "header filename is empty" );
+      ARINC_LOG_WARN( "header filename is empty" );
     }
 
     // load part number
@@ -136,7 +136,7 @@ void UploadOperationRequestFile::decode( Helper::ConstRawDataSpan rawData )
     std::tie( remainingData, loadPartNumber ) = String_decode( remainingData );
     if ( loadPartNumber.empty() )
     {
-      SPDLOG_WARN( "load part number is empty" );
+      ARINC_LOG_WARN( "load part number is empty" );
     }
 
     // Add load header info to the loads list
@@ -146,7 +146,7 @@ void UploadOperationRequestFile::decode( Helper::ConstRawDataSpan rawData )
   // Final Check for additional data
   if ( !remainingData.empty() )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "More data then expected" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "More data then expected" } );
   }
 }
 

@@ -14,9 +14,9 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <helper/Exception.hpp>
+#include <arinc_support/Exception.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/all.hpp>
 
@@ -43,7 +43,7 @@ StatusCode statusCode( const FinalStatus status )
       return StatusCode::OperationAbortedByTargetHw;
 
     default:
-      SPDLOG_WARN( "Invalid final status" );
+      ARINC_LOG_WARN( "Invalid final status" );
       return StatusCode::OperationAbortedByTargetHw;
   }
 }
@@ -70,7 +70,7 @@ FinalStatus finalStatus( const StatusCode code )
       return FinalStatus::LoadPartNumberOrDownloadFileFailed;
 
     default:
-      SPDLOG_WARN( "Invalid status code" );
+      ARINC_LOG_WARN( "Invalid status code" );
       return FinalStatus::AbortedByTargetHardware;
   }
 }
@@ -88,7 +88,7 @@ FinalStatus finalStatus( const AbortRequest abortRequest )
       return Arinc615a::FinalStatus::AbortedByOperator;
 
     default:
-      SPDLOG_WARN( "Invalid abort request" );
+      ARINC_LOG_WARN( "Invalid abort request" );
       return Arinc615a::FinalStatus::AbortedByTargetHardware;
   }
 }
@@ -113,7 +113,7 @@ StatusCode statusCode( uint16_t const code )
       break;
 
     default:
-      BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Invalid status code" } );
+      BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Invalid status code" } );
   }
 
   return StatusCode{ code };
@@ -132,7 +132,7 @@ OperationAcceptanceStatusCode operationAcceptanceStatusCode( uint16_t const code
       break;
 
     default:
-      BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Invalid status code" } );
+      BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Invalid status code" } );
   }
 
   return OperationAcceptanceStatusCode{ code };

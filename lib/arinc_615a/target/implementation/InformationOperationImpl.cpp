@@ -30,13 +30,13 @@
 #include <arinc_615a/Arinc615aException.hpp>
 #include <arinc_615a/StatusCode.hpp>
 
-#include <arinc_645/CheckValueGenerator.hpp>
+#include <arinc_checksum/CheckValueGenerator.hpp>
 
 #include <tftp/files/MemoryFile.hpp>
 
 #include <tftp/packets/TftpOptions.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/all.hpp>
 
@@ -110,15 +110,15 @@ void InformationOperationImpl::finished( const FinalStatus finalStatus, std::str
 
 void InformationOperationImpl::targetInformation(
   Information::TargetsHardware targetsHardware,
-  const Arinc645::CheckValueType checkValueType )
+  const ArincChecksum::CheckValueType checkValueType )
 {
-  SPDLOG_INFO( "Send target information" );
+  ARINC_LOG_INFO( "Send target information" );
 
   const Files::LoadConfigurationListFile configList{ protocolVersion(), std::move( targetsHardware ) };
 
-  const auto rawFile{ std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< Helper::RawData >( configList ) ) };
+  const auto rawFile{ std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< ArincSupport::RawData >( configList ) ) };
 
-  const auto checkValueGenerator{ Arinc645::CheckValueGenerator::create( checkValueType ) };
+  const auto checkValueGenerator{ ArincChecksum::CheckValueGenerator::create( checkValueType ) };
 
   checkValueGenerator->process( std::as_bytes( rawFile->data() ) );
 
@@ -127,7 +127,7 @@ void InformationOperationImpl::targetInformation(
     Files::ProtocolFileType::LoadConfigurationList,
     {}, // Operation deferred is ignored
     std::bind_front( &InformationOperationImpl::targetInformationCompleted, this ),
-    std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< Helper::RawData >( configList ) ),
+    std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< ArincSupport::RawData >( configList ) ),
     checkValueGenerator->checkValue() );
   assert( targetInformationOperation );
 
@@ -141,7 +141,7 @@ void InformationOperationImpl::tftpRequest(
   ::Tftp::Packets::TftpOptions clientTftpOptions [[maybe_unused]],
   Tftp::Arinc615aOptions clientArinc615aOptions [[maybe_unused]] )
 {
-  SPDLOG_ERROR( "No TFTP request expected for information operation." );
+  ARINC_LOG_ERROR( "No TFTP request expected for information operation." );
 
   try
   {
@@ -149,7 +149,7 @@ void InformationOperationImpl::tftpRequest(
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Error send TFTP error: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Error send TFTP error: {}", boost::diagnostic_information( e ) );
   }
 }
 
@@ -167,13 +167,13 @@ void InformationOperationImpl::statusFile()
   // if status has not been sent previously, send accepted status, set Accepted Status
   if ( Arinc615a::StatusCode::Invalid == statusV.code() )
   {
-    SPDLOG_INFO( "Force sending of acceptance status" );
+    ARINC_LOG_INFO( "Force sending of acceptance status" );
     statusV.code( Arinc615a::StatusCode::OperationAccepted );
   }
 
   const Files::InformationOperationStatusFile statusFile{ protocolVersion(), statusV };
 
-  const auto file{ std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< Helper::RawData >( statusFile ) ) };
+  const auto file{ std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< ArincSupport::RawData >( statusFile ) ) };
   assert( file );
 
   protocolFileLogger().transmitProtocolFile(
@@ -182,7 +182,7 @@ void InformationOperationImpl::statusFile()
 
   if ( statusOperation )
   {
-    SPDLOG_WARN( "Status Operation not empty" );
+    ARINC_LOG_WARN( "Status Operation not empty" );
   }
   lock.unlock();
 
@@ -208,7 +208,7 @@ void InformationOperationImpl::statusFileCompleted(
 {
   statusOperation.reset();
 
-  SPDLOG_INFO( "Send status completed" );
+  ARINC_LOG_INFO( "Send status completed" );
 
   switch ( transferStatus )
   {
@@ -226,7 +226,7 @@ void InformationOperationImpl::statusFileCompleted(
       return;
 
     default:
-      SPDLOG_ERROR( "Sending of status failed" );
+      ARINC_LOG_ERROR( "Sending of status failed" );
 
       // finalise operation
       finalise( FinalStatus::AbortedByTargetHardware, "Status transmission failed" );
@@ -243,7 +243,7 @@ void InformationOperationImpl::statusFileCompleted(
 
     // First transmission of status -> set to in progress
     case OperationAccepted:
-      SPDLOG_INFO( "Force sending of in progress status" );
+      ARINC_LOG_INFO( "Force sending of in progress status" );
 
       // set in progress status and immediate transmit
       inProgress( true );
@@ -265,7 +265,7 @@ void InformationOperationImpl::targetInformationCompleted( const Tftp::TransferS
 {
   targetInformationOperation.reset();
 
-  SPDLOG_INFO( "Send target information completed" );
+  ARINC_LOG_INFO( "Send target information completed" );
 
   if ( transferStatus != Tftp::TransferStatus::Successful )
   {

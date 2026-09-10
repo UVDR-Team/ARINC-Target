@@ -75,7 +75,7 @@ class InformationOperationImpl final : public InformationOperation, public Opera
     //! @copydoc InformationOperation::targetInformation
     void targetInformation(
       Information::TargetsHardware targetsHardware,
-      Arinc645::CheckValueType checkValueType = Arinc645::CheckValueType::NotUsed ) override;
+      ArincChecksum::CheckValueType checkValueType = ArincChecksum::CheckValueType::NotUsed ) override;
 
     //! @copydoc InformationOperation::finished()
     void finished( FinalStatus finalStatus, std::string description = {} ) override;

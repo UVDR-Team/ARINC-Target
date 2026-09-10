@@ -13,7 +13,7 @@
 
 #include "InformationOperationConfiguration.hpp"
 
-#include <arinc_645/CheckValueTypeDescription.hpp>
+#include <arinc_checksum/CheckValueTypeDescription.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -28,7 +28,7 @@ void InformationOperationConfiguration::fromProperties( const boost::property_tr
 {
   enabled = properties.get( "enabled", enabled );
 
-  listCheckValue = Arinc645::CheckValueTypeDescription::instance().enumeration(
+  listCheckValue = ArincChecksum::CheckValueTypeDescription::instance().enumeration(
     properties.get< std::string >( "list_check_value", {} ) ).value_or( listCheckValue );
 
   if (
@@ -45,9 +45,9 @@ boost::property_tree::ptree InformationOperationConfiguration::toProperties( con
 
   properties.add( "enabled", enabled );
 
-  if ( full || ( listCheckValue != Arinc645::CheckValueType::NotUsed ) )
+  if ( full || ( listCheckValue != ArincChecksum::CheckValueType::NotUsed ) )
   {
-    properties.add( "list_check_value", Arinc645::CheckValueTypeDescription::instance().name( listCheckValue ) );
+    properties.add( "list_check_value", ArincChecksum::CheckValueTypeDescription::instance().name( listCheckValue ) );
   }
 
   if ( full || !targetsHardware.empty() )

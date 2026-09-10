@@ -20,7 +20,7 @@
 
 #include <arinc_615a/tftp/clients/Clients.hpp>
 
-#include <arinc_645/CheckValue.hpp>
+#include <arinc_checksum/CheckValue.hpp>
 
 #include <string_view>
 
@@ -135,7 +135,7 @@ class ARINC_615A_EXPORT DownloadOperation : public Operation
      *   Can be set to empty string if not used.
      * @param[in] checkValue
      *   Check value of the file to transmit.
-     *   Set to @p Arinc645::CheckValue::NoCheckValue if not used.
+     *   Set to @p ArincChecksum::CheckValue::NoCheckValue if not used.
      *
      * @return TFTP Client _WRQ_ %Operation.
      **/
@@ -145,7 +145,7 @@ class ARINC_615A_EXPORT DownloadOperation : public Operation
       Tftp::TransmitDataHandlerPtr dataHandler,
       std::string filename,
       std::string partNumber = {},
-      Arinc645::CheckValue checkValue = Arinc645::CheckValue::NoCheckValue ) = 0;
+      ArincChecksum::CheckValue checkValue = ArincChecksum::CheckValue::NoCheckValue ) = 0;
 };
 
 }

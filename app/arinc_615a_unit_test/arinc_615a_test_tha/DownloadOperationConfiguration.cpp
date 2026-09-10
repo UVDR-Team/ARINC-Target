@@ -13,7 +13,7 @@
 
 #include "DownloadOperationConfiguration.hpp"
 
-#include <arinc_645/CheckValueTypeDescription.hpp>
+#include <arinc_checksum/CheckValueTypeDescription.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -44,7 +44,7 @@ void DownloadOperationConfiguration::fromProperties( const boost::property_tree:
 
   partNumberOption = properties.get( "part_number_option", partNumberOption );
 
-  checksumOption = Arinc645::CheckValueTypeDescription::instance()
+  checksumOption = ArincChecksum::CheckValueTypeDescription::instance()
     .enumeration( properties.get< std::string >( "checksum_option", {} ) )
     .value_or( checksumOption );
 }
@@ -69,9 +69,9 @@ boost::property_tree::ptree DownloadOperationConfiguration::toProperties( const 
     properties.add( "part_number_option", partNumberOption );
   }
 
-  if ( full || ( Arinc645::CheckValueType::NotUsed != checksumOption ) )
+  if ( full || ( ArincChecksum::CheckValueType::NotUsed != checksumOption ) )
   {
-    properties.add( "checksum_option", Arinc645::CheckValueTypeDescription::instance().name( checksumOption ) );
+    properties.add( "checksum_option", ArincChecksum::CheckValueTypeDescription::instance().name( checksumOption ) );
   }
 
   return properties;

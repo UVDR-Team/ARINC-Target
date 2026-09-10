@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE( encode )
 
   BOOST_CHECK( file.files().size() == 2 );
 
-  auto rawFile( static_cast< Helper::RawData >( file ) );
+  auto rawFile( static_cast< ArincSupport::RawData >( file ) );
   BOOST_CHECK( std::ranges::equal( rawFile, std::as_bytes( std::span{ rawDownloadOperationListFile } ) ) );
 }
 

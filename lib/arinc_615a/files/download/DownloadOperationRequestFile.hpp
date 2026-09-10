@@ -67,7 +67,7 @@ class ARINC_615A_EXPORT DownloadOperationRequestFile final : public ProtocolFile
     explicit DownloadOperationRequestFile(
       Arinc615aVersion protocolVersion,
       Information::DownloadFiles files = {},
-      Helper::RawData userDefinedData = {} );
+      ArincSupport::RawData userDefinedData = {} );
 
     /**
      * @brief Constructs the status file from the given raw data.
@@ -75,7 +75,7 @@ class ARINC_615A_EXPORT DownloadOperationRequestFile final : public ProtocolFile
      * @param[in] rawData
      *   Raw Download Request File.
      **/
-    explicit DownloadOperationRequestFile( Helper::ConstRawDataSpan rawData );
+    explicit DownloadOperationRequestFile( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @brief Assigns raw data to the file.
@@ -87,7 +87,7 @@ class ARINC_615A_EXPORT DownloadOperationRequestFile final : public ProtocolFile
      *
      * @return *this
      **/
-    DownloadOperationRequestFile& operator=( Helper::ConstRawDataSpan rawData );
+    DownloadOperationRequestFile& operator=( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @name Downloadable Files.
@@ -136,10 +136,10 @@ class ARINC_615A_EXPORT DownloadOperationRequestFile final : public ProtocolFile
      *
      * @return User Defined Data.
      **/
-    [[nodiscard]] Helper::ConstRawDataSpan userDefinedData() const;
+    [[nodiscard]] ArincSupport::ConstRawDataSpan userDefinedData() const;
 
     //! @copydoc userDefinedData() const
-    Helper::RawData& userDefinedData();
+    ArincSupport::RawData& userDefinedData();
 
     /**
      * @brief Updates the User Defined Data.
@@ -147,13 +147,13 @@ class ARINC_615A_EXPORT DownloadOperationRequestFile final : public ProtocolFile
      * @param[in] userDefinedData
      *   New User Defined Data.
      **/
-    void userDefinedData( Helper::RawData userDefinedData );
+    void userDefinedData( ArincSupport::RawData userDefinedData );
 
     /** @} **/
 
   protected:
     //! @copydoc ProtocolFile::encode
-    [[nodiscard]] Helper::RawData encode() const override;
+    [[nodiscard]] ArincSupport::RawData encode() const override;
 
     /**
      * @brief Decodes the Download Operations Request File from the raw data.
@@ -166,13 +166,13 @@ class ARINC_615A_EXPORT DownloadOperationRequestFile final : public ProtocolFile
      * @throw Arinc615aException
      *   If user defined data length is invalid
      **/
-    void decode( Helper::ConstRawDataSpan rawData );
+    void decode( ArincSupport::ConstRawDataSpan rawData );
 
   private:
     //! Download Files
     Information::DownloadFiles filesV;
     //! User Defined Data.
-    Helper::RawData userDefinedDataV;
+    ArincSupport::RawData userDefinedDataV;
 };
 
 }

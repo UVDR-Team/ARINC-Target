@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE( constructor )
   BOOST_CHECK( loadInfo->code() == StatusCode::OperationCompleted );
   BOOST_CHECK( loadInfo->description() == "ZZZ" );
 
-  Helper::RawData rawFile2( file );
+  ArincSupport::RawData rawFile2( file );
 
   UploadOperationStatusFile file2( rawFile2 );
 

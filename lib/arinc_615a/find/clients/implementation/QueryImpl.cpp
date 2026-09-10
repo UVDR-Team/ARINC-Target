@@ -19,9 +19,9 @@
 #include <arinc_615a/find/packets/Packet.hpp>
 #include <arinc_615a/find/packets/PacketStatistic.hpp>
 
-#include <helper/Exception.hpp>
+#include <arinc_support/Exception.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/all.hpp>
 
@@ -111,7 +111,7 @@ void QueryImpl::start()
       completionHandlerV();
     }
 
-    BOOST_THROW_EXCEPTION( FindClientException() << Helper::AdditionalInfo{ err.what() } );
+    BOOST_THROW_EXCEPTION( FindClientException() << ArincSupport::AdditionalInfo{ err.what() } );
   }
 }
 
@@ -131,7 +131,7 @@ void QueryImpl::abort()
       completionHandlerV();
     }
 
-    BOOST_THROW_EXCEPTION( FindClientException() << Helper::AdditionalInfo{ err.what() } );
+    BOOST_THROW_EXCEPTION( FindClientException() << ArincSupport::AdditionalInfo{ err.what() } );
   }
 
   if ( completionHandlerV )
@@ -142,7 +142,7 @@ void QueryImpl::abort()
 
 void QueryImpl::send( const boost::asio::ip::udp::endpoint &remote, const Packets::Packet &packet )
 {
-  SPDLOG_INFO( "Send FIND packet to {}:{}", remote.address().to_string(), remote.port() );
+  ARINC_LOG_INFO( "Send FIND packet to {}:{}", remote.address().to_string(), remote.port() );
 
   auto rawPacket{ packet.encode() };
 
@@ -176,7 +176,7 @@ void QueryImpl::timerHandler( const boost::system::error_code &error )
   if ( error )
   {
     // timer error
-    SPDLOG_ERROR( "timer error" );
+    ARINC_LOG_ERROR( "timer error" );
   }
 
   try
@@ -191,7 +191,7 @@ void QueryImpl::timerHandler( const boost::system::error_code &error )
       completionHandlerV();
     }
 
-    BOOST_THROW_EXCEPTION( FindClientException() << Helper::AdditionalInfo{ err.what() } );
+    BOOST_THROW_EXCEPTION( FindClientException() << ArincSupport::AdditionalInfo{ err.what() } );
   }
 
   if ( completionHandlerV )
@@ -211,7 +211,7 @@ void QueryImpl::receiveHandler( const boost::system::error_code &error, const st
   if ( error )
   {
     // receive error
-    SPDLOG_ERROR( "Error when receiving message - error code {}: {}", error.value(), error.message() );
+    ARINC_LOG_ERROR( "Error when receiving message - error code {}: {}", error.value(), error.message() );
   }
   else
   {
@@ -227,14 +227,14 @@ void QueryImpl::informationRequestPacket(
   const boost::asio::ip::udp::endpoint &remote,
   [[maybe_unused]] const Packets::Packet &request )
 {
-  SPDLOG_INFO( "Ignoring unexpected FIND information request packet received from: {}", remote.address().to_string() );
+  ARINC_LOG_INFO( "Ignoring unexpected FIND information request packet received from: {}", remote.address().to_string() );
 }
 
 void QueryImpl::informationAnswerPacket( const boost::asio::ip::udp::endpoint &remote, const Packets::Packet &answer )
 {
   if ( answer.numberOfParameters() != std::to_underlying( Packets::ParameterList::Last ) )
   {
-    SPDLOG_WARN(
+    ARINC_LOG_WARN(
       "invalid number of parameters actual: {}, expected {}",
       answer.numberOfParameters(),
       std::to_underlying( Packets::ParameterList::Last ) );
@@ -257,9 +257,9 @@ void QueryImpl::informationAnswerPacket( const boost::asio::ip::udp::endpoint &r
 
 void QueryImpl::invalidPacket(
   const boost::asio::ip::udp::endpoint &remote,
-  [[maybe_unused]] Helper::ConstRawDataSpan rawPacket )
+  [[maybe_unused]] ArincSupport::ConstRawDataSpan rawPacket )
 {
-  SPDLOG_WARN( "Ignoring invalid packet received from: {}", remote.address().to_string() );
+  ARINC_LOG_WARN( "Ignoring invalid packet received from: {}", remote.address().to_string() );
 }
 
 }

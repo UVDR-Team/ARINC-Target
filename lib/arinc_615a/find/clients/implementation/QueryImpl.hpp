@@ -161,14 +161,14 @@ class QueryImpl final : public Query, private Packets::PacketHandler
      * @param[in] rawPacket
      *   Raw Packet
      **/
-    void invalidPacket( const boost::asio::ip::udp::endpoint &remote,Helper::ConstRawDataSpan rawPacket ) override;
+    void invalidPacket( const boost::asio::ip::udp::endpoint &remote,ArincSupport::ConstRawDataSpan rawPacket ) override;
 
     //! Timer, which handles the reception timeout
     boost::asio::system_timer timerV;
     //! Query socket
     boost::asio::ip::udp::socket socketV;
     //! Storage of received data
-    Helper::RawData rawReceivePacketV;
+    ArincSupport::RawData rawReceivePacketV;
     //! Address of sender of received data.
     boost::asio::ip::udp::endpoint receiveRemoteEndpointV;
 

@@ -15,7 +15,7 @@
 
 #include <arinc_615a/Arinc615a.hpp>
 
-#include <helper/Description.hpp>
+#include <arinc_support/Description.hpp>
 
 #include <format>
 #include <iosfwd>
@@ -32,7 +32,7 @@ namespace Arinc615a {
  *
  * @sa @ref StatusCode
  **/
-class ARINC_615A_EXPORT StatusCodeDescription final : public Helper::Description< StatusCodeDescription, StatusCode >
+class ARINC_615A_EXPORT StatusCodeDescription final : public ArincSupport::Description< StatusCodeDescription, StatusCode >
 {
   public:
     //! Initialises Instance

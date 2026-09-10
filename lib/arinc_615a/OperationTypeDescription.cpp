@@ -13,7 +13,7 @@
 #include "OperationTypeDescription.hpp"
 
 #include <boost/exception/exception.hpp>
-#include <boost/program_options.hpp>
+#include <arinc_support/InputError.hpp>
 
 namespace Arinc615a {
 
@@ -44,7 +44,7 @@ std::istream& operator>>( std::istream& stream, OperationType &operation )
 
   if ( !optionalOperation )
   {
-    BOOST_THROW_EXCEPTION( boost::program_options::invalid_option_value( operationStr ) );
+    BOOST_THROW_EXCEPTION( ArincSupport::InvalidOptionValue( operationStr ) );
   }
 
   operation = *optionalOperation;

@@ -14,7 +14,7 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <helper/Exception.hpp>
+#include <arinc_support/Exception.hpp>
 
 #include <boost/exception/all.hpp>
 
@@ -50,7 +50,7 @@ void InitializationResponse::validate() const
 {
   if ( ( OperationAcceptanceStatusCode::OperationAccepted == codeV ) && !descriptionV.empty() )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Accepted and description not empty" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Accepted and description not empty" } );
   }
 }
 

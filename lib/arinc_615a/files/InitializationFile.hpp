@@ -68,7 +68,7 @@ class ARINC_615A_EXPORT InitializationFile final : public ProtocolFile
      * @param[in] rawData
      *   Raw data representation of the initialisation file.
      **/
-    explicit InitializationFile( Helper::ConstRawDataSpan rawData );
+    explicit InitializationFile( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @brief Assigns raw data to the file.
@@ -80,7 +80,7 @@ class ARINC_615A_EXPORT InitializationFile final : public ProtocolFile
      *
      * @return *this
      **/
-    InitializationFile& operator=( Helper::ConstRawDataSpan rawData );
+    InitializationFile& operator=( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @name Response Information
@@ -110,7 +110,7 @@ class ARINC_615A_EXPORT InitializationFile final : public ProtocolFile
 
   protected:
     //! @copydoc ProtocolFile::encode
-    [[nodiscard]] Helper::RawData encode() const override;
+    [[nodiscard]] ArincSupport::RawData encode() const override;
 
     /**
      * @brief Decodes the Initialisation File.
@@ -123,7 +123,7 @@ class ARINC_615A_EXPORT InitializationFile final : public ProtocolFile
      * @throw Arinc615aException
      *   More data than expected.
      **/
-    void decode( Helper::ConstRawDataSpan rawData );
+    void decode( ArincSupport::ConstRawDataSpan rawData );
 
   private:
     //! Response Information.

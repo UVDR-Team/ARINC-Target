@@ -77,7 +77,7 @@ class ARINC_615A_EXPORT DownloadOperationStatusFile final : public ProtocolFile
      * @param[in] rawData
      *   Raw Status File.
      **/
-    explicit DownloadOperationStatusFile( Helper::ConstRawDataSpan rawData );
+    explicit DownloadOperationStatusFile( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @brief Assigns raw data to the file.
@@ -89,7 +89,7 @@ class ARINC_615A_EXPORT DownloadOperationStatusFile final : public ProtocolFile
      *
      * @return *this
      **/
-    DownloadOperationStatusFile& operator=( Helper::ConstRawDataSpan rawData );
+    DownloadOperationStatusFile& operator=( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @name Status Information.
@@ -118,7 +118,7 @@ class ARINC_615A_EXPORT DownloadOperationStatusFile final : public ProtocolFile
 
   protected:
     //! @copydoc ProtocolFile::encode
-    [[nodiscard]] Helper::RawData encode() const override;
+    [[nodiscard]] ArincSupport::RawData encode() const override;
 
     /**
      * @brief Decodes the Download Operations Status File from the raw data.
@@ -126,7 +126,7 @@ class ARINC_615A_EXPORT DownloadOperationStatusFile final : public ProtocolFile
      * @param[in] rawData
      *   Raw data.
      **/
-    void decode( Helper::ConstRawDataSpan rawData );
+    void decode( ArincSupport::ConstRawDataSpan rawData );
 
   private:
     //! Download Status information.

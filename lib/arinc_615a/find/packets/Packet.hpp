@@ -15,7 +15,7 @@
 
 #include <arinc_615a/find/packets/Packets.hpp>
 
-#include <helper/RawData.hpp>
+#include <arinc_support/RawData.hpp>
 
 #include <string>
 #include <vector>
@@ -87,7 +87,7 @@ class ARINC_615A_EXPORT Packet final
      * @retval Opcode::Invalid
      *   If the packet type cannot be determined.
      **/
-    static Opcode packetType( Helper::ConstRawDataSpan rawPacket );
+    static Opcode packetType( ArincSupport::ConstRawDataSpan rawPacket );
 
     /**
      * @brief Generate a FIND packet with the given opcode and the given number of empty parameters.
@@ -124,7 +124,7 @@ class ARINC_615A_EXPORT Packet final
      * @throw InvalidFindPacket
      *   When FIND packet does not contain at least one (empty) parameter.
      **/
-    explicit Packet( Helper::ConstRawDataSpan rawPacket );
+    explicit Packet( ArincSupport::ConstRawDataSpan rawPacket );
 
     //! Destructor
     ~Packet() noexcept = default;
@@ -204,7 +204,7 @@ class ARINC_615A_EXPORT Packet final
      *
      * @return Packet as raw data.
      **/
-    [[nodiscard]] Helper::RawData encode() const;
+    [[nodiscard]] ArincSupport::RawData encode() const;
 
   private:
     //! Packet Opcode

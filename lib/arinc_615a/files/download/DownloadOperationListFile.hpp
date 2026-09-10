@@ -73,7 +73,7 @@ class ARINC_615A_EXPORT DownloadOperationListFile final : public ProtocolFile
      * @param[in] rawData
      *   Raw Status File.
      **/
-    explicit DownloadOperationListFile( Helper::ConstRawDataSpan rawData );
+    explicit DownloadOperationListFile( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @brief Assigns raw data to the file.
@@ -85,7 +85,7 @@ class ARINC_615A_EXPORT DownloadOperationListFile final : public ProtocolFile
      *
      * @return *this
      **/
-    DownloadOperationListFile& operator=( Helper::ConstRawDataSpan rawData );
+    DownloadOperationListFile& operator=( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @name Downloadable Files.
@@ -132,7 +132,7 @@ class ARINC_615A_EXPORT DownloadOperationListFile final : public ProtocolFile
 
   protected:
     //! @copydoc ProtocolFile::encode
-    [[nodiscard]] Helper::RawData encode() const override;
+    [[nodiscard]] ArincSupport::RawData encode() const override;
 
     /**
      * @brief Decodes the body from the raw data.
@@ -147,7 +147,7 @@ class ARINC_615A_EXPORT DownloadOperationListFile final : public ProtocolFile
      *   @throw Arinc615aException
      *   String decoding fails.
      **/
-    void decode( Helper::ConstRawDataSpan rawData );
+    void decode( ArincSupport::ConstRawDataSpan rawData );
 
   private:
     //! Download information list.

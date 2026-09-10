@@ -14,13 +14,13 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <helper/Exception.hpp>
+#include <arinc_support/Exception.hpp>
 
 #include <boost/exception/all.hpp>
 
 namespace Arinc615a::Files {
 
-ProtocolFile::operator Helper::RawData() const
+ProtocolFile::operator ArincSupport::RawData() const
 {
   return encode();
 }
@@ -40,38 +40,38 @@ ProtocolFile::ProtocolFile( const Arinc615aVersion protocolVersion ) :
 {
 }
 
-void ProtocolFile::insertHeader( Helper::RawDataSpan rawData ) const
+void ProtocolFile::insertHeader( ArincSupport::RawDataSpan rawData ) const
 {
   // file size
-  const auto nextData{ Helper::RawData_setInt( rawData, static_cast< uint32_t >( rawData.size() ) ) };
+  const auto nextData{ ArincSupport::RawData_setInt( rawData, static_cast< uint32_t >( rawData.size() ) ) };
 
   // protocol version
-  Helper::RawData_setInt( nextData, std::to_underlying( protocolVersionV ) );
+  ArincSupport::RawData_setInt( nextData, std::to_underlying( protocolVersionV ) );
 }
 
-Helper::ConstRawDataSpan ProtocolFile::decodeHeader( const Helper::ConstRawDataSpan rawData )
+ArincSupport::ConstRawDataSpan ProtocolFile::decodeHeader( const ArincSupport::ConstRawDataSpan rawData )
 {
   // check minimum data size
   if ( rawData.size() < HeaderSize )
   {
     BOOST_THROW_EXCEPTION(
-      Arinc615aException() << Helper::AdditionalInfo{ "Data packet to small" } );
+      Arinc615aException() << ArincSupport::AdditionalInfo{ "Data packet to small" } );
   }
 
   // check length field
   uint32_t length{};
   auto remainingData{ rawData };
-  std::tie( remainingData, length ) = Helper::RawData_getInt< uint32_t >( remainingData );
+  std::tie( remainingData, length ) = ArincSupport::RawData_getInt< uint32_t >( remainingData );
 
   if ( length != rawData.size() )
   {
     BOOST_THROW_EXCEPTION( Arinc615aException()
-      << Helper::AdditionalInfo{ "internal length field and data size differs" } );
+      << ArincSupport::AdditionalInfo{ "internal length field and data size differs" } );
   }
 
   // protocol version
   uint16_t protocolVersion;
-  std::tie( remainingData, protocolVersion ) = Helper::RawData_getInt< uint16_t >( remainingData );
+  std::tie( remainingData, protocolVersion ) = ArincSupport::RawData_getInt< uint16_t >( remainingData );
 
   // NOLINTNEXTLINE( clang-analyzer-optin.core.EnumCastOutOfRange ): Check for validity
   switch ( Arinc615aVersion{ protocolVersion } )
@@ -82,7 +82,7 @@ Helper::ConstRawDataSpan ProtocolFile::decodeHeader( const Helper::ConstRawDataS
 
     default:
       BOOST_THROW_EXCEPTION( Arinc615aException()
-        << Helper::AdditionalInfo{ "Invalid or unsupported protocol version" } );
+        << ArincSupport::AdditionalInfo{ "Invalid or unsupported protocol version" } );
   }
 
   protocolVersionV = Arinc615aVersion{ protocolVersion };

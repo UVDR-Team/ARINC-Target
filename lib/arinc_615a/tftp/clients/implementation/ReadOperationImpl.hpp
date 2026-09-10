@@ -17,7 +17,7 @@
 
 #include <arinc_615a/tftp/clients/implementation/OperationImpl.hpp>
 
-#include <arinc_645/CheckValue.hpp>
+#include <arinc_checksum/CheckValue.hpp>
 
 #include <tftp/TftpOptionsConfiguration.hpp>
 
@@ -82,7 +82,7 @@ class ReadOperationImpl final : public ReadOperation, private OperationImpl
 
     //! @copydoc ReadOperation::checksumOption()
     ReadOperation& checksumOption(
-      Arinc645::CheckValue checksumOption ) override;
+      ArincChecksum::CheckValue checksumOption ) override;
 
     //! @copydoc ReadOperation::remote
     ReadOperation& remote( boost::asio::ip::udp::endpoint remote ) override;
@@ -127,7 +127,7 @@ class ReadOperationImpl final : public ReadOperation, private OperationImpl
     //! Part Number Option
     std::string partNumberOptionV;
     //! Checksum Option (If set to NoCheckValue, not set)
-    Arinc645::CheckValue checksumOptionV{ Arinc645::CheckValue::NoCheckValue };
+    ArincChecksum::CheckValue checksumOptionV{ ArincChecksum::CheckValue::NoCheckValue };
     //! Where the connection should be established to.
     boost::asio::ip::udp::endpoint remoteV;
     //! Parameter to define the communication source

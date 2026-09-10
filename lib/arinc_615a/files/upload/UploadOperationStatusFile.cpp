@@ -18,10 +18,10 @@
 #include <arinc_615a/Arinc615aException.hpp>
 #include <arinc_615a/StatusCode.hpp>
 
-#include <helper/Exception.hpp>
-#include <helper/SafeCast.hpp>
+#include <arinc_support/Exception.hpp>
+#include <arinc_support/SafeCast.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/throw_exception.hpp>
 
@@ -37,12 +37,12 @@ UploadOperationStatusFile::UploadOperationStatusFile(
 {
 }
 
-UploadOperationStatusFile::UploadOperationStatusFile( Helper::ConstRawDataSpan rawData )
+UploadOperationStatusFile::UploadOperationStatusFile( ArincSupport::ConstRawDataSpan rawData )
 {
   decode( rawData );
 }
 
-UploadOperationStatusFile& UploadOperationStatusFile::operator=( Helper::ConstRawDataSpan rawData )
+UploadOperationStatusFile& UploadOperationStatusFile::operator=( ArincSupport::ConstRawDataSpan rawData )
 {
   decode( rawData );
   return *this;
@@ -63,16 +63,16 @@ void UploadOperationStatusFile::status( Information::UploadStatus status )
   statusV = std::move( status );
 }
 
-Helper::RawData UploadOperationStatusFile::encode() const
+ArincSupport::RawData UploadOperationStatusFile::encode() const
 {
   // Reserver Size for header and status code
-  Helper::RawData rawData( HeaderSize + sizeof( uint16_t ) );
+  ArincSupport::RawData rawData( HeaderSize + sizeof( uint16_t ) );
 
   // skip header - it is filled finally
-  auto nextData{ Helper::RawDataSpan{ rawData }.subspan( HeaderSize ) };
+  auto nextData{ ArincSupport::RawDataSpan{ rawData }.subspan( HeaderSize ) };
 
   // status code
-  Helper::RawData_setInt( nextData, std::to_underlying( statusV.code() ) );
+  ArincSupport::RawData_setInt( nextData, std::to_underlying( statusV.code() ) );
 
   // status description
   const auto rawDescription{ String_encode( statusV.description() ) };
@@ -80,16 +80,16 @@ Helper::RawData UploadOperationStatusFile::encode() const
 
   // reserve and resize buffer for status counter, exception timer, and estimated time
   rawData.resize( rawData.size() + ( 3UZ * sizeof( uint16_t ) ) );
-  nextData = Helper::RawDataSpan{ rawData }.last( 3UZ * sizeof( uint16_t ) );
+  nextData = ArincSupport::RawDataSpan{ rawData }.last( 3UZ * sizeof( uint16_t ) );
 
   // counter
-  nextData = Helper::RawData_setInt( nextData, statusV.counter() );
+  nextData = ArincSupport::RawData_setInt( nextData, statusV.counter() );
 
   // exception timer
-  nextData = Helper::RawData_setInt( nextData, statusV.exceptionTimer() );
+  nextData = ArincSupport::RawData_setInt( nextData, statusV.exceptionTimer() );
 
   // estimated time
-  nextData = Helper::RawData_setInt( nextData, statusV.estimatedTime() );
+  nextData = ArincSupport::RawData_setInt( nextData, statusV.estimatedTime() );
   assert( nextData.empty() );
 
   // load list ratio
@@ -98,17 +98,17 @@ Helper::RawData UploadOperationStatusFile::encode() const
 
   // resize buffer for number of header files
   rawData.resize( rawData.size() + sizeof( uint16_t ) );
-  nextData = Helper::RawDataSpan{ rawData }.last( sizeof( uint16_t ) );
+  nextData = ArincSupport::RawDataSpan{ rawData }.last( sizeof( uint16_t ) );
 
   // the number of loads must not exceed the field max value
   if ( statusV.loads().size() > std::numeric_limits< uint16_t >::max() )
   {
     BOOST_THROW_EXCEPTION( Arinc615aException{}
-      << Helper::AdditionalInfo{ "More Load Headers than allowed" } );
+      << ArincSupport::AdditionalInfo{ "More Load Headers than allowed" } );
   }
 
   // number of header files
-  Helper::RawData_setInt( nextData, Helper::safeCast< uint16_t >( statusV.loads().size() ) );
+  ArincSupport::RawData_setInt( nextData, ArincSupport::safeCast< uint16_t >( statusV.loads().size() ) );
 
   // add each header file status
   for ( const auto &headerFile : statusV.loads() )
@@ -127,10 +127,10 @@ Helper::RawData UploadOperationStatusFile::encode() const
 
     // resize buffer for load status code
     rawData.resize( rawData.size() + sizeof( uint16_t ) );
-    nextData = Helper::RawDataSpan{ rawData }.last( sizeof( uint16_t ) );
+    nextData = ArincSupport::RawDataSpan{ rawData }.last( sizeof( uint16_t ) );
 
     // load status code
-    nextData = Helper::RawData_setInt( nextData, std::to_underlying( headerFile.code() ) );
+    nextData = ArincSupport::RawData_setInt( nextData, std::to_underlying( headerFile.code() ) );
     assert( nextData.empty() );
 
     // Load status description
@@ -144,19 +144,19 @@ Helper::RawData UploadOperationStatusFile::encode() const
   return rawData;
 }
 
-void UploadOperationStatusFile::decode( Helper::ConstRawDataSpan rawData )
+void UploadOperationStatusFile::decode( ArincSupport::ConstRawDataSpan rawData )
 {
   // check minimum data size
   if ( rawData.size() < ( HeaderSize + 9UZ ) )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Protocol file to small" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Protocol file to small" } );
   }
 
   auto remainingData{ decodeHeader( rawData ) };
 
   // status code
   uint16_t intStatusCode;
-  std::tie( remainingData, intStatusCode ) = Helper::RawData_getInt< uint16_t >( remainingData );
+  std::tie( remainingData, intStatusCode ) = ArincSupport::RawData_getInt< uint16_t >( remainingData );
   statusV.code( statusCode( intStatusCode ) );
 
   // status description
@@ -166,17 +166,17 @@ void UploadOperationStatusFile::decode( Helper::ConstRawDataSpan rawData )
 
   // counter
   uint16_t counter;
-  std::tie( remainingData, counter ) = Helper::RawData_getInt< uint16_t >( remainingData );
+  std::tie( remainingData, counter ) = ArincSupport::RawData_getInt< uint16_t >( remainingData );
   statusV.counter( counter );
 
   // exception timer
   uint16_t exceptionTimer;
-  std::tie( remainingData, exceptionTimer ) = Helper::RawData_getInt< uint16_t >( remainingData );
+  std::tie( remainingData, exceptionTimer ) = ArincSupport::RawData_getInt< uint16_t >( remainingData );
   statusV.exceptionTimer( exceptionTimer );
 
   // estimated time
   int16_t estimatedTime;
-  std::tie( remainingData, estimatedTime ) = Helper::RawData_getInt< int16_t >( remainingData );
+  std::tie( remainingData, estimatedTime ) = ArincSupport::RawData_getInt< int16_t >( remainingData );
   statusV.estimatedTime( estimatedTime );
 
   // load list ratio
@@ -186,7 +186,7 @@ void UploadOperationStatusFile::decode( Helper::ConstRawDataSpan rawData )
 
   // number of header files
   uint16_t numberOfHeaderFiles;
-  std::tie( remainingData, numberOfHeaderFiles ) = Helper::RawData_getInt< uint16_t >( remainingData );
+  std::tie( remainingData, numberOfHeaderFiles ) = ArincSupport::RawData_getInt< uint16_t >( remainingData );
 
   Information::UploadLoadsStatus loadsStatus;
 
@@ -200,7 +200,7 @@ void UploadOperationStatusFile::decode( Helper::ConstRawDataSpan rawData )
       std::tie( remainingData, headerFilename ) = String_decode( remainingData );
       if ( headerFilename.empty() )
       {
-        SPDLOG_WARN( "header filename is empty" );
+        ARINC_LOG_WARN( "header filename is empty" );
       }
 
       // load part number
@@ -208,7 +208,7 @@ void UploadOperationStatusFile::decode( Helper::ConstRawDataSpan rawData )
       std::tie( remainingData, loadPartNumber ) = String_decode( remainingData );
       if ( loadPartNumber.empty() )
       {
-        SPDLOG_WARN( "load part number is empty" );
+        ARINC_LOG_WARN( "load part number is empty" );
       }
 
       // load ratio
@@ -217,7 +217,7 @@ void UploadOperationStatusFile::decode( Helper::ConstRawDataSpan rawData )
 
       // load status code
       uint16_t intLoadStatusCode;
-      std::tie( remainingData, intLoadStatusCode ) = Helper::RawData_getInt< uint16_t >( remainingData );
+      std::tie( remainingData, intLoadStatusCode ) = ArincSupport::RawData_getInt< uint16_t >( remainingData );
 
       // load status description
       std::string loadStatusDescription;
@@ -232,7 +232,7 @@ void UploadOperationStatusFile::decode( Helper::ConstRawDataSpan rawData )
     }
     catch ( const std::invalid_argument & )
     {
-      BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Decoding Load Ratio" } );
+      BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Decoding Load Ratio" } );
     }
   }
 
@@ -241,7 +241,7 @@ void UploadOperationStatusFile::decode( Helper::ConstRawDataSpan rawData )
   // Final Check for additional data
   if ( !remainingData.empty() )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "More data then expected" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "More data then expected" } );
   }
 }
 

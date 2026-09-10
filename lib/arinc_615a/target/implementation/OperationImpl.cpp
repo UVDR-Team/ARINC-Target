@@ -34,7 +34,7 @@
 
 #include <tftp/packets/TftpOptions.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <utility>
 
@@ -121,7 +121,7 @@ Tftp::Clients::ReadOperationPtr OperationImpl::tftpClientReadOperation(
   Tftp::ReceiveDataHandlerPtr dataHandler,
   std::string filename,
   std::string partNumberOption,
-  Arinc645::CheckValue checksumOption )
+  ArincChecksum::CheckValue checksumOption )
 {
   auto operation{ tftpClientV->readOperation() };
   assert( operation );
@@ -152,7 +152,7 @@ Tftp::Clients::WriteOperationPtr OperationImpl::tftpClientWriteOperation(
   Tftp::TransmitDataHandlerPtr dataHandler,
   std::string filename,
   std::string partNumberOption,
-  Arinc645::CheckValue checksumOption )
+  ArincChecksum::CheckValue checksumOption )
 {
   auto operation{ tftpClientV->writeOperation() };
 
@@ -179,7 +179,7 @@ void OperationImpl::sendInitFile(
   ::Tftp::Packets::TftpOptions clientTftpOptions,
   std::optional< uint16_t > port )
 {
-  SPDLOG_INFO( "Send initialisation file with status 'Operation Accepted'" );
+  ARINC_LOG_INFO( "Send initialisation file with status 'Operation Accepted'" );
 
   try
   {
@@ -188,7 +188,7 @@ void OperationImpl::sendInitFile(
       protocolVersionV,
       Information::InitializationResponse{ OperationAcceptanceStatusCode::OperationAccepted } };
 
-    const auto file{ std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< Helper::RawData >( initFile ) ) };
+    const auto file{ std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< ArincSupport::RawData >( initFile ) ) };
     assert( file );
 
     protocolFileLoggerV.transmitProtocolFile( std::format( "{}.INIT", targetIdV ), file->data() );
@@ -209,19 +209,19 @@ void OperationImpl::sendInitFile(
         Tftp::Arinc615aOptions{
           .port = port,
           .partNumber = {},
-          .checksum = Arinc645::CheckValue::NoCheckValue } );
+          .checksum = ArincChecksum::CheckValue::NoCheckValue } );
 
     initialisationOperationV->start();
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Error send initialisation file: {}", e.what() );
+    ARINC_LOG_ERROR( "Error send initialisation file: {}", e.what() );
   }
 }
 
 void OperationImpl::sendInitFileComplete( const ::Tftp::TransferStatus transferStatus )
 {
-  SPDLOG_INFO( "Send initialisation file completed" );
+  ARINC_LOG_INFO( "Send initialisation file completed" );
 
   initialisationOperationV.reset();
 
@@ -244,14 +244,14 @@ Tftp::Clients::WriteOperationPtr OperationImpl::protocolFileOperation(
   Tftp::Clients::OperationDeferredHandler operationDeferredHandler,
   Tftp::Clients::OperationCompletedHandler completionHandler,
   Tftp::TransmitDataHandlerPtr dataHandler,
-  Arinc645::CheckValue checkValue )
+  ArincChecksum::CheckValue checkValue )
 {
-  SPDLOG_INFO( "Send protocol file {}", Files::ProtocolFileTypeDescription::instance().name( fileType ) );
+  ARINC_LOG_INFO( "Send protocol file {}", Files::ProtocolFileTypeDescription::instance().name( fileType ) );
 
   // check for the checksum option
-  if ( ( Arinc645::CheckValue::NoCheckValue != checkValue ) && ( Arinc615aVersion::Arinc615a34 != protocolVersion() ) )
+  if ( ( ArincChecksum::CheckValue::NoCheckValue != checkValue ) && ( Arinc615aVersion::Arinc615a34 != protocolVersion() ) )
   {
-    SPDLOG_INFO( "Checksum option requested when not in ARINC 615A-3/4 mode" );
+    ARINC_LOG_INFO( "Checksum option requested when not in ARINC 615A-3/4 mode" );
   }
 
   bool handleAbort{ false };
@@ -314,7 +314,7 @@ void OperationImpl::triggerStatusTransmissionTimer()
 
 void OperationImpl::finalise( FinalStatus finalStatus, std::string_view description )
 {
-  SPDLOG_INFO( "ARINC 615A Target Operation finished" );
+  ARINC_LOG_INFO( "ARINC 615A Target Operation finished" );
 
   // inform handler
   handlerV.finished( finalStatus, description );
@@ -333,45 +333,45 @@ void OperationImpl::statusTransmissionTimerHandler( const boost::system::error_c
   // operation aborted
   if ( boost::asio::error::operation_aborted == errorCode )
   {
-    SPDLOG_INFO( "Status timer aborted" );
+    ARINC_LOG_INFO( "Status timer aborted" );
     return;
   }
 
   if ( errorCode )
   {
     // internal (timer) error occurred
-    SPDLOG_ERROR( "timer error: {}", errorCode.message() );
+    ARINC_LOG_ERROR( "timer error: {}", errorCode.message() );
   }
 
-  SPDLOG_INFO( "Status transmission timeout" );
+  ARINC_LOG_INFO( "Status transmission timeout" );
 
   // send status
   statusFile();
 }
 
 bool OperationImpl::protocolFileOptionsNegotiation(
-  [[maybe_unused]] const Arinc645::CheckValue &providedCheckValue,
+  [[maybe_unused]] const ArincChecksum::CheckValue &providedCheckValue,
   const Tftp::Arinc615aOptions &serverOptions )
 {
   // ARINC 615A Port Option is only provided on Initialisation File Request.
   if ( serverOptions.port )
   {
-    SPDLOG_ERROR( "Received unexpected ARINC 615A Port Option for protocol file" );
+    ARINC_LOG_ERROR( "Received unexpected ARINC 615A Port Option for protocol file" );
     return false;
   }
 
   // ARINC 615A Part Number Option isn't provided for Protocol Files
   if ( !serverOptions.partNumber.empty() )
   {
-    SPDLOG_ERROR( "Received unexpected ARINC 615A Part Number Option for protocol file" );
+    ARINC_LOG_ERROR( "Received unexpected ARINC 615A Part Number Option for protocol file" );
     return false;
   }
 
-  if ( Arinc645::CheckValue::NoCheckValue == providedCheckValue )
+  if ( ArincChecksum::CheckValue::NoCheckValue == providedCheckValue )
   {
-    if ( Arinc645::CheckValue::NoCheckValue != serverOptions.checksum )
+    if ( ArincChecksum::CheckValue::NoCheckValue != serverOptions.checksum )
     {
-      SPDLOG_ERROR( "Received unexpected ARINC 615A Checksum Option for protocol file" );
+      ARINC_LOG_ERROR( "Received unexpected ARINC 615A Checksum Option for protocol file" );
       return false;
     }
   }
@@ -379,7 +379,7 @@ bool OperationImpl::protocolFileOptionsNegotiation(
   {
     if ( providedCheckValue != serverOptions.checksum )
     {
-      SPDLOG_ERROR( "Received ARINC 615A Checksum Option differs for protocol file" );
+      ARINC_LOG_ERROR( "Received ARINC 615A Checksum Option differs for protocol file" );
       return false;
     }
   }

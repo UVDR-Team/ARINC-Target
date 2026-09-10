@@ -14,28 +14,28 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <helper/Exception.hpp>
-#include <helper/SafeCast.hpp>
+#include <arinc_support/Exception.hpp>
+#include <arinc_support/SafeCast.hpp>
 
 #include <boost/throw_exception.hpp>
 
 namespace Arinc615a::Files {
 
-std::tuple< Helper::ConstRawDataSpan, std::string_view > String_decode( Helper::ConstRawDataSpan rawData )
+std::tuple< ArincSupport::ConstRawDataSpan, std::string_view > String_decode( ArincSupport::ConstRawDataSpan rawData )
 {
   if ( rawData.empty() )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "invalid start and end supplied" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "invalid start and end supplied" } );
   }
 
   // decode string length
   uint8_t stringLength{};
-  std::tie( rawData, stringLength ) = Helper::RawData_getInt< uint8_t>( rawData );
+  std::tie( rawData, stringLength ) = ArincSupport::RawData_getInt< uint8_t>( rawData );
 
   // check string length
   if ( rawData.size() < stringLength )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "string length inconsistent" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "string length inconsistent" } );
   }
 
   // clear the string
@@ -45,13 +45,13 @@ std::tuple< Helper::ConstRawDataSpan, std::string_view > String_decode( Helper::
   if ( stringLength > 0 )
   {
     // decode string
-    std::tie( rawData, decodedString ) = Helper::RawData_getString( rawData, stringLength );
+    std::tie( rawData, decodedString ) = ArincSupport::RawData_getString( rawData, stringLength );
 
     // search for terminating 0-character
     const size_t nullTermPos{ decodedString.find( '\0' ) };
     if ( std::string::npos == nullTermPos )
     {
-      BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "string not NULL terminated" } );
+      BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "string not NULL terminated" } );
     }
 
     // resize string to actual length
@@ -61,26 +61,26 @@ std::tuple< Helper::ConstRawDataSpan, std::string_view > String_decode( Helper::
   return { rawData, decodedString };
 }
 
-Helper::RawData String_encode( const std::string_view stringToEncode, const uint8_t fixedLength )
+ArincSupport::RawData String_encode( const std::string_view stringToEncode, const uint8_t fixedLength )
 {
   // raw string size is string size + terminating NULL-character - in case of empty string length is 0
   const auto rawStringSize{ stringToEncode.empty() ? 0U : stringToEncode.size() + 1U };
 
   if ( ( rawStringSize >= 255U ) || ( ( fixedLength != 0U ) && ( rawStringSize > fixedLength ) ) )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "string too long" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "string too long" } );
   }
 
   // size of raw string is length field (1 byte) + ( fixed length or rawStringSize (incl. NULL-char) )
-  Helper::RawData rawString( fixedLength != 0 ? 1U + fixedLength : 1U + rawStringSize );
+  ArincSupport::RawData rawString( fixedLength != 0 ? 1U + fixedLength : 1U + rawStringSize );
 
   // length
-  auto remaining{ Helper::RawData_setInt< uint8_t >(
+  auto remaining{ ArincSupport::RawData_setInt< uint8_t >(
     rawString,
-    fixedLength != 0U ? fixedLength : Helper::safeCast< uint8_t >( rawStringSize ) ) };
+    fixedLength != 0U ? fixedLength : ArincSupport::safeCast< uint8_t >( rawStringSize ) ) };
 
   // copy string
-  remaining = Helper::RawData_setString( remaining, stringToEncode );
+  remaining = ArincSupport::RawData_setString( remaining, stringToEncode );
   if ( !stringToEncode.empty() )
   {
     // add trailing '0'

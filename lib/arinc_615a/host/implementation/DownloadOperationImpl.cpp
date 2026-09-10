@@ -28,7 +28,7 @@
 
 #include <tftp/packets/TftpOptions.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/all.hpp>
 
@@ -59,7 +59,7 @@ Tftp::Servers::WriteOperationPtr DownloadOperationImpl::doFileTransfer(
   boost::asio::ip::udp::endpoint remote,
   ::Tftp::Packets::TftpOptions clientTftpOptions,
   std::string partNumber,
-  Arinc645::CheckValue checkValue )
+  ArincChecksum::CheckValue checkValue )
 {
   Tftp::Arinc615aOptions options{};
 
@@ -72,7 +72,7 @@ Tftp::Servers::WriteOperationPtr DownloadOperationImpl::doFileTransfer(
   }
 
   // Add checksum option
-  if ( Arinc645::CheckValueType::NotUsed != checkValue.type() )
+  if ( ArincChecksum::CheckValueType::NotUsed != checkValue.type() )
   {
     options.checksum = std::move( checkValue );
   }
@@ -126,7 +126,7 @@ void DownloadOperationImpl::statusFileRequest(
     // no ARINC 615A Options (Part Number, Checksum or port) expected - discard
     if ( clientArinc615aOptions )
     {
-      SPDLOG_INFO( "Received unexpected ARINC 615A options: {}", Arinc615aOptions_toString( clientArinc615aOptions ) );
+      ARINC_LOG_INFO( "Received unexpected ARINC 615A options: {}", Arinc615aOptions_toString( clientArinc615aOptions ) );
     }
 
     // Create TFTP Server Read Operation, to receive the Status File.
@@ -150,7 +150,7 @@ void DownloadOperationImpl::statusFileRequest(
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Error receiving status file: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Error receiving status file: {}", boost::diagnostic_information( e ) );
   }
 }
 
@@ -161,13 +161,13 @@ void DownloadOperationImpl::statusFileCompleted(
 {
   if ( 1U != statusFileOperationsV.remove( operation ) )
   {
-    SPDLOG_ERROR( "Status file operation completed, which was not initiated" );
+    ARINC_LOG_ERROR( "Status file operation completed, which was not initiated" );
     finished( StatusCode::OperationAbortedByDlp, "Status file operation completed, which was not initiated" );
   }
 
   if ( ::Tftp::TransferStatus::Successful != status )
   {
-    SPDLOG_ERROR( "Status file could not be received" );
+    ARINC_LOG_ERROR( "Status file could not be received" );
 
     finished( StatusCode::OperationAbortedByDlp, "Status file could not be received" );
     return;
@@ -185,7 +185,7 @@ void DownloadOperationImpl::statusFileCompleted(
     // Validate protocol version (only check and warn but no abort
     if ( statusFile.protocolVersion() != protocolVersion() )
     {
-      SPDLOG_WARN( "Status file protocol version differs from expected" );
+      ARINC_LOG_WARN( "Status file protocol version differs from expected" );
     }
 
     // call handler
@@ -216,14 +216,14 @@ void DownloadOperationImpl::statusFileCompleted(
         break;
 
       default:
-        SPDLOG_WARN( "Invalid status - operation finished" );
+        ARINC_LOG_WARN( "Invalid status - operation finished" );
         finished( OperationAbortedByDlp );
         break;
     }
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Decoding/Handling status file: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Decoding/Handling status file: {}", boost::diagnostic_information( e ) );
   }
 }
 

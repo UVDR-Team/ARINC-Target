@@ -14,10 +14,9 @@
 
 #include <arinc_615a/find/packets/PacketException.hpp>
 
-#include <helper/Dump.hpp>
-#include <helper/Exception.hpp>
+#include <arinc_support/Exception.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/all.hpp>
 
@@ -25,16 +24,16 @@
 
 namespace Arinc615a::Find::Packets {
 
-Opcode Packet::packetType( const Helper::ConstRawDataSpan rawPacket )
+Opcode Packet::packetType( const ArincSupport::ConstRawDataSpan rawPacket )
 {
   // check size
   if ( rawPacket.size() < sizeof( uint16_t ) )
   {
-    SPDLOG_ERROR( "Packet too small" );
+    ARINC_LOG_ERROR( "Packet too small" );
     return Opcode::Invalid;
   }
 
-  const auto [ _, opcode ]{ Helper::RawData_getInt< uint16_t >( rawPacket ) };
+  const auto [ _, opcode ]{ ArincSupport::RawData_getInt< uint16_t >( rawPacket ) };
 
   // determine opcode
   // NOLINTNEXTLINE( clang-analyzer-optin.core.EnumCastOutOfRange ): Check for validity
@@ -45,7 +44,7 @@ Opcode Packet::packetType( const Helper::ConstRawDataSpan rawPacket )
       break;
 
     default:
-      SPDLOG_ERROR( "Invalid opcode 0x{:04X}", opcode );
+      ARINC_LOG_ERROR( "Invalid opcode 0x{:04X}", opcode );
       return Opcode::Invalid;
   }
 
@@ -64,13 +63,13 @@ Packet::Packet( const Opcode opcode, Parameters parameters ) :
 {
 }
 
-Packet::Packet( Helper::ConstRawDataSpan rawPacket )
+Packet::Packet( ArincSupport::ConstRawDataSpan rawPacket )
 {
   // check minimum packet size
   if ( rawPacket.size() <= sizeof( uint16_t ) )
   {
     BOOST_THROW_EXCEPTION( InvalidFindPacket{}
-      << Helper::AdditionalInfo{ std::format( "Packet to small: {}", rawPacket.size() ) } );
+      << ArincSupport::AdditionalInfo{ std::format( "Packet to small: {}", rawPacket.size() ) } );
   }
 
   auto remainingData{ rawPacket };
@@ -79,14 +78,14 @@ Packet::Packet( Helper::ConstRawDataSpan rawPacket )
   if ( remainingData.back() != PacketTerminator )
   {
     BOOST_THROW_EXCEPTION( InvalidFindPacket()
-      << Helper::AdditionalInfo{ "Packet is not terminated by packet terminator" } );
+      << ArincSupport::AdditionalInfo{ "Packet is not terminated by packet terminator" } );
   }
 
   remainingData = remainingData.first( remainingData.size() - 1U );
 
   // decode opcode
   uint16_t intOpcode{};
-  std::tie( remainingData, intOpcode ) = Helper::RawData_getInt< uint16_t >( remainingData );
+  std::tie( remainingData, intOpcode ) = ArincSupport::RawData_getInt< uint16_t >( remainingData );
   // NOLINTNEXTLINE( clang-analyzer-optin.core.EnumCastOutOfRange ): Check for validity
   switch ( Opcode{ intOpcode } )
   {
@@ -95,7 +94,7 @@ Packet::Packet( Helper::ConstRawDataSpan rawPacket )
       break;
 
     default:
-      BOOST_THROW_EXCEPTION( InvalidFindPacket() << Helper::AdditionalInfo{ "Invalid opcode" } );
+      BOOST_THROW_EXCEPTION( InvalidFindPacket() << ArincSupport::AdditionalInfo{ "Invalid opcode" } );
       /* no break - because BOOST_THROW_EXCEPTION throws*/
   }
 
@@ -103,7 +102,7 @@ Packet::Packet( Helper::ConstRawDataSpan rawPacket )
 
   // decode parameters
   for (
-    auto [ _, parametersString ] { Helper::RawData_getString( remainingData, remainingData.size() ) };
+    auto [ _, parametersString ] { ArincSupport::RawData_getString( remainingData, remainingData.size() ) };
     !parametersString.empty(); )
   {
     const auto parameterEnd{ parametersString.find( '\0' ) };
@@ -111,7 +110,7 @@ Packet::Packet( Helper::ConstRawDataSpan rawPacket )
     if ( parameterEnd == std::string_view::npos )
     {
       BOOST_THROW_EXCEPTION( InvalidFindPacket()
-        << Helper::AdditionalInfo{ "String Terminator missing" } );
+        << ArincSupport::AdditionalInfo{ "String Terminator missing" } );
     }
 
     parametersV.emplace_back( parametersString.substr( 0, parameterEnd ) );
@@ -122,7 +121,7 @@ Packet::Packet( Helper::ConstRawDataSpan rawPacket )
   if ( parametersV.empty() )
   {
     BOOST_THROW_EXCEPTION( InvalidFindPacket()
-      << Helper::AdditionalInfo{ "Packet must contain at least one (empty) parameter" } );
+      << ArincSupport::AdditionalInfo{ "Packet must contain at least one (empty) parameter" } );
   }
 }
 
@@ -161,13 +160,13 @@ std::string Packet::parameter( const size_t position ) const
   return parametersV.at( position );
 }
 
-Helper::RawData Packet::encode() const
+ArincSupport::RawData Packet::encode() const
 {
   // reserve space of raw packet ( Opcode + String-Sizes (incl. 0) + Packet Terminator)
-  Helper::RawData rawPacket( 2U );
+  ArincSupport::RawData rawPacket( 2U );
 
   // add opcode opcode
-  Helper::RawData_setInt( rawPacket, std::to_underlying( opcodeV ) );
+  ArincSupport::RawData_setInt( rawPacket, std::to_underlying( opcodeV ) );
 
   // add parameters
   for ( const auto &parameter : parametersV )
@@ -175,7 +174,7 @@ Helper::RawData Packet::encode() const
     rawPacket.reserve( rawPacket.size() + parameter.size() + 1U );
 
     // option name
-    auto rawParameter{ Helper::RawData_asRaw( parameter ) };
+    auto rawParameter{ ArincSupport::RawData_asRaw( parameter ) };
     rawPacket.insert( rawPacket.end(), rawParameter.begin(), rawParameter.end() );
 
     // name value divider

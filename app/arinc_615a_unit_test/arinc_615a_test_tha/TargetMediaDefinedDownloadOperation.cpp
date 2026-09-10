@@ -28,7 +28,7 @@
 #include <arinc_615a/StatusCode.hpp>
 #include <arinc_615a/StatusCodeDescription.hpp>
 
-#include <arinc_645/CheckValueGenerator.hpp>
+#include <arinc_checksum/CheckValueGenerator.hpp>
 
 #include <tftp/files/StreamFile.hpp>
 
@@ -36,7 +36,7 @@
 
 #include <tftp/clients/Operation.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/diagnostic_information.hpp>
 
@@ -60,11 +60,11 @@ TargetMediaDefinedDownloadOperation::TargetMediaDefinedDownloadOperation(
       .targetId = std::move( targetId ),
       .statusTransmissionRate = statusTransmissionRate } ) }
 {
-  SPDLOG_INFO( "Create Media Defined Download Operation" );
+  ARINC_LOG_INFO( "Create Media Defined Download Operation" );
 
   for ( auto const &directory : configurationV.directories )
   {
-    SPDLOG_INFO( "Directory: {}", directory.string() );
+    ARINC_LOG_INFO( "Directory: {}", directory.string() );
 
     std::error_code errorCode{};
     for ( const auto &file : std::filesystem::recursive_directory_iterator(
@@ -74,7 +74,7 @@ TargetMediaDefinedDownloadOperation::TargetMediaDefinedDownloadOperation(
     {
       if ( file.is_regular_file() )
       {
-        SPDLOG_INFO( "Available file: {}", file.path().string() );
+        ARINC_LOG_INFO( "Available file: {}", file.path().string() );
 
         availableFilesV.try_emplace( file.path().filename().string(), file.path() );
       }
@@ -105,15 +105,15 @@ void TargetMediaDefinedDownloadOperation::initialise(
   }
   catch ( const boost::exception &e )
   {
-    SPDLOG_ERROR( "Error during Media Define Download operation: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Error during Media Define Download operation: {}", boost::diagnostic_information( e ) );
   }
   catch ( const std::exception &e )
   {
-    SPDLOG_ERROR( "Error during Media Define Download operation: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Error during Media Define Download operation: {}", boost::diagnostic_information( e ) );
   }
   catch ( ... )
   {
-    SPDLOG_ERROR( "Error during Media Define Download operation" );
+    ARINC_LOG_ERROR( "Error during Media Define Download operation" );
   }
 }
 
@@ -145,7 +145,7 @@ void TargetMediaDefinedDownloadOperation::finished(
   const Arinc615a::FinalStatus finalStatus,
   std::string_view description )
 {
-  SPDLOG_INFO(
+  ARINC_LOG_INFO(
     "Operation finished: {} '{}'",
     Arinc615a::StatusCodeDescription::instance().name( Arinc615a::statusCode( finalStatus ) ),
     description );
@@ -154,7 +154,7 @@ void TargetMediaDefinedDownloadOperation::finished(
 
 void TargetMediaDefinedDownloadOperation::abortRequest( const Arinc615a::AbortRequest abortRequest )
 {
-  SPDLOG_INFO( "Abort request from host" );
+  ARINC_LOG_INFO( "Abort request from host" );
 
   abortRequestPending = abortRequest;
 
@@ -173,7 +173,7 @@ void TargetMediaDefinedDownloadOperation::abortRequest( const Arinc615a::AbortRe
 
 void TargetMediaDefinedDownloadOperation::status( const Arinc615a::Information::DownloadStatus &status )
 {
-  SPDLOG_INFO(
+  ARINC_LOG_INFO(
     "Status:\n"
     "\tCounter:         {}\n"
     "\tStatus:          {} ({})\n"
@@ -196,9 +196,9 @@ void TargetMediaDefinedDownloadOperation::status( const Arinc615a::Information::
 
 void TargetMediaDefinedDownloadOperation::downloadingRequest(
   const Arinc615a::Information::DownloadFiles &files,
-  [[maybe_unused]] Helper::ConstRawDataSpan userDefinedData )
+  [[maybe_unused]] ArincSupport::ConstRawDataSpan userDefinedData )
 {
-  SPDLOG_INFO( "Download Request: {} files", files.size() );
+  ARINC_LOG_INFO( "Download Request: {} files", files.size() );
 
   if ( files.empty() )
   {
@@ -222,12 +222,12 @@ void TargetMediaDefinedDownloadOperation::downloadingRequest(
 
 void TargetMediaDefinedDownloadOperation::sendFile()
 {
-  SPDLOG_INFO( "Send file {}", *currentFileV );
+  ARINC_LOG_INFO( "Send file {}", *currentFileV );
 
   auto const fileInfo{ availableFilesV.find( *currentFileV ) };
   if ( availableFilesV.end() == fileInfo )
   {
-    SPDLOG_ERROR( "File Info not found" );
+    ARINC_LOG_ERROR( "File Info not found" );
 
     operationV->fileFinished(
       *currentFileV,
@@ -251,9 +251,9 @@ void TargetMediaDefinedDownloadOperation::sendFile()
 
   auto partNumber{ configurationV.partNumberOption ? fileInfo->first : std::string{} };
   auto checkValue{
-    ( Arinc645::CheckValueType::NotUsed == configurationV.checksumOption )
-      ? Arinc645::CheckValue::NoCheckValue
-      : Arinc645::CheckValueGenerator::checkValue( configurationV.checksumOption, fileInfo->second ) };
+    ( ArincChecksum::CheckValueType::NotUsed == configurationV.checksumOption )
+      ? ArincChecksum::CheckValue::NoCheckValue
+      : ArincChecksum::CheckValueGenerator::checkValue( configurationV.checksumOption, fileInfo->second ) };
 
   fileOperationV = operationV->transferFile(
     std::bind_front( &TargetMediaDefinedDownloadOperation::fileOptionsNegotiation, this, partNumber, checkValue ),
@@ -269,15 +269,15 @@ void TargetMediaDefinedDownloadOperation::sendFile()
 
 bool TargetMediaDefinedDownloadOperation::fileOptionsNegotiation(
   std::string_view providedPartNumber,
-  const Arinc645::CheckValue &providedCheckValue,
+  const ArincChecksum::CheckValue &providedCheckValue,
   std::string_view partNumber,
-  const Arinc645::CheckValue &checksum )
+  const ArincChecksum::CheckValue &checksum )
 {
   if ( providedPartNumber.empty() )
   {
     if ( !partNumber.empty() )
     {
-      SPDLOG_ERROR( "Host sent Part Number Option which was not advertised" );
+      ARINC_LOG_ERROR( "Host sent Part Number Option which was not advertised" );
       return false;
     }
   }
@@ -285,11 +285,11 @@ bool TargetMediaDefinedDownloadOperation::fileOptionsNegotiation(
   {
     if ( partNumber.empty() )
     {
-      SPDLOG_WARN( "Host has not acknowledged Part Number Option" );
+      ARINC_LOG_WARN( "Host has not acknowledged Part Number Option" );
     }
     else if ( providedPartNumber != partNumber )
     {
-      SPDLOG_ERROR( "Received Part Number Option differs from sent one" );
+      ARINC_LOG_ERROR( "Received Part Number Option differs from sent one" );
 
       return false;
     }
@@ -299,23 +299,23 @@ bool TargetMediaDefinedDownloadOperation::fileOptionsNegotiation(
     }
   }
 
-  if ( Arinc645::CheckValue::NoCheckValue == providedCheckValue )
+  if ( ArincChecksum::CheckValue::NoCheckValue == providedCheckValue )
   {
-    if ( Arinc645::CheckValue::NoCheckValue != checksum )
+    if ( ArincChecksum::CheckValue::NoCheckValue != checksum )
     {
-      SPDLOG_ERROR( "Host sent Checksum Option which was not advertised" );
+      ARINC_LOG_ERROR( "Host sent Checksum Option which was not advertised" );
       return false;
     }
   }
   else
   {
-    if ( Arinc645::CheckValue::NoCheckValue == checksum )
+    if ( ArincChecksum::CheckValue::NoCheckValue == checksum )
     {
-      SPDLOG_WARN( "Host has not acknowledged Checksum Option" );
+      ARINC_LOG_WARN( "Host has not acknowledged Checksum Option" );
     }
     else if ( checksum != providedCheckValue )
     {
-      SPDLOG_ERROR(
+      ARINC_LOG_ERROR(
         "Received Checksum Option differs from sent one: RX: {} TX: {}",
         checksum.format(),
         providedCheckValue.format() );
@@ -340,7 +340,7 @@ void TargetMediaDefinedDownloadOperation::fileCompleted( const Arinc615a::Tftp::
 
   if ( Arinc615a::Tftp::TransferStatus::Successful != status )
   {
-    SPDLOG_ERROR( "Transfer Error" );
+    ARINC_LOG_ERROR( "Transfer Error" );
 
     operationV->fileFinished(
       *currentFileV,

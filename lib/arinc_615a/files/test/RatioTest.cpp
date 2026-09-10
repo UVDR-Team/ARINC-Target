@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE( RatioDecode )
 //! Ratio encode test
 BOOST_AUTO_TEST_CASE( RatioEncode )
 {
-  using Helper::operator ""_b;
+  using ArincSupport::operator ""_b;
 
   const auto rawRatio1{ Ratio_encode( Information::Ratio{} ) };
   BOOST_CHECK( rawRatio1.size() == 3U );

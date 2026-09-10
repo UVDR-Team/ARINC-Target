@@ -19,6 +19,21 @@
  **/
 namespace Arinc615aTha {
 
+struct TargetDataLoaderConfiguration;
+
+// Blocking server entry points: call from an integration-owned worker task.
+// Return EXIT_SUCCESS after requestStop(), EXIT_FAILURE on startup/runtime error.
+int run(const TargetDataLoaderConfiguration &configuration);
+int runFromFile(const char *configurationFile);
+
+// Thread-safe: schedules the original shutdown sequence on the server task.
+// Returns false if no server is running or the request could not be queued.
+bool requestStop() noexcept;
+
+namespace detail {
+int runConfigured(const TargetDataLoaderConfiguration &configuration, bool hostSignals);
+}
+
 /**
  * @brief Starts the target data loader runtime.
  *
@@ -27,7 +42,9 @@ namespace Arinc615aTha {
  * configuration-file argument.  It retains the original test application's
  * command-line and JSON configuration behaviour.
  */
+#if ARINC_ENABLE_COMMAND_LINE
 int run( int argc, char *argv[] );
+#endif
 
 }
 

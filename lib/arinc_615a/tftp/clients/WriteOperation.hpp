@@ -88,7 +88,7 @@ class ARINC_615A_EXPORT WriteOperation : public Operation
     WriteOperation& partNumberOption( std::string partNumberOption ) override = 0;
 
     //! @copydoc Operation::checksumOption()
-    WriteOperation& checksumOption( Arinc645::CheckValue checksumOption ) override = 0;
+    WriteOperation& checksumOption( ArincChecksum::CheckValue checksumOption ) override = 0;
 
     //! @copydoc Operation::remote
     WriteOperation& remote( boost::asio::ip::udp::endpoint remote ) override = 0;

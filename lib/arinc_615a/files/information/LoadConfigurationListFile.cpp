@@ -19,10 +19,10 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <helper/Exception.hpp>
-#include <helper/RawData.hpp>
+#include <arinc_support/Exception.hpp>
+#include <arinc_support/RawData.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/throw_exception.hpp>
 
@@ -38,12 +38,12 @@ LoadConfigurationListFile::LoadConfigurationListFile(
 {
 }
 
-LoadConfigurationListFile::LoadConfigurationListFile( Helper::ConstRawDataSpan rawData )
+LoadConfigurationListFile::LoadConfigurationListFile( ArincSupport::ConstRawDataSpan rawData )
 {
   decode( rawData );
 }
 
-LoadConfigurationListFile& LoadConfigurationListFile::operator=( Helper::ConstRawDataSpan rawData )
+LoadConfigurationListFile& LoadConfigurationListFile::operator=( ArincSupport::ConstRawDataSpan rawData )
 {
   decode( rawData );
   return *this;
@@ -64,22 +64,22 @@ void LoadConfigurationListFile::targetsHardware( Information::TargetsHardware ta
   targetsHardwareV = std::move( targetsHardware );
 }
 
-Helper::RawData LoadConfigurationListFile::encode() const
+ArincSupport::RawData LoadConfigurationListFile::encode() const
 {
-  Helper::RawData rawData( HeaderSize + 2UZ );
+  ArincSupport::RawData rawData( HeaderSize + 2UZ );
 
   // skip header - it is filled finally
-  auto nextData{ Helper::RawDataSpan{ rawData }.subspan( HeaderSize ) };
+  auto nextData{ ArincSupport::RawDataSpan{ rawData }.subspan( HeaderSize ) };
 
   // Number of targets must not exceed field
   if ( targetsHardwareV.size() > std::numeric_limits< uint16_t >::max() )
   {
     BOOST_THROW_EXCEPTION( Arinc615aException()
-      << Helper::AdditionalInfo{ "More THW IDs than allowed" } );
+      << ArincSupport::AdditionalInfo{ "More THW IDs than allowed" } );
   }
 
   // number of target hardware information
-  nextData = Helper::RawData_setInt( nextData, static_cast< uint16_t >( targetsHardwareV.size() ) );
+  nextData = ArincSupport::RawData_setInt( nextData, static_cast< uint16_t >( targetsHardwareV.size() ) );
   assert( nextData.empty() );
 
   // targets hardware
@@ -102,12 +102,12 @@ Helper::RawData LoadConfigurationListFile::encode() const
     // Number of part numbers must not exceed field
     if ( thw.partNumbers.size() > std::numeric_limits< uint16_t>::max() )
     {
-      BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "More Part Numbers than allowed" } );
+      BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "More Part Numbers than allowed" } );
     }
 
     // number of part numbers
-    Helper::RawData_setInt< uint16_t >(
-      Helper::RawDataSpan{ rawData }.last( 2U ),
+    ArincSupport::RawData_setInt< uint16_t >(
+      ArincSupport::RawDataSpan{ rawData }.last( 2U ),
       static_cast< uint16_t >( thw.partNumbers.size() ) );
 
     // iterate over part numbers
@@ -138,19 +138,19 @@ Helper::RawData LoadConfigurationListFile::encode() const
   return rawData;
 }
 
-void LoadConfigurationListFile::decode( const Helper::ConstRawDataSpan rawData )
+void LoadConfigurationListFile::decode( const ArincSupport::ConstRawDataSpan rawData )
 {
   // check minimum data size
   if ( rawData.size() < HeaderSize + 13UZ )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Protocol file to small" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Protocol file to small" } );
   }
 
   auto remainingData{ decodeHeader( rawData ) };
 
   // number of targets hardware
   uint16_t targetHardwareCount;
-  std::tie( remainingData, targetHardwareCount ) = Helper::RawData_getInt< uint16_t >( remainingData );
+  std::tie( remainingData, targetHardwareCount ) = ArincSupport::RawData_getInt< uint16_t >( remainingData );
 
   // iterate over targets hardware
   for ( uint16_t targetHardwareIndex{ 0U }; targetHardwareIndex < targetHardwareCount; ++targetHardwareIndex )
@@ -160,7 +160,7 @@ void LoadConfigurationListFile::decode( const Helper::ConstRawDataSpan rawData )
     std::tie( remainingData, literalName ) = String_decode( remainingData );
     if ( literalName.empty() )
     {
-      SPDLOG_WARN( "literal name is empty" );
+      ARINC_LOG_WARN( "literal name is empty" );
     }
 
     // serial number
@@ -168,12 +168,12 @@ void LoadConfigurationListFile::decode( const Helper::ConstRawDataSpan rawData )
     std::tie( remainingData, serialNumber ) = String_decode( remainingData );
     if ( serialNumber.empty() )
     {
-      SPDLOG_WARN( "serial number is empty" );
+      ARINC_LOG_WARN( "serial number is empty" );
     }
 
     // number of part numbers
     uint16_t partNumbersCount;
-    std::tie( remainingData, partNumbersCount ) = Helper::RawData_getInt< uint16_t>( remainingData );
+    std::tie( remainingData, partNumbersCount ) = ArincSupport::RawData_getInt< uint16_t>( remainingData );
 
     Information::PartNumbers partNumbers;
 
@@ -185,7 +185,7 @@ void LoadConfigurationListFile::decode( const Helper::ConstRawDataSpan rawData )
       std::tie( remainingData, partNumber ) = String_decode( remainingData );
       if ( partNumber.empty() )
       {
-        SPDLOG_WARN( "part number is empty" );
+        ARINC_LOG_WARN( "part number is empty" );
       }
 
       // amendment
@@ -197,7 +197,7 @@ void LoadConfigurationListFile::decode( const Helper::ConstRawDataSpan rawData )
       std::tie( remainingData, partDesignation ) = String_decode( remainingData );
       if ( partDesignation.empty() )
       {
-        SPDLOG_WARN( "part designation is empty" );
+        ARINC_LOG_WARN( "part designation is empty" );
       }
 
       // Add to the part number list
@@ -211,7 +211,7 @@ void LoadConfigurationListFile::decode( const Helper::ConstRawDataSpan rawData )
   // Final Check for additional data
   if ( !remainingData.empty() )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "More data then expected" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "More data then expected" } );
   }
 }
 

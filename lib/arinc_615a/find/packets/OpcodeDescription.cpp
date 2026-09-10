@@ -13,7 +13,7 @@
 #include "OpcodeDescription.hpp"
 
 #include <boost/exception/exception.hpp>
-#include <boost/program_options.hpp>
+#include <arinc_support/InputError.hpp>
 
 namespace Arinc615a::Find::Packets {
 

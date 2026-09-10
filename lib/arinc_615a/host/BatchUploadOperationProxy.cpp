@@ -46,7 +46,7 @@ void BatchUploadOperationProxy::fileRequest(
   const std::string_view filename,
   const ::Tftp::Packets::TftpOptions &clientTftpOptions,
   const std::string_view loadPartNumber,
-  const Arinc645::CheckValue &checkValue )
+  const ArincChecksum::CheckValue &checkValue )
 {
   handlerV.fileRequest( targetIdV, remote, filename, clientTftpOptions, loadPartNumber, checkValue );
 }

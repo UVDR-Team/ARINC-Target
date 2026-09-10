@@ -17,7 +17,9 @@
 
 #include <boost/asio/ip/address.hpp>
 
+#if ARINC_ENABLE_COMMAND_LINE
 #include <boost/program_options/options_description.hpp>
+#endif
 
 #include <boost/property_tree/ptree_fwd.hpp>
 
@@ -73,7 +75,9 @@ class ARINC_615A_EXPORT FindConfiguration
      *
      * @return FIND configuration options description.
      **/
+#if ARINC_ENABLE_COMMAND_LINE
     [[nodiscard]] boost::program_options::options_description options();
+#endif
 
     //! Local Interface Address
     boost::asio::ip::address localInterfaceAddress{ boost::asio::ip::address_v4::any() };

@@ -17,7 +17,7 @@
 #include <arinc_615a/Arinc615aException.hpp>
 #include <arinc_615a/StatusCode.hpp>
 
-#include <helper/Exception.hpp>
+#include <arinc_support/Exception.hpp>
 
 #include <boost/throw_exception.hpp>
 
@@ -33,12 +33,12 @@ InformationOperationStatusFile::InformationOperationStatusFile(
 {
 }
 
-InformationOperationStatusFile::InformationOperationStatusFile( Helper::ConstRawDataSpan rawData )
+InformationOperationStatusFile::InformationOperationStatusFile( ArincSupport::ConstRawDataSpan rawData )
 {
   decode( rawData );
 }
 
-InformationOperationStatusFile& InformationOperationStatusFile::operator=( Helper::ConstRawDataSpan rawData )
+InformationOperationStatusFile& InformationOperationStatusFile::operator=( ArincSupport::ConstRawDataSpan rawData )
 {
   decode( rawData );
   return *this;
@@ -59,25 +59,25 @@ void InformationOperationStatusFile::status( Information::InformationStatus stat
   statusV = std::move( status );
 }
 
-Helper::RawData InformationOperationStatusFile::encode() const
+ArincSupport::RawData InformationOperationStatusFile::encode() const
 {
   // counter + status code + exception timer + estimated time (each 16 bit)
-  Helper::RawData rawData( HeaderSize + ( 4U * sizeof( uint16_t ) ) );
+  ArincSupport::RawData rawData( HeaderSize + ( 4U * sizeof( uint16_t ) ) );
 
   // skip header - it is filled finally
-  auto nextData{ Helper::RawDataSpan{ rawData }.subspan( HeaderSize ) };
+  auto nextData{ ArincSupport::RawDataSpan{ rawData }.subspan( HeaderSize ) };
 
   // counter
-  nextData = Helper::RawData_setInt( nextData, statusV.counter() );
+  nextData = ArincSupport::RawData_setInt( nextData, statusV.counter() );
 
   // status code
-  nextData = Helper::RawData_setInt( nextData, std::to_underlying( statusV.code() ) );
+  nextData = ArincSupport::RawData_setInt( nextData, std::to_underlying( statusV.code() ) );
 
   // exception timer
-  nextData = Helper::RawData_setInt( nextData, statusV.exceptionTimer() );
+  nextData = ArincSupport::RawData_setInt( nextData, statusV.exceptionTimer() );
 
   // estimated time
-  nextData = Helper::RawData_setInt( nextData, statusV.estimatedTime() );
+  nextData = ArincSupport::RawData_setInt( nextData, statusV.estimatedTime() );
   assert( nextData.empty() );
 
   // status description
@@ -90,34 +90,34 @@ Helper::RawData InformationOperationStatusFile::encode() const
   return rawData;
 }
 
-void InformationOperationStatusFile::decode( Helper::ConstRawDataSpan rawData )
+void InformationOperationStatusFile::decode( ArincSupport::ConstRawDataSpan rawData )
 {
   // check minimum data size
   if ( rawData.size() < ( HeaderSize + 9U ) )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Protocol file to small" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Protocol file to small" } );
   }
 
   auto remainingData{ decodeHeader( rawData ) };
 
   // counter
   uint16_t counter;
-  std::tie( remainingData, counter ) = Helper::RawData_getInt< uint16_t >( remainingData );
+  std::tie( remainingData, counter ) = ArincSupport::RawData_getInt< uint16_t >( remainingData );
   statusV.counter( counter );
 
   // status code
   uint16_t intStatusCode;
-  std::tie( remainingData, intStatusCode ) = Helper::RawData_getInt< uint16_t >( remainingData );
+  std::tie( remainingData, intStatusCode ) = ArincSupport::RawData_getInt< uint16_t >( remainingData );
   statusV.code( statusCode( intStatusCode ) );
 
   // exception timer
   uint16_t exceptionTimer;
-  std::tie( remainingData, exceptionTimer ) = Helper::RawData_getInt< uint16_t >( remainingData );
+  std::tie( remainingData, exceptionTimer ) = ArincSupport::RawData_getInt< uint16_t >( remainingData );
   statusV.exceptionTimer( exceptionTimer );
 
   // estimated time
   int16_t estimatedTime;
-  std::tie( remainingData, estimatedTime ) = Helper::RawData_getInt< int16_t >( remainingData );
+  std::tie( remainingData, estimatedTime ) = ArincSupport::RawData_getInt< int16_t >( remainingData );
   statusV.estimatedTime( estimatedTime );
 
   // status description
@@ -128,7 +128,7 @@ void InformationOperationStatusFile::decode( Helper::ConstRawDataSpan rawData )
   // Final Check for additional data
   if ( !remainingData.empty() )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "More data than expected" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "More data than expected" } );
   }
 }
 

@@ -24,7 +24,7 @@
 
 #include <tftp/packets/Options.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 namespace Arinc615a::Tftp::Servers {
 
@@ -131,7 +131,7 @@ void ServerImpl::tftpRequestHandler(
   // check transfer mode (only OCTET accepted)
   if ( mode != ::Tftp::Packets::TransferMode::OCTET )
   {
-    SPDLOG_ERROR( "Invalid transfer mode" );
+    ARINC_LOG_ERROR( "Invalid transfer mode" );
 
     errorOperation( remote, ::Tftp::Packets::ErrorCode::IllegalTftpOperation, "Wrong transfer mode" );
 
@@ -167,7 +167,7 @@ void ServerImpl::tftpRequestHandler(
 
   if ( !remainingAdditionalClientOptions.empty() )
   {
-    SPDLOG_INFO(
+    ARINC_LOG_INFO(
       "There are additional options ignored: {}",
       ::Tftp::Packets::Options_toString( remainingAdditionalClientOptions ) );
   }

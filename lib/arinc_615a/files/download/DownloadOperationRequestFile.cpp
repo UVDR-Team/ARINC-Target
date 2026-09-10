@@ -16,11 +16,11 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <helper/Exception.hpp>
-#include <helper/RawData.hpp>
-#include <helper/SafeCast.hpp>
+#include <arinc_support/Exception.hpp>
+#include <arinc_support/RawData.hpp>
+#include <arinc_support/SafeCast.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/throw_exception.hpp>
 
@@ -29,19 +29,19 @@ namespace Arinc615a::Files {
 DownloadOperationRequestFile::DownloadOperationRequestFile(
   Arinc615aVersion const protocolVersion,
   Information::DownloadFiles files,
-  Helper::RawData userDefinedData ) :
+  ArincSupport::RawData userDefinedData ) :
   ProtocolFile{ protocolVersion },
   filesV{ std::move( files ) },
   userDefinedDataV{ std::move( userDefinedData ) }
 {
 }
 
-DownloadOperationRequestFile::DownloadOperationRequestFile( Helper::ConstRawDataSpan rawData )
+DownloadOperationRequestFile::DownloadOperationRequestFile( ArincSupport::ConstRawDataSpan rawData )
 {
   decode( rawData );
 }
 
-DownloadOperationRequestFile& DownloadOperationRequestFile::operator=( Helper::ConstRawDataSpan rawData )
+DownloadOperationRequestFile& DownloadOperationRequestFile::operator=( ArincSupport::ConstRawDataSpan rawData )
 {
   decode( rawData );
   return *this;
@@ -67,37 +67,37 @@ void DownloadOperationRequestFile::file( std::string fileName )
   filesV.push_back( std::move( fileName ) );
 }
 
-Helper::ConstRawDataSpan DownloadOperationRequestFile::userDefinedData() const
+ArincSupport::ConstRawDataSpan DownloadOperationRequestFile::userDefinedData() const
 {
   return userDefinedDataV;
 }
 
-Helper::RawData& DownloadOperationRequestFile::userDefinedData()
+ArincSupport::RawData& DownloadOperationRequestFile::userDefinedData()
 {
   return userDefinedDataV;
 }
 
-void DownloadOperationRequestFile::userDefinedData( Helper::RawData userDefinedData )
+void DownloadOperationRequestFile::userDefinedData( ArincSupport::RawData userDefinedData )
 {
   userDefinedDataV = std::move( userDefinedData );
 }
 
-Helper::RawData DownloadOperationRequestFile::encode() const
+ArincSupport::RawData DownloadOperationRequestFile::encode() const
 {
-  Helper::RawData rawData( HeaderSize + 2UZ );
+  ArincSupport::RawData rawData( HeaderSize + 2UZ );
 
   // skip header - it is filled finally
-  auto nextData{ Helper::RawDataSpan{ rawData }.subspan( HeaderSize ) };
+  auto nextData{ ArincSupport::RawDataSpan{ rawData }.subspan( HeaderSize ) };
 
   // the number of files must not exceed the field maximum value
   if ( filesV.size() > std::numeric_limits< uint16_t >::max() )
   {
     BOOST_THROW_EXCEPTION( Arinc615aException()
-      << Helper::AdditionalInfo{ "More files than allowed" } );
+      << ArincSupport::AdditionalInfo{ "More files than allowed" } );
   }
 
   // number of files
-  nextData = Helper::RawData_setInt( nextData, Helper::safeCast< uint16_t >( filesV.size() ) );
+  nextData = ArincSupport::RawData_setInt( nextData, ArincSupport::safeCast< uint16_t >( filesV.size() ) );
   assert( nextData.empty() );
 
   // iterate over files
@@ -113,14 +113,14 @@ Helper::RawData DownloadOperationRequestFile::encode() const
   // User-defined data must not exceed the field maximum value
   if ( userDefinedDataV.size() > std::numeric_limits< uint8_t >::max() )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "User defined data do big" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "User defined data do big" } );
   }
 
   // user defined data (length field)
   rawData.resize( rawData.size() + 1UZ );
 
   // encode length of user defined data
-  Helper::RawData_setInt( Helper::RawDataSpan{ rawData }.last( 1 ), Helper::safeCast< uint8_t >( userDefinedDataV.size() ) );
+  ArincSupport::RawData_setInt( ArincSupport::RawDataSpan{ rawData }.last( 1 ), ArincSupport::safeCast< uint8_t >( userDefinedDataV.size() ) );
 
   // copy user defined data
   rawData.insert( rawData.end(), userDefinedDataV.begin(), userDefinedDataV.end() );
@@ -131,23 +131,23 @@ Helper::RawData DownloadOperationRequestFile::encode() const
   return rawData;
 }
 
-void DownloadOperationRequestFile::decode( Helper::ConstRawDataSpan rawData )
+void DownloadOperationRequestFile::decode( ArincSupport::ConstRawDataSpan rawData )
 {
   // check minimum data size
   if ( rawData.size() < MinimumSize )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Protocol file to small" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Protocol file to small" } );
   }
 
   auto remainingData{ decodeHeader( rawData ) };
 
   // number of files
   uint16_t numberOfFiles;
-  std::tie( remainingData, numberOfFiles ) = Helper::RawData_getInt< uint16_t >( remainingData );
+  std::tie( remainingData, numberOfFiles ) = ArincSupport::RawData_getInt< uint16_t >( remainingData );
 
   if ( 0U == numberOfFiles )
   {
-    SPDLOG_WARN( "Invalid number of files (0)" );
+    ARINC_LOG_WARN( "Invalid number of files (0)" );
   }
 
   // iterate over files
@@ -158,7 +158,7 @@ void DownloadOperationRequestFile::decode( Helper::ConstRawDataSpan rawData )
     std::tie( remainingData, filename ) = String_decode( remainingData );
     if ( filename.empty() )
     {
-      SPDLOG_WARN( "filename is empty" );
+      ARINC_LOG_WARN( "filename is empty" );
     }
 
     filesV.emplace_back( std::move( filename ) );
@@ -166,10 +166,10 @@ void DownloadOperationRequestFile::decode( Helper::ConstRawDataSpan rawData )
 
   // user defined data size
   uint8_t userDefinedDataLength;
-  std::tie( remainingData, userDefinedDataLength ) = Helper::RawData_getInt< uint8_t >( remainingData );
+  std::tie( remainingData, userDefinedDataLength ) = ArincSupport::RawData_getInt< uint8_t >( remainingData );
   if ( remainingData.size() != userDefinedDataLength )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "user defined data length" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "user defined data length" } );
   }
 
   // user defined data

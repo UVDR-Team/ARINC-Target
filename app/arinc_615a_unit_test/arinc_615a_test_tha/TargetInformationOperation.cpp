@@ -34,7 +34,7 @@
 
 #include <tftp/clients/Operation.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/diagnostic_information.hpp>
 
@@ -74,15 +74,15 @@ void TargetInformationOperation::initialise(
   }
   catch ( const boost::exception &e )
   {
-    SPDLOG_ERROR( "Error during Information operation: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Error during Information operation: {}", boost::diagnostic_information( e ) );
   }
   catch ( const std::exception &e )
   {
-    SPDLOG_ERROR( "Error during Information operation: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Error during Information operation: {}", boost::diagnostic_information( e ) );
   }
   catch ( ... )
   {
-    SPDLOG_ERROR( "Error during Information operation" );
+    ARINC_LOG_ERROR( "Error during Information operation" );
   }
 }
 
@@ -103,7 +103,7 @@ void TargetInformationOperation::initialised()
 
 void TargetInformationOperation::finished( const Arinc615a::FinalStatus finalStatus, std::string_view description )
 {
-  SPDLOG_INFO(
+  ARINC_LOG_INFO(
     "Operation finished: {} '{}'",
     Arinc615a::StatusCodeDescription::instance().name( Arinc615a::statusCode( finalStatus ) ),
     description );
@@ -113,7 +113,7 @@ void TargetInformationOperation::finished( const Arinc615a::FinalStatus finalSta
 
 void TargetInformationOperation::abortRequest( const Arinc615a::AbortRequest abortRequest )
 {
-  SPDLOG_INFO( "Abort Request from host" );
+  ARINC_LOG_INFO( "Abort Request from host" );
 
   // directly abort operation
   operationV->finished( Arinc615a::finalStatus( abortRequest ) );
@@ -121,7 +121,7 @@ void TargetInformationOperation::abortRequest( const Arinc615a::AbortRequest abo
 
 void TargetInformationOperation::status( const Arinc615a::Information::InformationStatus &status )
 {
-  SPDLOG_INFO(
+  ARINC_LOG_INFO(
     "Status:\n"
     "\tCounter:         {}\n"
     "\tStatus:          {} ({})\n"

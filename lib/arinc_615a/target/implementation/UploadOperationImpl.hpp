@@ -110,7 +110,7 @@ class UploadOperationImpl final : public UploadOperation, public OperationImpl
       Tftp::ReceiveDataHandlerPtr dataHandler,
       std::string filename,
       std::string partNumber = {},
-      Arinc645::CheckValue checkValue = Arinc645::CheckValue::NoCheckValue ) override;
+      ArincChecksum::CheckValue checkValue = ArincChecksum::CheckValue::NoCheckValue ) override;
 
     //! @copydoc UploadOperation::finished()
     void finished( FinalStatus finalStatus, std::string description = {} ) override;

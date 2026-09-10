@@ -37,7 +37,7 @@
 
 #include <tftp/TftpException.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/all.hpp>
 
@@ -78,11 +78,11 @@ void OperationImpl::doAbort( const Operation::AbortReason reason )
 {
   if ( Operation::AbortReason::NoAbort != abortReasonV )
   {
-    SPDLOG_INFO( "Already aborted - skip" );
+    ARINC_LOG_INFO( "Already aborted - skip" );
     return;
   }
 
-  SPDLOG_INFO( "Operation abort received" );
+  ARINC_LOG_INFO( "Operation abort received" );
 
   abortReasonV = reason;
 
@@ -95,7 +95,7 @@ void OperationImpl::doAbort( const Operation::AbortReason reason )
 
 void OperationImpl::doTerminate( const Operation::AbortReason reason )
 {
-  SPDLOG_INFO( "Terminate Operation" );
+  ARINC_LOG_INFO( "Terminate Operation" );
 
   // if initialisation is in-progress, abort them immediately
   if ( initialisationOperationV )
@@ -118,7 +118,7 @@ void OperationImpl::doTerminate( const Operation::AbortReason reason )
       break;
 
     default:
-      SPDLOG_WARN( "Invalid abort reason" );
+      ARINC_LOG_WARN( "Invalid abort reason" );
       statusCode = OperationAbortedByDlp;
       break;
   }
@@ -190,7 +190,7 @@ bool OperationImpl::isAborted( const boost::asio::ip::udp::endpoint &remote )
     return false;
   }
 
-  SPDLOG_INFO( "Handle abort request" );
+  ARINC_LOG_INFO( "Handle abort request" );
 
   // the status file is responded with an error - the target will send a proper status file
   StatusCode statusCode;
@@ -208,7 +208,7 @@ bool OperationImpl::isAborted( const boost::asio::ip::udp::endpoint &remote )
       break;
 
     default:
-      SPDLOG_WARN( "Invalid abort reason" );
+      ARINC_LOG_WARN( "Invalid abort reason" );
       statusCode = OperationAbortedByDlp;
       break;
   }
@@ -232,7 +232,7 @@ bool OperationImpl::checkRequest( const std::string_view filename, const boost::
     if ( const Files::ProtocolFilename protocolFilename{ filename }; protocolFilename.targetId() != targetId() )
     {
       // Reject other files
-      SPDLOG_ERROR( "Wrong target ID for given protocol file" );
+      ARINC_LOG_ERROR( "Wrong target ID for given protocol file" );
 
       tftpServerV->errorOperation(
         remote,
@@ -248,7 +248,7 @@ bool OperationImpl::checkRequest( const std::string_view filename, const boost::
 
 void OperationImpl::initialise( const Files::ProtocolFileType fileType )
 {
-  SPDLOG_INFO( "Request initialisation file '{}'", Files::ProtocolFileTypeDescription::instance().name( fileType ) );
+  ARINC_LOG_INFO( "Request initialisation file '{}'", Files::ProtocolFileTypeDescription::instance().name( fileType ) );
 
   try
   {
@@ -287,7 +287,7 @@ void OperationImpl::initialise( const Files::ProtocolFileType fileType )
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Error receive initialisation file: {}", e.what() );
+    ARINC_LOG_ERROR( "Error receive initialisation file: {}", e.what() );
   }
 }
 
@@ -303,7 +303,7 @@ void OperationImpl::receivedTftpRequest(
   const ::Tftp::Packets::TftpOptions &clientTftpOptions,
   const Tftp::Arinc615aOptions &clientArinc615aOptions )
 {
-  SPDLOG_INFO( "Received TFTP request" );
+  ARINC_LOG_INFO( "Received TFTP request" );
 
   // call operation request handler
   tftpRequest( std::move( remote ), requestType, std::string{ filename }, clientTftpOptions, clientArinc615aOptions );
@@ -320,14 +320,14 @@ void OperationImpl::timerHandler( const boost::system::error_code &errorCode )
   // internal (timer) error occurred
   if ( errorCode )
   {
-    SPDLOG_ERROR( "timer error: {}", errorCode.message() );
+    ARINC_LOG_ERROR( "timer error: {}", errorCode.message() );
 
     finished( StatusCode::OperationAbortedByDlp, "Internal timer error" );
 
     return;
   }
 
-  SPDLOG_ERROR( "DLP timeout" );
+  ARINC_LOG_ERROR( "DLP timeout" );
 
   //! @todo cancel active transfers
 
@@ -341,9 +341,9 @@ void OperationImpl::initialisationFileDeferred( const std::chrono::seconds waitT
 
 bool OperationImpl::initialisationFileOptionsNegotiation( const Tftp::Arinc615aOptions &options )
 {
-  if ( options.checksum != Arinc645::CheckValue::NoCheckValue )
+  if ( options.checksum != ArincChecksum::CheckValue::NoCheckValue )
   {
-    SPDLOG_ERROR( "Received checksum option, when never requested" );
+    ARINC_LOG_ERROR( "Received checksum option, when never requested" );
     return false;
   }
 
@@ -351,13 +351,13 @@ bool OperationImpl::initialisationFileOptionsNegotiation( const Tftp::Arinc615aO
   {
     if ( !portOptionV )
     {
-      SPDLOG_ERROR( "Port option received, when not requested" );
+      ARINC_LOG_ERROR( "Port option received, when not requested" );
       return false;
     }
 
     if ( *options.port != tftpServerV->localEndpoint().port() )
     {
-      SPDLOG_ERROR( "Port option unequal to requested" );
+      ARINC_LOG_ERROR( "Port option unequal to requested" );
       return false;
     }
   }
@@ -365,7 +365,7 @@ bool OperationImpl::initialisationFileOptionsNegotiation( const Tftp::Arinc615aO
   {
     if ( portOptionV )
     {
-      SPDLOG_ERROR( "Port option not accepted - Operation must be restarted with default port" );
+      ARINC_LOG_ERROR( "Port option not accepted - Operation must be restarted with default port" );
       return false;
     }
   }
@@ -381,11 +381,11 @@ void OperationImpl::initialisationFileCompleted(
   // clean-up initialisation operation
   initialisationOperationV.reset();
 
-  SPDLOG_INFO( "Initialisation file completion handler" );
+  ARINC_LOG_INFO( "Initialisation file completion handler" );
 
   if ( Tftp::TransferStatus::Successful != status )
   {
-    SPDLOG_ERROR( "Initialisation File could not be received" );
+    ARINC_LOG_ERROR( "Initialisation File could not be received" );
 
     finished( StatusCode::OperationAbortedByDlp, "Initialisation File could not be received" );
     return;
@@ -398,7 +398,7 @@ void OperationImpl::initialisationFileCompleted(
     // Decode received data as an initialisation file
     Files::InitializationFile initFile{ rawInitialisationFile->data() };
 
-    SPDLOG_INFO(
+    ARINC_LOG_INFO(
       "Initialisation Response: {} '{}'",
       StatusCodeDescription::instance().name( static_cast< StatusCode >( initFile.response().code() ) ),
       initFile.response().description() );
@@ -419,19 +419,19 @@ void OperationImpl::initialisationFileCompleted(
         break;
 
       case OperationDenied:
-        SPDLOG_ERROR( "Operation denied: {}", initFile.response().description() );
+        ARINC_LOG_ERROR( "Operation denied: {}", initFile.response().description() );
 
         finished( static_cast< StatusCode >( initFile.response().code() ), initFile.response().description() );
         break;
 
       case OperationNotSupported:
-        SPDLOG_ERROR( "Operation not supported: {}", initFile.response().description() );
+        ARINC_LOG_ERROR( "Operation not supported: {}", initFile.response().description() );
 
         finished( static_cast< StatusCode >( initFile.response().code() ), initFile.response().description() );
         break;
 
       default:
-        SPDLOG_ERROR( "Unknown acceptance code" );
+        ARINC_LOG_ERROR( "Unknown acceptance code" );
 
         finished( StatusCode::OperationAbortedByDlp, "unknown status code" );
         break;
@@ -439,7 +439,7 @@ void OperationImpl::initialisationFileCompleted(
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Decoding/Handling initialisation file: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Decoding/Handling initialisation file: {}", boost::diagnostic_information( e ) );
 
     finished( StatusCode::OperationAbortedByDlp, "Initialisation File could not be received" );
   }

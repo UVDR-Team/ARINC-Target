@@ -12,9 +12,9 @@
 
 #include "DownloadInformation.hpp"
 
-#include <arinc_645/CheckValueGenerator.hpp>
+#include <arinc_checksum/CheckValueGenerator.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <format>
 #include <fstream>
@@ -66,7 +66,7 @@ void DownloadInformation::fileStart(
   const std::string_view filename,
   std::filesystem::path filePath,
   std::string partNumber,
-  Arinc645::CheckValue checkValue )
+  ArincChecksum::CheckValue checkValue )
 {
   std::unique_lock lock{ mutexV };
 
@@ -108,13 +108,13 @@ void DownloadInformation::save( const std::filesystem::path &downloadInformation
 {
   std::unique_lock lock{ mutexV };
 
-  SPDLOG_INFO( "Write Download Information to {}", downloadInformationPath.string() );
+  ARINC_LOG_INFO( "Write Download Information to {}", downloadInformationPath.string() );
 
   std::fstream downloadInformationStream{ downloadInformationPath, std::ios::out | std::ios::trunc };
 
   if ( !downloadInformationStream )
   {
-    SPDLOG_ERROR( "Could not open {}", downloadInformationPath.string() );
+    ARINC_LOG_ERROR( "Could not open {}", downloadInformationPath.string() );
   }
 
   downloadInformationStream
@@ -165,13 +165,13 @@ void DownloadInformation::save( const std::filesystem::path &downloadInformation
       downloadInformationStream << std::format( "  {:23} {}\n", "Part Number:", status.partNumber );
     }
 
-    if ( status.checkValue != Arinc645::CheckValue::NoCheckValue )
+    if ( status.checkValue != ArincChecksum::CheckValue::NoCheckValue )
     {
       downloadInformationStream << std::format( "  {:23} {}\n", "Check Value:", status.checkValue );
 
       if ( checkIntegrity )
       {
-        auto calculatedCheckValue{ Arinc645::CheckValueGenerator::checkValue( status.checkValue.type(), status.filePath ) };
+        auto calculatedCheckValue{ ArincChecksum::CheckValueGenerator::checkValue( status.checkValue.type(), status.filePath ) };
 
         downloadInformationStream << std::format(
           "  {:23} {} *{}*\n",

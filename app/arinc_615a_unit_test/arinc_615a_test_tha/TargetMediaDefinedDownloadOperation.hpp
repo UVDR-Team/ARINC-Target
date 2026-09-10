@@ -92,7 +92,7 @@ class TargetMediaDefinedDownloadOperation final :
     //! @copydoc Arinc615a::Target::MediaDefinedDownloadOperationHandler::downloadingRequest
     void downloadingRequest(
       const Arinc615a::Information::DownloadFiles &files,
-      Helper::ConstRawDataSpan userDefinedData ) override;
+      ArincSupport::ConstRawDataSpan userDefinedData ) override;
 
     /**
      * @brief Send next File in List.
@@ -117,9 +117,9 @@ class TargetMediaDefinedDownloadOperation final :
      **/
     [[nodiscard]] bool fileOptionsNegotiation(
       std::string_view providedPartNumber,
-      const Arinc645::CheckValue &providedCheckValue,
+      const ArincChecksum::CheckValue &providedCheckValue,
       std::string_view partNumber,
-      const Arinc645::CheckValue &checksum );
+      const ArincChecksum::CheckValue &checksum );
 
     /**
      * @brief Handler for transmitted file.

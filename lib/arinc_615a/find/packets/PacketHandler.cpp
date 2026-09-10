@@ -16,11 +16,11 @@
 #include <arinc_615a/find/packets/PacketException.hpp>
 #include <arinc_615a/find/packets/PacketStatistic.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 namespace Arinc615a::Find::Packets {
 
-void PacketHandler::packet( const boost::asio::ip::udp::endpoint &remote, Helper::ConstRawDataSpan rawPacket )
+void PacketHandler::packet( const boost::asio::ip::udp::endpoint &remote, ArincSupport::ConstRawDataSpan rawPacket )
 {
   switch ( Packet::packetType( rawPacket ) )
   {
@@ -36,7 +36,7 @@ void PacketHandler::packet( const boost::asio::ip::udp::endpoint &remote, Helper
       }
       catch ( const InvalidFindPacket &e )
       {
-        SPDLOG_ERROR( "Error decoding/ handling IRQ packet: {}", e.what() );
+        ARINC_LOG_ERROR( "Error decoding/ handling IRQ packet: {}", e.what() );
 
         // Update statistic
         PacketStatistic::globalReceive().packet( Invalid, rawPacket.size() );
@@ -55,7 +55,7 @@ void PacketHandler::packet( const boost::asio::ip::udp::endpoint &remote, Helper
       }
       catch ( const InvalidFindPacket &e )
       {
-        SPDLOG_ERROR( "Error decoding/ handling IAN packet: {}", e.what() );
+        ARINC_LOG_ERROR( "Error decoding/ handling IAN packet: {}", e.what() );
 
         // Update statistic
         PacketStatistic::globalReceive().packet( Invalid, rawPacket.size() );

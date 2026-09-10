@@ -114,13 +114,13 @@ class ServerImpl final : public Server, private Packets::PacketHandler
      * @param[in] rawPacket
      *   Received data.
      **/
-    void invalidPacket( const boost::asio::ip::udp::endpoint &remote, Helper::ConstRawDataSpan rawPacket ) override;
+    void invalidPacket( const boost::asio::ip::udp::endpoint &remote, ArincSupport::ConstRawDataSpan rawPacket ) override;
 
     //! Server Socket
     boost::asio::ip::udp::socket socketV;
 
     //! Received packet
-    Helper::RawData rawReceivePacketV;
+    ArincSupport::RawData rawReceivePacketV;
     //! Source address of the received data.
     boost::asio::ip::udp::endpoint receiveRemoteEndpointV;
     //! FIND Request Handler

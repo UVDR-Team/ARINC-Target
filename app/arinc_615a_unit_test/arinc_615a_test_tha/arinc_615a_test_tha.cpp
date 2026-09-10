@@ -11,6 +11,7 @@
  * @brief Entry point of the ARINC 615A test THA target data loader.
  **/
 
+#include "Arinc615aTha.hpp"
 #include "TargetDataLoaderConfiguration.hpp"
 #include "TargetInformationOperation.hpp"
 #include "TargetMediaDefinedDownloadOperation.hpp"
@@ -24,21 +25,21 @@
 #include <arinc_615a/target/Protocol.hpp>
 #include <arinc_615a/target/ProtocolConfiguration.hpp>
 
-#include <arinc_615a/information/Information.hpp>
 
-#include <arinc_615a/tftp/Arinc615aOptions.hpp>
 
-#include <arinc_615a/Arinc615aException.hpp>
 
 #include <tftp/packets/TftpOptions.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/all.hpp>
 
-#include <boost/program_options.hpp>
 
-#include <boost/asio.hpp>
+#include <boost/asio/post.hpp>
+#if ARINC_ENABLE_COMMAND_LINE
+#include <boost/asio/signal_set.hpp>
+#include <csignal>
+#endif
 #include <boost/asio/io_context.hpp>
 
 #include <boost/property_tree/json_parser.hpp>
@@ -47,18 +48,22 @@
 #include <iostream>
 #include <string>
 
-/**
- * @brief Target data loader runtime entry point.
- *
- * @param[in] argc
- *   Number of arguments.
- * @param[in] argv
- *   Arguments
- *
- * @return Application exit status.
- **/
-int Arinc615aTha::run( int argc, char * argv[] );
+#include <cassert>
+#include <filesystem>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <stdexcept>
 
+namespace {
+class Runtime
+{
+public:
+  explicit Runtime(const Arinc615aTha::TargetDataLoaderConfiguration &config) : configuration{ config } {}
+  void run(bool hostSignals);
+  void stop();
+  void requestStop() { boost::asio::post(ioContext, [this] { stop(); }); }
+private:
 /**
  * @brief Signal Handler.
  *
@@ -69,7 +74,9 @@ int Arinc615aTha::run( int argc, char * argv[] );
  * @param[in] signal
  *   Received signal.
  **/
-static void signalHandler( const boost::system::error_code &error, int signal );
+#if ARINC_ENABLE_COMMAND_LINE
+void signalHandler( const boost::system::error_code &error, int signal );
+#endif
 
 /**
  * @brief Handles an ARINC 615A FIND Request.
@@ -77,7 +84,7 @@ static void signalHandler( const boost::system::error_code &error, int signal );
  * @param[in] from
  *   Source of request.
  **/
-static void findRequest( const boost::asio::ip::udp::endpoint &from );
+void findRequest( const boost::asio::ip::udp::endpoint &from );
 
 /**
  * @brief Handles an ARINC 615A Operation Request.
@@ -93,7 +100,7 @@ static void findRequest( const boost::asio::ip::udp::endpoint &from );
  * @param[in] targetId
  *   Target ID
  **/
-static void operationRequest(
+void operationRequest(
   Arinc615a::OperationType operation,
   const boost::asio::ip::udp::endpoint &remote,
   const ::Tftp::Packets::TftpOptions &clientTftpOptions,
@@ -114,7 +121,7 @@ static void operationRequest(
  * @param[in] targetId
  *   Target ID
  **/
-static void informationOperationRequest(
+void informationOperationRequest(
   const boost::asio::ip::udp::endpoint &remote,
   const Arinc615aTha::InformationOperationConfiguration &opConfig,
   const Tftp::Packets::TftpOptions &clientTftpOptions,
@@ -135,7 +142,7 @@ static void informationOperationRequest(
  * @param[in] targetId
  *   Target ID
  **/
-static void uploadOperationRequest(
+void uploadOperationRequest(
   const boost::asio::ip::udp::endpoint &remote,
   const Arinc615aTha::UploadOperationConfiguration &opConfig,
   const Tftp::Packets::TftpOptions &clientTftpOptions,
@@ -156,7 +163,7 @@ static void uploadOperationRequest(
  * @param[in] targetId
  *   Target ID
  **/
-static void mediaDefinedDownloadOperationRequest(
+void mediaDefinedDownloadOperationRequest(
   const boost::asio::ip::udp::endpoint &remote,
   const Arinc615aTha::DownloadOperationConfiguration &opConfig,
   const Tftp::Packets::TftpOptions &clientTftpOptions,
@@ -177,7 +184,7 @@ static void mediaDefinedDownloadOperationRequest(
  * @param[in] targetId
  *   Target ID
  **/
-static void operatorDefinedDownloadOperationRequest(
+void operatorDefinedDownloadOperationRequest(
   const boost::asio::ip::udp::endpoint &remote,
   const Arinc615aTha::DownloadOperationConfiguration &opConfig,
   const Tftp::Packets::TftpOptions &clientTftpOptions,
@@ -187,85 +194,59 @@ static void operatorDefinedDownloadOperationRequest(
 /**
  * @brief Operation Finished handler.
  **/
-static void operationFinished();
+void operationFinished();
 
 /**
  * @brief Error Operation completed handler.
  **/
-static void errorOperationCompleted();
+void errorOperationCompleted();
 
 //! Target Data Loader Configuration
-static Arinc615aTha::TargetDataLoaderConfiguration configuration;
+Arinc615aTha::TargetDataLoaderConfiguration configuration;
 
 //! I/O Context
-static boost::asio::io_context ioContext;
+boost::asio::io_context ioContext;
 //! Signal Set
-static boost::asio::signal_set signals{ ioContext, SIGINT, SIGTERM };
+#if ARINC_ENABLE_COMMAND_LINE
+std::unique_ptr< boost::asio::signal_set > signals;
+#endif
+bool stopped{ false };
 
 //! FIND Server
-static Arinc615a::Find::Servers::ServerPtr findServer;
+Arinc615a::Find::Servers::ServerPtr findServer;
 //! ARINC 615A Target Protocol
-static Arinc615a::Target::ProtocolPtr protocol;
+Arinc615a::Target::ProtocolPtr protocol;
 //! ARINC 615A Target Operation
-static std::shared_ptr< Arinc615aTha::TargetOperation > targetOperation;
+std::shared_ptr< Arinc615aTha::TargetOperation > targetOperation;
 //! Error Operation
-static Arinc615a::Target::ErrorOperationPtr errorOperation;
+Arinc615a::Target::ErrorOperationPtr errorOperation;
 
-int Arinc615aTha::run( const int argc, char * argv[] )
+};
+
+std::mutex activeMutex;
+Runtime *activeRuntime{};
+
+struct ActiveRuntimeGuard
 {
-  spdlog::set_level( spdlog::level::level_enum::warn );
+  ~ActiveRuntimeGuard() { std::lock_guard lock{activeMutex}; activeRuntime = nullptr; }
+};
 
-  try
-  {
-    boost::program_options::options_description optionsDescription{ "ARINC 615A THA Options" };
+int reportException() noexcept
+{
+  try { throw; }
+  catch (const boost::exception &e) { std::cerr << "Error: " << boost::diagnostic_information(e) << '\n'; }
+  catch (const std::exception &e) { std::cerr << "Error: " << e.what() << '\n'; }
+  catch (...) { std::cerr << "Unknown exception occurred\n"; }
+  return EXIT_FAILURE;
+}
 
-    optionsDescription.add_options()
-    (
-      "help",
-      "print this help screen"
-    );
-
-    optionsDescription.add( configuration.dataLoader.options() );
-    optionsDescription.add( configuration.find.options() );
-
-    std::cout << "ARINC 615A THA\n";
-
-    // Try to load Configuration from Configuration File
-    const auto configFile{ std::filesystem::path{ argv [ 0 ] }.replace_extension( ".json" ) };
-
-    boost::property_tree::ptree properties;
-
-    if ( std::filesystem::is_regular_file( configFile ) )
-    {
-      boost::property_tree::read_json( configFile.string(), properties );
-    }
-    else
-    {
-      SPDLOG_WARN(
-        "No configuration file '{}' Found. Using default configuration - No operations are active.",
-        configFile.string() );
-    }
-    configuration.fromProperties( properties );
-
-    // Handle Command Line
-    boost::program_options::variables_map variablesMap;
-    boost::program_options::store(
-      boost::program_options::parse_command_line( argc, argv, optionsDescription ),
-      variablesMap );
-
-    if ( 0U != variablesMap.count( "help" ) )
-    {
-      std::cout << "ARINC 615A Test Hardware\n" << optionsDescription << "\n";
-      return EXIT_FAILURE;
-    }
-
-    boost::program_options::notify( variablesMap );
-
+void Runtime::run(const bool hostSignals)
+{
     findServer = Arinc615a::Find::Servers::Server::instance( ioContext );
     assert( findServer );
 
     findServer
-      ->requestHandler( std::bind_front( &findRequest ) )
+      ->requestHandler( std::bind_front( &Runtime::findRequest, this ) )
       .localEndpoint( { configuration.find.localInterfaceAddress, configuration.find.findPort } );
 
     findServer->start();
@@ -273,50 +254,41 @@ int Arinc615aTha::run( const int argc, char * argv[] )
     protocol = Arinc615a::Target::Protocol::instance(
       ioContext,
       Arinc615a::Target::ProtocolConfiguration{
-        .newOperationRequestHandler = std::bind_front( &operationRequest ),
+        .newOperationRequestHandler = std::bind_front( &Runtime::operationRequest, this ),
         .configuration = configuration.dataLoader,
         .protocolVersion = configuration.version } );
     assert( protocol );
 
     protocol->start();
 
-    // connect to SIGINT and SIGTERM
-    signals.async_wait( std::bind_front( &signalHandler ) );
-
-    auto ioRunner{
-      std::jthread{ [](){
-        ioContext.run();
-      } } };
-
-    ioRunner.join();
-
-    return EXIT_SUCCESS;
-  }
-  catch ( const boost::program_options::error &e )
+#if ARINC_ENABLE_COMMAND_LINE
+  if (hostSignals)
   {
-    std::cerr
-      << "Error parsing command line: " << e.what() << '\n'
-      << "Enter '" << argv[ 0 ] << " --help' for command line description.\n";
-    return EXIT_FAILURE;
+    signals = std::make_unique<boost::asio::signal_set>(ioContext, SIGINT, SIGTERM);
+    signals->async_wait(std::bind_front(&Runtime::signalHandler, this));
   }
-  catch ( const boost::exception &e )
-  {
-    std::cerr << "Error: " << boost::diagnostic_information( e ) << '\n';
-    return EXIT_FAILURE;
-  }
-  catch ( const std::exception &e )
-  {
-    std::cerr << "Error: " << e.what() << '\n';
-    return EXIT_FAILURE;
-  }
-  catch ( ... )
-  {
-    std::cerr << "Unknown exception occurred\n";
-    return EXIT_FAILURE;
-  }
+#else
+  (void)hostSignals;
+#endif
+  // The caller's DKM task owns this event loop. No extra std::jthread.
+  ioContext.run();
 }
 
-static void signalHandler( const boost::system::error_code &error, const int signal )
+void Runtime::stop()
+{
+  if (stopped) return;
+  stopped = true;
+  std::cout << "Termination request\n";
+  if (findServer) findServer->stop();
+  if (protocol) protocol->stop();
+#if ARINC_ENABLE_COMMAND_LINE
+  if (signals) signals->cancel();
+#endif
+  ioContext.stop();
+}
+
+#if ARINC_ENABLE_COMMAND_LINE
+void Runtime::signalHandler( const boost::system::error_code &error, const int signal )
 {
   // handle abort
   if ( boost::asio::error::operation_aborted == error )
@@ -327,31 +299,23 @@ static void signalHandler( const boost::system::error_code &error, const int sig
   switch ( signal )
   {
     case SIGINT:
-     SPDLOG_INFO( "SIGINT received" );
+     ARINC_LOG_INFO( "SIGINT received" );
       break;
 
     case SIGTERM:
-     SPDLOG_INFO( "SIGTERM received" );
+     ARINC_LOG_INFO( "SIGTERM received" );
       break;
 
     default:
-     SPDLOG_INFO( "Other signal received" );
+     ARINC_LOG_INFO( "Other signal received" );
       break;
   }
 
-  // re-connect to SIGINT and SIGTERM
-  signals.async_wait( std::bind_front( &signalHandler ) );
-
-  std::cout << "Termination request\n";
-
-  findServer->stop();
-  protocol->stop();
-
-  signals.cancel();
-  ioContext.stop();
+  stop();
 }
+#endif
 
-static void findRequest( const boost::asio::ip::udp::endpoint &from )
+void Runtime::findRequest( const boost::asio::ip::udp::endpoint &from )
 {
   for ( const auto &findInformation : configuration.findInformation )
   {
@@ -359,24 +323,24 @@ static void findRequest( const boost::asio::ip::udp::endpoint &from )
   }
 }
 
-static void operationRequest(
+void Runtime::operationRequest(
   const Arinc615a::OperationType operation,
   const boost::asio::ip::udp::endpoint &remote,
   const ::Tftp::Packets::TftpOptions &clientTftpOptions,
   const std::optional< uint16_t > port,
   const Arinc615a::TargetId &targetId )
 {
-  SPDLOG_INFO( "Received operation from {} with Target ID: {}", remote.address().to_string(), targetId.toString() );
+  ARINC_LOG_INFO( "Received operation from {} with Target ID: {}", remote.address().to_string(), targetId.toString() );
 
   auto targetInfo{ configuration.targets.find( static_cast< std::string >( targetId ) ) };
 
   if ( targetInfo == configuration.targets.end() )
   {
-    SPDLOG_ERROR( "Invalid Target ID" );
+    ARINC_LOG_ERROR( "Invalid Target ID" );
 
     errorOperation = protocol->errorOperation(
       Arinc615a::Target::ErrorOperationConfiguration{
-        .completionHandler = std::bind_front( &errorOperationCompleted ),
+        .completionHandler = std::bind_front( &Runtime::errorOperationCompleted, this ),
         .operation = operation,
         .targetId = targetId,
         .status = Arinc615a::OperationAcceptanceStatusCode::OperationDenied,
@@ -390,11 +354,11 @@ static void operationRequest(
   // check active operation
   if ( targetOperation )
   {
-   SPDLOG_ERROR( "Another operation already active" );
+   ARINC_LOG_ERROR( "Another operation already active" );
 
     errorOperation = protocol->errorOperation(
       Arinc615a::Target::ErrorOperationConfiguration{
-        .completionHandler = std::bind_front( &errorOperationCompleted ),
+        .completionHandler = std::bind_front( &Runtime::errorOperationCompleted, this ),
         .operation = operation,
         .targetId = targetId,
         .status = Arinc615a::OperationAcceptanceStatusCode::OperationDenied,
@@ -434,11 +398,11 @@ static void operationRequest(
       break;
 
     default:
-     SPDLOG_ERROR( "Invalid Operation Request" );
+     ARINC_LOG_ERROR( "Invalid Operation Request" );
 
       errorOperation =
         protocol->errorOperation( Arinc615a::Target::ErrorOperationConfiguration{
-          .completionHandler = std::bind_front( &errorOperationCompleted ),
+          .completionHandler = std::bind_front( &Runtime::errorOperationCompleted, this ),
           .operation = operation,
           .targetId = targetId,
           .status = Arinc615a::OperationAcceptanceStatusCode::OperationNotSupported,
@@ -449,7 +413,7 @@ static void operationRequest(
   }
 }
 
-static void informationOperationRequest(
+void Runtime::informationOperationRequest(
   const boost::asio::ip::udp::endpoint &remote,
   const Arinc615aTha::InformationOperationConfiguration &opConfig,
   const Tftp::Packets::TftpOptions &clientTftpOptions,
@@ -459,11 +423,11 @@ static void informationOperationRequest(
   // If operation is not enabled, reject it
   if ( !opConfig.enabled )
   {
-   SPDLOG_ERROR( "Information Operation not Enabled" );
+   ARINC_LOG_ERROR( "Information Operation not Enabled" );
 
     errorOperation = protocol->errorOperation(
       Arinc615a::Target::ErrorOperationConfiguration{
-        .completionHandler = std::bind_front( &errorOperationCompleted ),
+        .completionHandler = std::bind_front( &Runtime::errorOperationCompleted, this ),
         .operation = Arinc615a::OperationType::Information,
         .targetId = targetId,
         .status = Arinc615a::OperationAcceptanceStatusCode::OperationNotSupported,
@@ -475,7 +439,7 @@ static void informationOperationRequest(
   }
 
   targetOperation = std::make_shared< Arinc615aTha::TargetInformationOperation >(
-    std::bind_front( &operationFinished ),
+    std::bind_front( &Runtime::operationFinished, this ),
     ioContext,
     opConfig,
     *protocol,
@@ -485,7 +449,7 @@ static void informationOperationRequest(
   targetOperation->initialise( remote, clientTftpOptions, port );
 }
 
-static void uploadOperationRequest(
+void Runtime::uploadOperationRequest(
   const boost::asio::ip::udp::endpoint &remote,
   const Arinc615aTha::UploadOperationConfiguration &opConfig,
   const Tftp::Packets::TftpOptions &clientTftpOptions,
@@ -495,11 +459,11 @@ static void uploadOperationRequest(
   // If operation is not enabled, reject it
   if ( !opConfig.enabled )
   {
-   SPDLOG_ERROR( "Upload Operation not Enabled" );
+   ARINC_LOG_ERROR( "Upload Operation not Enabled" );
 
     errorOperation = protocol->errorOperation(
       Arinc615a::Target::ErrorOperationConfiguration{
-        .completionHandler = std::bind_front( &errorOperationCompleted ),
+        .completionHandler = std::bind_front( &Runtime::errorOperationCompleted, this ),
         .operation = Arinc615a::OperationType::Upload,
         .targetId = targetId,
         .status = Arinc615a::OperationAcceptanceStatusCode::OperationNotSupported,
@@ -512,11 +476,11 @@ static void uploadOperationRequest(
 
   if ( !std::filesystem::is_directory( opConfig.directory ) )
   {
-   SPDLOG_ERROR( "Upload Directory does not exist" );
+   ARINC_LOG_ERROR( "Upload Directory does not exist" );
 
     errorOperation = protocol->errorOperation(
       Arinc615a::Target::ErrorOperationConfiguration{
-        .completionHandler = std::bind_front( &errorOperationCompleted ),
+        .completionHandler = std::bind_front( &Runtime::errorOperationCompleted, this ),
         .operation = Arinc615a::OperationType::Upload,
         .targetId = targetId,
         .status = Arinc615a::OperationAcceptanceStatusCode::OperationDenied,
@@ -528,7 +492,7 @@ static void uploadOperationRequest(
   }
 
   targetOperation = std::make_shared< Arinc615aTha::TargetUploadOperation >(
-    std::bind_front( &operationFinished ),
+    std::bind_front( &Runtime::operationFinished, this ),
     ioContext,
     opConfig,
     *protocol,
@@ -538,7 +502,7 @@ static void uploadOperationRequest(
   targetOperation->initialise( remote, clientTftpOptions, port );
 }
 
-static void mediaDefinedDownloadOperationRequest(
+void Runtime::mediaDefinedDownloadOperationRequest(
   const boost::asio::ip::udp::endpoint &remote,
   const Arinc615aTha::DownloadOperationConfiguration &opConfig,
   const Tftp::Packets::TftpOptions &clientTftpOptions,
@@ -548,11 +512,11 @@ static void mediaDefinedDownloadOperationRequest(
   // If operation is not enabled, reject it
   if ( !opConfig.enabled )
   {
-   SPDLOG_ERROR( "Operation not enabled" );
+   ARINC_LOG_ERROR( "Operation not enabled" );
 
     errorOperation = protocol->errorOperation(
       Arinc615a::Target::ErrorOperationConfiguration{
-        .completionHandler = std::bind_front( &errorOperationCompleted ),
+        .completionHandler = std::bind_front( &Runtime::errorOperationCompleted, this ),
         .operation = Arinc615a::OperationType::MediaDefinedDownload,
         .targetId = targetId,
         .status = Arinc615a::OperationAcceptanceStatusCode::OperationNotSupported,
@@ -567,11 +531,11 @@ static void mediaDefinedDownloadOperationRequest(
   {
     if ( !std::filesystem::is_directory( directory ) )
     {
-     SPDLOG_ERROR( "Download Directory does not exist: '{}'", directory.string() );
+     ARINC_LOG_ERROR( "Download Directory does not exist: '{}'", directory.string() );
 
       errorOperation = protocol->errorOperation(
         Arinc615a::Target::ErrorOperationConfiguration{
-          .completionHandler = std::bind_front( &errorOperationCompleted ),
+          .completionHandler = std::bind_front( &Runtime::errorOperationCompleted, this ),
           .operation = Arinc615a::OperationType::MediaDefinedDownload,
           .targetId = targetId,
           .status = Arinc615a::OperationAcceptanceStatusCode::OperationDenied,
@@ -584,7 +548,7 @@ static void mediaDefinedDownloadOperationRequest(
   }
 
   targetOperation = std::make_shared< Arinc615aTha::TargetMediaDefinedDownloadOperation >(
-    std::bind_front( &operationFinished ),
+    std::bind_front( &Runtime::operationFinished, this ),
     ioContext,
     opConfig,
     *protocol,
@@ -594,7 +558,7 @@ static void mediaDefinedDownloadOperationRequest(
   targetOperation->initialise( remote, clientTftpOptions, port );
 }
 
-static void operatorDefinedDownloadOperationRequest(
+void Runtime::operatorDefinedDownloadOperationRequest(
   const boost::asio::ip::udp::endpoint &remote,
   const Arinc615aTha::DownloadOperationConfiguration &opConfig,
   const Tftp::Packets::TftpOptions &clientTftpOptions,
@@ -604,11 +568,11 @@ static void operatorDefinedDownloadOperationRequest(
   // If operation is not enabled, reject it
   if ( !opConfig.enabled )
   {
-   SPDLOG_ERROR( "Operation not Enabled" );
+   ARINC_LOG_ERROR( "Operation not Enabled" );
 
     errorOperation = protocol->errorOperation(
       Arinc615a::Target::ErrorOperationConfiguration{
-        .completionHandler = std::bind_front( &errorOperationCompleted ),
+        .completionHandler = std::bind_front( &Runtime::errorOperationCompleted, this ),
         .operation = Arinc615a::OperationType::OperatorDefinedDownload,
         .targetId = targetId,
         .status = Arinc615a::OperationAcceptanceStatusCode::OperationNotSupported,
@@ -623,11 +587,11 @@ static void operatorDefinedDownloadOperationRequest(
   {
     if ( !std::filesystem::is_directory( directory ) )
     {
-     SPDLOG_ERROR( "Download Directory does not exist: '{}'", directory.string() );
+     ARINC_LOG_ERROR( "Download Directory does not exist: '{}'", directory.string() );
 
       errorOperation = protocol->errorOperation(
         Arinc615a::Target::ErrorOperationConfiguration{
-          .completionHandler = std::bind_front( &errorOperationCompleted ),
+          .completionHandler = std::bind_front( &Runtime::errorOperationCompleted, this ),
           .operation = Arinc615a::OperationType::OperatorDefinedDownload,
           .targetId = targetId,
           .status = Arinc615a::OperationAcceptanceStatusCode::OperationDenied,
@@ -640,7 +604,7 @@ static void operatorDefinedDownloadOperationRequest(
   }
 
   targetOperation = std::make_shared< Arinc615aTha::TargetOperatorDefinedDownloadOperation >(
-    std::bind_front( &operationFinished ),
+    std::bind_front( &Runtime::operationFinished, this ),
     ioContext,
     opConfig,
     *protocol,
@@ -650,16 +614,74 @@ static void operatorDefinedDownloadOperationRequest(
   targetOperation->initialise( remote, clientTftpOptions, port );
 }
 
-static void operationFinished()
+void Runtime::operationFinished()
 {
-  SPDLOG_INFO( "Operation finished" );
+  ARINC_LOG_INFO( "Operation finished" );
 
   targetOperation.reset();
 }
 
-static void errorOperationCompleted()
+void Runtime::errorOperationCompleted()
 {
-  SPDLOG_INFO( "Error Operation finished" );
+  ARINC_LOG_INFO( "Error Operation finished" );
 
   errorOperation.reset();
+}
+
+} // namespace
+
+int Arinc615aTha::detail::runConfigured(const TargetDataLoaderConfiguration &config, const bool hostSignals)
+{
+  try
+  {
+    Runtime runtime{config};
+    {
+      std::lock_guard lock{activeMutex};
+      if (activeRuntime)
+      {
+        std::cerr << "ARINC 615A THA is already running\n";
+        return EXIT_FAILURE;
+      }
+      activeRuntime = &runtime;
+    }
+    ActiveRuntimeGuard guard;
+    runtime.run(hostSignals);
+    return EXIT_SUCCESS;
+  }
+  catch (...) { return reportException(); }
+}
+
+int Arinc615aTha::run(const TargetDataLoaderConfiguration &config)
+{
+  std::cout << "ARINC 615A THA\n";
+  return detail::runConfigured(config, false);
+}
+
+int Arinc615aTha::runFromFile(const char *configurationFile)
+{
+  try
+  {
+    if (!configurationFile || !*configurationFile)
+      throw std::invalid_argument{"Configuration filename is empty"};
+    std::cout << "ARINC 615A THA\n";
+    boost::property_tree::ptree properties;
+    if (std::filesystem::is_regular_file(configurationFile))
+      boost::property_tree::read_json(configurationFile, properties);
+    else
+      ARINC_LOG_WARN("No configuration file '{}' Found. Using default configuration - No operations are active.", configurationFile);
+    return detail::runConfigured(TargetDataLoaderConfiguration{properties}, false);
+  }
+  catch (...) { return reportException(); }
+}
+
+bool Arinc615aTha::requestStop() noexcept
+{
+  try
+  {
+    std::lock_guard lock{activeMutex};
+    if (!activeRuntime) return false;
+    activeRuntime->requestStop();
+    return true;
+  }
+  catch (...) { return false; }
 }

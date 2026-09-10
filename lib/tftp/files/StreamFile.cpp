@@ -1,0 +1,109 @@
+// SPDX-License-Identifier: MPL-2.0
+/**
+ * @file
+ * @copyright
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * @author Thomas Vogt, thomas@thomas-vogt.de
+ *
+ * @brief Definition of Class Tftp::Files::StreamFile.
+ **/
+
+#include "StreamFile.hpp"
+
+#include <tftp/TftpException.hpp>
+
+#include <arinc_support/Exception.hpp>
+
+#include <arinc_support/Logging.hpp>
+
+#include <boost/exception/all.hpp>
+
+#include <utility>
+
+namespace Tftp::Files {
+
+StreamFile::StreamFile( const Operation operation, std::filesystem::path filename ) :
+  operationV{ operation },
+  filenameV{ std::move( filename ) }
+{
+}
+
+StreamFile::StreamFile( const Operation operation, std::filesystem::path filename, const size_t size ) :
+  operationV{ operation },
+  filenameV{ std::move( filename ) },
+  sizeV{ size }
+{
+}
+
+void StreamFile::start()
+{
+  switch ( operationV )
+  {
+    case File::Operation::Receive:
+      streamV.open( filenameV, std::ios::out | std::ios::trunc | std::ios::binary );
+      break;
+
+    case File::Operation::Transmit:
+      streamV.open( filenameV, std::ios::in | std::ios::binary );
+      break;
+
+    default:
+      BOOST_THROW_EXCEPTION( TftpException{}
+        << ArincSupport::AdditionalInfo{ "Invalid file mode" }
+        << boost::errinfo_file_name{ filenameV.string() } );
+  }
+
+  if ( !streamV )
+  {
+    BOOST_THROW_EXCEPTION( TftpException{}
+      << ArincSupport::AdditionalInfo{ "Error opening the file" }
+      << boost::errinfo_file_name{ filenameV.string() } );
+  }
+}
+
+void StreamFile::finished()
+{
+  streamV.flush();
+  streamV.close();
+}
+
+bool StreamFile::receivedTransferSize( const uint64_t transferSize )
+{
+  // If no size is provided
+  if ( !sizeV )
+  {
+    // Always accept the file based on size
+    return true;
+  }
+
+  // Accept the file if size is matching the maximum allowed one.
+  return ( transferSize <= sizeV );
+}
+
+void StreamFile::receivedData( const ArincSupport::ConstRawDataSpan data )
+{
+  if ( !data.empty() )
+  {
+    streamV.write( reinterpret_cast< const char * >( data.data() ), static_cast< std::streamsize >( data.size() ) );
+  }
+}
+
+std::optional< uint64_t> StreamFile::requestedTransferSize()
+{
+  return sizeV;
+}
+
+ArincSupport::RawData StreamFile::sendData( const size_t maxSize )
+{
+  ArincSupport::RawData data( maxSize );
+
+  streamV.read( reinterpret_cast< char * >( data.data() ), static_cast< std::streamsize >( maxSize ) );
+
+  data.resize( streamV.gcount() );
+
+  return data;
+}
+
+}

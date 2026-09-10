@@ -17,7 +17,7 @@
 #include <arinc_615a/Arinc615aException.hpp>
 #include <arinc_615a/StatusCode.hpp>
 
-#include <helper/Exception.hpp>
+#include <arinc_support/Exception.hpp>
 
 #include <boost/throw_exception.hpp>
 
@@ -33,12 +33,12 @@ InitializationFile::InitializationFile(
 {
 }
 
-InitializationFile::InitializationFile( Helper::ConstRawDataSpan rawData )
+InitializationFile::InitializationFile( ArincSupport::ConstRawDataSpan rawData )
 {
   decode( rawData );
 }
 
-InitializationFile& InitializationFile::operator=( Helper::ConstRawDataSpan rawData )
+InitializationFile& InitializationFile::operator=( ArincSupport::ConstRawDataSpan rawData )
 {
   decode( rawData );
   return *this;
@@ -59,15 +59,15 @@ void InitializationFile::response( Information::InitializationResponse response 
   responseV = std::move( response );
 }
 
-Helper::RawData InitializationFile::encode() const
+ArincSupport::RawData InitializationFile::encode() const
 {
-  Helper::RawData rawData( HeaderSize + 2U );
+  ArincSupport::RawData rawData( HeaderSize + 2U );
 
   // skip header - it is filled finally
-  auto nextData{ Helper::RawDataSpan{ rawData }.subspan( HeaderSize ) };
+  auto nextData{ ArincSupport::RawDataSpan{ rawData }.subspan( HeaderSize ) };
 
   // status code
-  nextData = Helper::RawData_setInt( nextData, std::to_underlying( responseV.code() ) );
+  nextData = ArincSupport::RawData_setInt( nextData, std::to_underlying( responseV.code() ) );
   assert( nextData.empty() );
 
   // status message
@@ -80,12 +80,12 @@ Helper::RawData InitializationFile::encode() const
   return rawData;
 }
 
-void InitializationFile::decode( Helper::ConstRawDataSpan rawData )
+void InitializationFile::decode( ArincSupport::ConstRawDataSpan rawData )
 {
   // check minimum data size
   if ( rawData.size() < MinFileSize )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Protocol file to small" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Protocol file to small" } );
   }
 
   auto remainingData{ decodeHeader( rawData ) };
@@ -93,7 +93,7 @@ void InitializationFile::decode( Helper::ConstRawDataSpan rawData )
   // Status code
   std::underlying_type_t< OperationAcceptanceStatusCode > intStatusCode;
   std::tie( remainingData, intStatusCode ) =
-    Helper::RawData_getInt< std::underlying_type_t< OperationAcceptanceStatusCode > >( remainingData );
+    ArincSupport::RawData_getInt< std::underlying_type_t< OperationAcceptanceStatusCode > >( remainingData );
   responseV.code( operationAcceptanceStatusCode( intStatusCode ) );
 
   // Status description
@@ -104,7 +104,7 @@ void InitializationFile::decode( Helper::ConstRawDataSpan rawData )
   // Final Check for additional data
   if ( !remainingData.empty() )
   {
-    BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "More data then expected" } );
+    BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "More data then expected" } );
   }
 }
 

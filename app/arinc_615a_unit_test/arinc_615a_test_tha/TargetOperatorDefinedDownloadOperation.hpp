@@ -125,9 +125,9 @@ class TargetOperatorDefinedDownloadOperation final :
      **/
     [[nodiscard]] bool fileOptionsNegotiation(
       std::string_view providedPartNumber,
-      const Arinc645::CheckValue &providedCheckValue,
+      const ArincChecksum::CheckValue &providedCheckValue,
       std::string_view partNumber,
-      const Arinc645::CheckValue &checksum );
+      const ArincChecksum::CheckValue &checksum );
 
     /**
      * @brief Handler for transmitted file.

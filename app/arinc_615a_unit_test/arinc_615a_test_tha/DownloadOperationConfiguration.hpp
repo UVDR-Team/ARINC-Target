@@ -14,7 +14,7 @@
 #ifndef ARINC615A_DOWNLOADOPERATIONCONFIGURATION_HPP
 #define ARINC615A_DOWNLOADOPERATIONCONFIGURATION_HPP
 
-#include <arinc_645/Arinc645.hpp>
+#include <arinc_checksum/Arinc645.hpp>
 
 #include <boost/property_tree/ptree_fwd.hpp>
 
@@ -62,7 +62,7 @@ struct DownloadOperationConfiguration
   //! Provide Part Number
   bool partNumberOption{ false };
   //! Checksum Option enabled (only ARINC 615A-3+)
-  Arinc645::CheckValueType checksumOption{ Arinc645::CheckValueType::NotUsed };
+  ArincChecksum::CheckValueType checksumOption{ ArincChecksum::CheckValueType::NotUsed };
 };
 
 }

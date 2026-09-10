@@ -15,7 +15,7 @@
 
 #include <arinc_615a/files/Files.hpp>
 
-#include <helper/Description.hpp>
+#include <arinc_support/Description.hpp>
 
 #include <iosfwd>
 #include <format>
@@ -33,7 +33,7 @@ namespace Arinc615a::Files {
  * @sa @ref ProtocolFileType
  **/
 class ARINC_615A_EXPORT ProtocolFileTypeDescription final :
-  public Helper::Description< ProtocolFileTypeDescription, ProtocolFileType >
+  public ArincSupport::Description< ProtocolFileTypeDescription, ProtocolFileType >
 {
   public:
     //! Initialises Instance

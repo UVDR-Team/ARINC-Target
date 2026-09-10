@@ -15,7 +15,7 @@
 
 #include <arinc_615a/files/Files.hpp>
 
-#include <helper/RawData.hpp>
+#include <arinc_support/RawData.hpp>
 
 #include <string_view>
 
@@ -42,8 +42,8 @@ namespace Arinc615a::Files {
  *
  * @sa @ref String_encode()
  **/
-[[nodiscard]] ARINC_615A_EXPORT std::tuple< Helper::ConstRawDataSpan, std::string_view > String_decode(
-  Helper::ConstRawDataSpan rawData );
+[[nodiscard]] ARINC_615A_EXPORT std::tuple< ArincSupport::ConstRawDataSpan, std::string_view > String_decode(
+  ArincSupport::ConstRawDataSpan rawData );
 
 /**
  * @brief Encodes the given String as Raw Data.
@@ -64,7 +64,7 @@ namespace Arinc615a::Files {
  *
  * @sa @ref String_decode()
  **/
-[[nodiscard]] ARINC_615A_EXPORT Helper::RawData String_encode( std::string_view stringToEncode, uint8_t fixedLength = 0 );
+[[nodiscard]] ARINC_615A_EXPORT ArincSupport::RawData String_encode( std::string_view stringToEncode, uint8_t fixedLength = 0 );
 
 /** @} **/
 

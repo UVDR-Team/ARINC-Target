@@ -33,13 +33,13 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <arinc_645/CheckValueGenerator.hpp>
+#include <arinc_checksum/CheckValueGenerator.hpp>
 
 #include <tftp/files/MemoryFile.hpp>
 
 #include <tftp/packets/TftpOptions.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <boost/exception/all.hpp>
 
@@ -106,7 +106,7 @@ void InformationOperationImpl::tftpRequest(
     tftpServer().errorOperation( remote, ::Tftp::Packets::ErrorCode::IllegalTftpOperation, "Only WRQ allowed" );
   }
 
-  SPDLOG_INFO( "Protocol File Request: {}", Files::ProtocolFileTypeDescription::instance().name( file.fileType() ) );
+  ARINC_LOG_INFO( "Protocol File Request: {}", Files::ProtocolFileTypeDescription::instance().name( file.fileType() ) );
 
   // check file type
   switch ( file.fileType() )
@@ -126,7 +126,7 @@ void InformationOperationImpl::tftpRequest(
       break;
 
     default:
-      SPDLOG_ERROR( "Unexpected file received" );
+      ARINC_LOG_ERROR( "Unexpected file received" );
       tftpServer().errorOperation( remote, ::Tftp::Packets::ErrorCode::FileNotFound, "Wrong filename" );
       break;
   }
@@ -149,7 +149,7 @@ void InformationOperationImpl::statusFileRequest(
     // no ARINC 615A Options (Part Number, Checksum or port) expected - discard
     if ( clientArinc615aOptions )
     {
-      SPDLOG_INFO( "Received unexpected ARINC 615A options: {}", Arinc615aOptions_toString( clientArinc615aOptions ) );
+      ARINC_LOG_INFO( "Received unexpected ARINC 615A options: {}", Arinc615aOptions_toString( clientArinc615aOptions ) );
     }
 
     // Create TFTP Server Read Operation, to receive the Status File.
@@ -173,7 +173,7 @@ void InformationOperationImpl::statusFileRequest(
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Error receiving status file: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Error receiving status file: {}", boost::diagnostic_information( e ) );
   }
 }
 
@@ -184,14 +184,14 @@ void InformationOperationImpl::statusFileCompleted(
 {
   if ( 1U != statusFileOperationsV.remove( operation ) )
   {
-    SPDLOG_ERROR( "Status file operation completed, which was not initiated" );
+    ARINC_LOG_ERROR( "Status file operation completed, which was not initiated" );
     finished( StatusCode::OperationAbortedByDlp, "Status file operation completed, which was not initiated" );
     return;
   }
 
   if ( ::Tftp::TransferStatus::Successful != status )
   {
-    SPDLOG_ERROR( "Status file could not be received" );
+    ARINC_LOG_ERROR( "Status file could not be received" );
 
     finished( StatusCode::OperationAbortedByDlp, "Status file could not be received" );
     return;
@@ -209,7 +209,7 @@ void InformationOperationImpl::statusFileCompleted(
     // Validate protocol version (only check and warn but no abort
     if ( statusFile.protocolVersion() != protocolVersion() )
     {
-      SPDLOG_WARN( "Status file protocol version differs from expected" );
+      ARINC_LOG_WARN( "Status file protocol version differs from expected" );
     }
 
     // call handler
@@ -246,14 +246,14 @@ void InformationOperationImpl::statusFileCompleted(
         break;
 
       default:
-        SPDLOG_WARN( "Invalid status - operation finished" );
+        ARINC_LOG_WARN( "Invalid status - operation finished" );
         finished( OperationAbortedByDlp );
         break;
     }
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Decoding/Handling status file: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Decoding/Handling status file: {}", boost::diagnostic_information( e ) );
   }
 }
 
@@ -266,21 +266,21 @@ void InformationOperationImpl::listFileRequest(
   {
     if ( listFileOperationV )
     {
-      SPDLOG_INFO( "Received List File request, when list file reception is active" );
+      ARINC_LOG_INFO( "Received List File request, when list file reception is active" );
 
       listFileOperationV->gracefulAbort( ::Tftp::Packets::ErrorCode::NotDefined, "New list file received" );
     }
 
     // ARINC 615A Checksum Option is allowed, all others are discarded
-    if ( clientArinc615aOptions.checksum != Arinc645::CheckValue::NoCheckValue )
+    if ( clientArinc615aOptions.checksum != ArincChecksum::CheckValue::NoCheckValue )
     {
-      SPDLOG_INFO( "Received ARINC 615A Checksum Option '{}'", clientArinc615aOptions.checksum.format() );
+      ARINC_LOG_INFO( "Received ARINC 615A Checksum Option '{}'", clientArinc615aOptions.checksum.format() );
     }
 
     // no ARINC 615A Part Number or port expected - discard
     if ( !clientArinc615aOptions.partNumber.empty() || clientArinc615aOptions.port )
     {
-      SPDLOG_INFO( "Received unexpected ARINC 615A options: {}", Arinc615aOptions_toString( clientArinc615aOptions ) );
+      ARINC_LOG_INFO( "Received unexpected ARINC 615A options: {}", Arinc615aOptions_toString( clientArinc615aOptions ) );
     }
 
     // Create TFTP Server Read Operation, to receive the List File.
@@ -310,7 +310,7 @@ void InformationOperationImpl::listFileRequest(
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Error receiving list file: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Error receiving list file: {}", boost::diagnostic_information( e ) );
 
     abort( AbortReason::Protocol );
   }
@@ -318,14 +318,14 @@ void InformationOperationImpl::listFileRequest(
 
 void InformationOperationImpl::listFileCompleted(
   ::Tftp::Files::MemoryFilePtr rawListFile,
-  Arinc645::CheckValue checkValue,
+  ArincChecksum::CheckValue checkValue,
   const ::Tftp::TransferStatus status )
 {
   listFileOperationV.reset();
 
   if ( ::Tftp::TransferStatus::Successful != status )
   {
-    SPDLOG_ERROR( "List file could not be received" );
+    ARINC_LOG_ERROR( "List file could not be received" );
 
     if ( !waitForFinalStatusV )
     {
@@ -341,14 +341,14 @@ void InformationOperationImpl::listFileCompleted(
   try
   {
     // Check checksum
-    const auto checkValueGenerator{ Arinc645::CheckValueGenerator::create( checkValue.type() ) };
+    const auto checkValueGenerator{ ArincChecksum::CheckValueGenerator::create( checkValue.type() ) };
     assert( checkValueGenerator );
 
     bool integrityInformation{ true };
     checkValueGenerator->process( std::as_bytes( rawListFile->data() ) );
     if ( checkValueGenerator->checkValue() != checkValue )
     {
-      SPDLOG_WARN(
+      ARINC_LOG_WARN(
         "Supplied Check Values differs: '{}' '{}'",
         checkValue.format(),
         checkValueGenerator->checkValue().format() );
@@ -365,7 +365,7 @@ void InformationOperationImpl::listFileCompleted(
     // Validate protocol version (only check and warn but no abort
     if ( listFile.protocolVersion() != protocolVersion() )
     {
-      SPDLOG_WARN( "List file protocol version differs from expected" );
+      ARINC_LOG_WARN( "List file protocol version differs from expected" );
     }
 
     // call handler
@@ -383,7 +383,7 @@ void InformationOperationImpl::listFileCompleted(
   }
   catch ( const Arinc615aException &e )
   {
-    SPDLOG_ERROR( "Decoding / handling list configuration: {}", boost::diagnostic_information( e ) );
+    ARINC_LOG_ERROR( "Decoding / handling list configuration: {}", boost::diagnostic_information( e ) );
 
     // if the "wait for final status" flag is not set (no previous status file was received), the whole operation is
     // completed

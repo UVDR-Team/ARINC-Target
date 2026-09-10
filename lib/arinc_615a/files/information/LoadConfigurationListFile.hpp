@@ -78,7 +78,7 @@ class ARINC_615A_EXPORT LoadConfigurationListFile final : public ProtocolFile
      * @param[in] rawData
      *   Raw file data.
      **/
-    explicit LoadConfigurationListFile( Helper::ConstRawDataSpan rawData );
+    explicit LoadConfigurationListFile( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @brief Assigns raw data to the file.
@@ -90,7 +90,7 @@ class ARINC_615A_EXPORT LoadConfigurationListFile final : public ProtocolFile
      *
      * @return *this
      **/
-    LoadConfigurationListFile& operator=( Helper::ConstRawDataSpan rawData );
+    LoadConfigurationListFile& operator=( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @name Targets Hardware.
@@ -119,7 +119,7 @@ class ARINC_615A_EXPORT LoadConfigurationListFile final : public ProtocolFile
 
   protected:
     //! @copydoc ProtocolFile::encode
-    [[nodiscard]] Helper::RawData encode() const override;
+    [[nodiscard]] ArincSupport::RawData encode() const override;
 
     /**
      * @brief Decodes the Load Configuration List File from the raw data.
@@ -127,7 +127,7 @@ class ARINC_615A_EXPORT LoadConfigurationListFile final : public ProtocolFile
      * @param[in] rawData
      *   Raw data.
      **/
-    void decode( Helper::ConstRawDataSpan rawData );
+    void decode( ArincSupport::ConstRawDataSpan rawData );
 
   private:
     //! Target Hardware List.

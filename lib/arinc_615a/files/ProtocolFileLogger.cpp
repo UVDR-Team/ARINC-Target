@@ -14,7 +14,7 @@
 
 #include <arinc_615a/OperationTypeDescription.hpp>
 
-#include <spdlog/spdlog.h>
+#include <arinc_support/Logging.hpp>
 
 #include <chrono>
 #include <format>
@@ -24,7 +24,7 @@ namespace Arinc615a::Files {
 
 ProtocolFileLogger& ProtocolFileLogger::loggingDirectory( std::filesystem::path loggingDirectory )
 {
-  SPDLOG_INFO( "Protocol file logging directory: {}", loggingDirectory.string() );
+  ARINC_LOG_INFO( "Protocol file logging directory: {}", loggingDirectory.string() );
   loggingDirectoryV = std::move( loggingDirectory );
   return *this;
 }
@@ -41,7 +41,7 @@ ProtocolFileLogger& ProtocolFileLogger::operation( const OperationType operation
   return *this;
 }
 
-void ProtocolFileLogger::receivedProtocolFile( std::string_view filename, Helper::ConstRawDataSpan file )
+void ProtocolFileLogger::receivedProtocolFile( std::string_view filename, ArincSupport::ConstRawDataSpan file )
 {
   if ( !loggingEnabledV )
   {
@@ -51,7 +51,7 @@ void ProtocolFileLogger::receivedProtocolFile( std::string_view filename, Helper
   logProtocolFile( "RX", filename, file );
 }
 
-void ProtocolFileLogger::transmitProtocolFile( std::string_view filename, Helper::ConstRawDataSpan file )
+void ProtocolFileLogger::transmitProtocolFile( std::string_view filename, ArincSupport::ConstRawDataSpan file )
 {
   if ( !loggingEnabledV )
   {
@@ -64,7 +64,7 @@ void ProtocolFileLogger::transmitProtocolFile( std::string_view filename, Helper
 void ProtocolFileLogger::logProtocolFile(
   std::string_view prefix,
   std::string_view filename,
-  Helper::ConstRawDataSpan file )
+  ArincSupport::ConstRawDataSpan file )
 {
   auto protocolFileLoggingFilename{
     loggingDirectoryV
@@ -75,13 +75,13 @@ void ProtocolFileLogger::logProtocolFile(
       prefix,
       filename ) };
 
-  SPDLOG_INFO( "Log protocol file to {}", protocolFileLoggingFilename.string() );
+  ARINC_LOG_INFO( "Log protocol file to {}", protocolFileLoggingFilename.string() );
 
   std::ofstream fileStream{ protocolFileLoggingFilename, std::ios::out | std::ios::binary };
 
   if ( !fileStream )
   {
-    SPDLOG_ERROR( "Could not open file for writing" );
+    ARINC_LOG_ERROR( "Could not open file for writing" );
     return;
   }
 

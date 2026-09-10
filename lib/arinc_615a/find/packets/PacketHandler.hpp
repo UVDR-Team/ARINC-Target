@@ -15,7 +15,7 @@
 
 #include <arinc_615a/find/packets/Packets.hpp>
 
-#include <helper/RawData.hpp>
+#include <arinc_support/RawData.hpp>
 
 #include <boost/asio/ip/udp.hpp>
 
@@ -54,7 +54,7 @@ class ARINC_615A_EXPORT PacketHandler
      * @param[in] rawPacket
      *   Received data.
      **/
-    void packet( const boost::asio::ip::udp::endpoint &remote, Helper::ConstRawDataSpan rawPacket );
+    void packet( const boost::asio::ip::udp::endpoint &remote, ArincSupport::ConstRawDataSpan rawPacket );
 
   protected:
     /**
@@ -87,7 +87,7 @@ class ARINC_615A_EXPORT PacketHandler
      * @param[in] rawPacket
      *   Raw packet data.
      **/
-    virtual void invalidPacket( const boost::asio::ip::udp::endpoint &remote, Helper::ConstRawDataSpan rawPacket ) = 0;
+    virtual void invalidPacket( const boost::asio::ip::udp::endpoint &remote, ArincSupport::ConstRawDataSpan rawPacket ) = 0;
 };
 
 }

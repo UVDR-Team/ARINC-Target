@@ -1,89 +1,65 @@
 # SPDX-License-Identifier: MPL-2.0
+cmake_minimum_required(VERSION 3.24)
+project(arinc_615a LANGUAGES C CXX)
 
-# This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-# If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
-cmake_minimum_required( VERSION 4.3 )
-
-project(
-  arinc_615a
-  #VERSION 0.0.0.0
-  DESCRIPTION "ARINC 615A Tool Suite"
-  HOMEPAGE_URL "https://git.thomas-vogt.de/thomas-vogt/arinc_615a" )
-
-# A DKM build must be self-contained.  In particular, do not invoke Git or
-# fetch sources while configuring the target build.  The four protocol
-# libraries below are supplied by the VxWorks integration as imported targets.
-option(
-  ARINC615A_DKM_PROFILE
-  "Build only the target-side static library for a VxWorks DKM"
-  ON )
-
-set(
-  ARINC615A_DEPENDENCY_FILE
-  ""
-  CACHE FILEPATH
-  "CMake file that declares imported targets: tftp, helper, arinc_645 and arinc_665" )
-
-if( ARINC615A_DEPENDENCY_FILE )
-  if( NOT EXISTS "${ARINC615A_DEPENDENCY_FILE}" )
-    message( FATAL_ERROR "ARINC615A_DEPENDENCY_FILE does not exist: ${ARINC615A_DEPENDENCY_FILE}" )
-  endif()
-  include( "${ARINC615A_DEPENDENCY_FILE}" )
+include(GNUInstallDirs)
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+option(ARINC615A_THA_BUILD_TEST_APPLICATION "Build the original desktop CLI" OFF)
+option(ARINC_BUILD_TESTS "Build host regression tests; never included in the DKM" OFF)
+option(ARINC_ENABLE_COMMAND_LINE "Retain Boost.Program_options APIs for desktop callers" ${ARINC615A_THA_BUILD_TEST_APPLICATION})
+set(ARINC665_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../arinc_665-main" CACHE PATH "Local ARINC 665 sources")
+if(CMAKE_SYSTEM_NAME STREQUAL "VxWorks" AND (ARINC615A_THA_BUILD_TEST_APPLICATION OR ARINC_ENABLE_COMMAND_LINE OR ARINC_BUILD_TESTS))
+  message(FATAL_ERROR "The VxWorks DKM uses runFromFile/run(configuration); desktop CLI and host tests must be OFF.")
 endif()
-
-set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
-
-enable_testing()
-
-include( GNUInstallDirs )
-
-# Activate Dynamic Libraries for Boost on Windows Platform
-if( WIN32 )
-  set( Boost_USE_STATIC_LIBS OFF )
+if(ARINC615A_THA_BUILD_TEST_APPLICATION AND NOT ARINC_ENABLE_COMMAND_LINE)
+  message(FATAL_ERROR "The desktop test application requires ARINC_ENABLE_COMMAND_LINE=ON.")
 endif()
+include(cmake/OfflineLibraries.cmake)
+arinc_configure_support("${CMAKE_CURRENT_SOURCE_DIR}")
+arinc_add_665("${ARINC665_SOURCE_DIR}")
+arinc_add_tftp()
+arinc_add_615a()
 
-# TODO Disable Module scanning for the moment
-set( CMAKE_CXX_SCAN_FOR_MODULES OFF )
-
-# find clang-tidy and add options to execute
-find_program( CLANG_TIDY_EXE NAMES clang-tidy )
-
-if( CLANG_TIDY_EXE )
-  set( CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_EXE} -p )
+set(tha_dir "${CMAKE_CURRENT_SOURCE_DIR}/app/arinc_615a_unit_test/arinc_615a_test_tha")
+add_library(arinc_615a_tha_target STATIC
+  "${tha_dir}/arinc_615a_test_tha.cpp"
+  "${tha_dir}/ThaC.cpp"
+  "${tha_dir}/DownloadOperationConfiguration.cpp"
+  "${tha_dir}/InformationOperationConfiguration.cpp"
+  "${tha_dir}/OperationConfiguration.cpp"
+  "${tha_dir}/TargetDataLoaderConfiguration.cpp"
+  "${tha_dir}/TargetInformationOperation.cpp"
+  "${tha_dir}/TargetMediaDefinedDownloadOperation.cpp"
+  "${tha_dir}/TargetOperatorDefinedDownloadOperation.cpp"
+  "${tha_dir}/TargetUploadOperation.cpp"
+  "${tha_dir}/UploadOperationConfiguration.cpp")
+target_include_directories(arinc_615a_tha_target PUBLIC "$<BUILD_INTERFACE:${tha_dir}>" "$<INSTALL_INTERFACE:include/arinc_615a_tha>")
+target_link_libraries(arinc_615a_tha_target PUBLIC arinc_615a arinc_665)
+if(ARINC_ENABLE_COMMAND_LINE)
+  target_sources(arinc_615a_tha_target PRIVATE "${tha_dir}/ThaCommandLine.cpp")
 endif()
-
-# find iwyu and add options to execute
-find_program( CLANG_IWYU_EXE NAMES iwyu )
-
-if( CLANG_IWYU_EXE )
-  #set( CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${CLANG_IWYU_EXE} )
+if(ARINC615A_THA_BUILD_TEST_APPLICATION)
+  add_executable(arinc_615a_test_tha "${tha_dir}/main.cpp")
+  target_link_libraries(arinc_615a_test_tha PRIVATE arinc_615a_tha_target)
+  configure_file("${tha_dir}/arinc_615a_test_tha.json.template" arinc_615a_test_tha.json COPYONLY)
 endif()
-
-foreach( dependency IN ITEMS tftp helper arinc_645 arinc_665 )
-  if( NOT TARGET ${dependency} )
-    message(
-      FATAL_ERROR
-      "Required target '${dependency}' was not supplied. Configure with "
-      "-DARINC615A_DEPENDENCY_FILE=<your VxWorks imported-target file>. "
-      "See VxWorksDKMDependencies.cmake.example." )
-  endif()
-endforeach()
-
-if( ARINC615A_DKM_PROFILE )
-  # Do not build host tools, Qt applications, command-line utilities or docs
-  # into a kernel module.  They pull in desktop-only runtime dependencies.
-  add_subdirectory( lib/arinc_615a )
-  add_subdirectory( app/arinc_615a_unit_test/arinc_615a_test_tha )
-else()
-  message(
-    FATAL_ERROR
-    "The network-fetch desktop profile has been removed. Use the DKM profile "
-    "with prebuilt/imported dependencies, or maintain a separate host build." )
+install(TARGETS arinc_615a_tha_target arinc_615a arinc_665 tftp arinc_build_config EXPORT arinc-offline-targets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+if(TARGET arinc_cli_options)
+  install(TARGETS arinc_cli_options EXPORT arinc-offline-targets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
-
-install(
-  FILES LICENSE
-  RENAME ${PROJECT_NAME}.LICENSE
-  TYPE DOC
-  COMPONENT runtime )
+install(EXPORT arinc-offline-targets NAMESPACE Arinc:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/arinc-offline)
+install(DIRECTORY "${tha_dir}/" DESTINATION include/arinc_615a_tha FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h")
+install(DIRECTORY lib/arinc_615a lib/tftp lib/arinc_support lib/arinc_checksum DESTINATION include
+  FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h" PATTERN "*.ipp" PATTERN "test" EXCLUDE PATTERN "host" EXCLUDE)
+install(DIRECTORY "${ARINC665_SOURCE_DIR}/lib/arinc_665/" DESTINATION include/arinc_665
+  FILES_MATCHING PATTERN "*.hpp" PATTERN "test" EXCLUDE PATTERN "media" EXCLUDE PATTERN "utils" EXCLUDE)
+install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/" DESTINATION include)
+install(DIRECTORY third_party_licenses/ DESTINATION ${CMAKE_INSTALL_DATADIR}/arinc/licenses)
+install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/arinc/licenses RENAME arinc_615a.LICENSE)
+install(FILES "${ARINC665_SOURCE_DIR}/LICENSE" DESTINATION ${CMAKE_INSTALL_DATADIR}/arinc/licenses RENAME arinc_665.LICENSE)
+if(ARINC_BUILD_TESTS)
+  enable_testing()
+  include(cmake/RegressionTests.cmake)
+endif()

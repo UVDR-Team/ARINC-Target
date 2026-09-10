@@ -13,7 +13,7 @@
 #include <arinc_615a/find/packets/Packet.hpp>
 #include <arinc_615a/find/packets/PacketException.hpp>
 
-#include <helper/RawData.hpp>
+#include <arinc_support/RawData.hpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -44,14 +44,14 @@ static uint8_t findAnswerPacket[]{
 //! get packet type test
 BOOST_AUTO_TEST_CASE( packetType )
 {
-  using Helper::operator ""_b;
+  using ArincSupport::operator ""_b;
 
-  BOOST_CHECK( Packet::packetType( Helper::RawData{} ) == Opcode::Invalid );
-  BOOST_CHECK( Packet::packetType( Helper::RawData{ 0_b } ) == Opcode::Invalid );
+  BOOST_CHECK( Packet::packetType( ArincSupport::RawData{} ) == Opcode::Invalid );
+  BOOST_CHECK( Packet::packetType( ArincSupport::RawData{ 0_b } ) == Opcode::Invalid );
 
-  BOOST_CHECK( Packet::packetType( Helper::RawData{ 0_b, 1_b } ) == Opcode::InformationRequest );
-  BOOST_CHECK( Packet::packetType( Helper::RawData{ 0_b, 2_b } ) == Opcode::InformationAnswer );
-  BOOST_CHECK( Packet::packetType( Helper::RawData{ 0_b, 4_b } ) == Opcode::Invalid );
+  BOOST_CHECK( Packet::packetType( ArincSupport::RawData{ 0_b, 1_b } ) == Opcode::InformationRequest );
+  BOOST_CHECK( Packet::packetType( ArincSupport::RawData{ 0_b, 2_b } ) == Opcode::InformationAnswer );
+  BOOST_CHECK( Packet::packetType( ArincSupport::RawData{ 0_b, 4_b } ) == Opcode::Invalid );
 }
 
 //! Information Request packet Test
@@ -120,15 +120,15 @@ BOOST_AUTO_TEST_CASE( informationAnswerPacket2 )
 //! Invalid packet test
 BOOST_AUTO_TEST_CASE( invalidPacket )
 {
-  using Helper::operator ""_b;
+  using ArincSupport::operator ""_b;
 
-  BOOST_CHECK_THROW( Packet{ Helper::RawData{} }, InvalidFindPacket );
-  BOOST_CHECK_THROW( Packet{ Helper::RawData{ 0_b } }, InvalidFindPacket );
+  BOOST_CHECK_THROW( Packet{ ArincSupport::RawData{} }, InvalidFindPacket );
+  BOOST_CHECK_THROW( Packet{ ArincSupport::RawData{ 0_b } }, InvalidFindPacket );
 
-  BOOST_CHECK_THROW( ( Packet{ Helper::RawData{ 0_b, 1_b, 0x00_b } } ), InvalidFindPacket );
-  BOOST_CHECK_THROW( ( Packet{ Helper::RawData{ 0_b, 1_b, 0x10_b } } ), InvalidFindPacket );
+  BOOST_CHECK_THROW( ( Packet{ ArincSupport::RawData{ 0_b, 1_b, 0x00_b } } ), InvalidFindPacket );
+  BOOST_CHECK_THROW( ( Packet{ ArincSupport::RawData{ 0_b, 1_b, 0x10_b } } ), InvalidFindPacket );
 
-  BOOST_CHECK_THROW( ( Packet{ Helper::RawData{ 0_b, 0_b, 0x00_b, 0x10_b } } ), InvalidFindPacket );
+  BOOST_CHECK_THROW( ( Packet{ ArincSupport::RawData{ 0_b, 0_b, 0x00_b, 0x10_b } } ), InvalidFindPacket );
 }
 
 BOOST_AUTO_TEST_SUITE_END()

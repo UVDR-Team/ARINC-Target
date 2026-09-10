@@ -76,7 +76,7 @@ class ARINC_615A_EXPORT UploadOperationRequestFile final : public ProtocolFile
      * @param[in] rawData
      *   Raw data file representation.
      **/
-    explicit UploadOperationRequestFile( Helper::ConstRawDataSpan rawData );
+    explicit UploadOperationRequestFile( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @brief Assigns raw data to the file.
@@ -88,7 +88,7 @@ class ARINC_615A_EXPORT UploadOperationRequestFile final : public ProtocolFile
      *
      * @return *this
      **/
-    UploadOperationRequestFile& operator=( Helper::ConstRawDataSpan rawData );
+    UploadOperationRequestFile& operator=( ArincSupport::ConstRawDataSpan rawData );
 
     /**
      * @name Loads.
@@ -121,7 +121,7 @@ class ARINC_615A_EXPORT UploadOperationRequestFile final : public ProtocolFile
 
   protected:
     //! @copydoc ProtocolFile::encode
-    [[nodiscard]] Helper::RawData encode() const override;
+    [[nodiscard]] ArincSupport::RawData encode() const override;
 
     /**
      * @brief Decodes the Upload Operations Request File from the raw data.
@@ -132,7 +132,7 @@ class ARINC_615A_EXPORT UploadOperationRequestFile final : public ProtocolFile
      * @throw Arinc615aException
      *   When the number of header files field is `0`.
      **/
-    void decode( Helper::ConstRawDataSpan rawData );
+    void decode( ArincSupport::ConstRawDataSpan rawData );
 
   private:
     //! upload loads information

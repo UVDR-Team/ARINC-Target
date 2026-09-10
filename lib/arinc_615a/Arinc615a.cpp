@@ -14,11 +14,11 @@
 
 #include <arinc_615a/Version.hpp>
 
-#include <helper/VersionInformation.hpp>
+#include <arinc_support/VersionInformation.hpp>
 
 namespace Arinc615a {
 
-Helper::VersionsInformation::value_type arinc615aVersion()
+ArincSupport::VersionsInformation::value_type arinc615aVersion()
 {
   return {
     Version::Key,

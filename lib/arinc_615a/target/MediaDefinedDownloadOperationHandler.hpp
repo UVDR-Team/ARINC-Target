@@ -18,7 +18,7 @@
 
 #include <arinc_615a/information/Information.hpp>
 
-#include <helper/RawData.hpp>
+#include <arinc_support/RawData.hpp>
 
 namespace Arinc615a::Target {
 
@@ -43,7 +43,7 @@ class MediaDefinedDownloadOperationHandler : public DownloadOperationHandler
      **/
     virtual void downloadingRequest(
       const Information::DownloadFiles &files,
-      Helper::ConstRawDataSpan userDefinedData ) = 0;
+      ArincSupport::ConstRawDataSpan userDefinedData ) = 0;
 };
 
 }

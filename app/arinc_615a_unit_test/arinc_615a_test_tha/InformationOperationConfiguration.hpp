@@ -17,7 +17,7 @@
 #include <arinc_615a/information/TargetHardware.hpp>
 #include <arinc_615a/information/PartNumber.hpp>
 
-#include <arinc_645/Arinc645.hpp>
+#include <arinc_checksum/Arinc645.hpp>
 
 #include <boost/property_tree/ptree_fwd.hpp>
 
@@ -58,7 +58,7 @@ struct InformationOperationConfiguration
   //! If operation is enabled.
   bool enabled{ false };
   //! Check Value for List Transfer
-  Arinc645::CheckValueType listCheckValue{ Arinc645::CheckValueType::NotUsed };
+  ArincChecksum::CheckValueType listCheckValue{ ArincChecksum::CheckValueType::NotUsed };
   //! Target Hardware Information
   Arinc615a::Information::TargetsHardware targetsHardware;
 };
