@@ -307,3 +307,11 @@ void dkm_stop(void)
     arinc615a_tha_stop();
 }
 ```
+
+### 5.5 CheckValueGenerator Compatibility Fix (Boost 1.86.0)
+- `arinc-649/lib/arinc_649/CheckValueGenerator.cpp`:
+  - Added `#include <boost/version.hpp>` and compile guard `#if BOOST_VERSION >= 108800`.
+  - Conditioned `<boost/hash2/md5.hpp>`, `sha1.hpp`, `sha2.hpp` behind `ARINC_649_HAVE_BOOST_HASH2`.
+  - Enabled all standard ARINC CRC generators (CRC8, CRC16, CRC32, CRC64, NOP) to build cleanly on Boost 1.86.0 (VxWorks SDK version) without missing headers.
+- `arinc-649/lib/arinc_649/CMakeLists.txt`:
+  - Changed `find_package( Boost 1.88 REQUIRED )` to `find_package( Boost REQUIRED )` to permit Boost 1.86.0 headers from the VxWorks SDK.

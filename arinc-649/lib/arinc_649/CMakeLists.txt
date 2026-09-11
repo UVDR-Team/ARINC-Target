@@ -8,7 +8,7 @@ cmake_minimum_required( VERSION 3.24 )
 if( ARINC_615A_VXWORKS )
   find_package( Boost REQUIRED )
 else()
-  find_package( Boost 1.88 REQUIRED )
+  find_package( Boost REQUIRED )
   find_package( spdlog REQUIRED )
 endif()
 

@@ -24,9 +24,14 @@
 
 #include <spdlog/spdlog.h>
 
+#include <boost/version.hpp>
+
+#if BOOST_VERSION >= 108800
+#define ARINC_649_HAVE_BOOST_HASH2 1
 #include <boost/hash2/md5.hpp>
 #include <boost/hash2/sha1.hpp>
 #include <boost/hash2/sha2.hpp>
+#endif
 
 #include <boost/exception/all.hpp>
 
@@ -121,16 +126,36 @@ CheckValueGeneratorPtr CheckValueGenerator::create( const CheckValueType type )
       return std::make_shared< Crc32CheckValueGenerator >();
 
     case Md5:
+#if ARINC_649_HAVE_BOOST_HASH2
       return std::make_shared< HashCheckValueGenerator< Md5, boost::hash2::md5_128 > >();
+#else
+      SPDLOG_ERROR( "MD5 check value generator requires Boost >= 1.88 (Boost.Hash2)" );
+      return {};
+#endif
 
     case Sha1:
+#if ARINC_649_HAVE_BOOST_HASH2
       return std::make_shared< HashCheckValueGenerator< Sha1, boost::hash2::sha1_160 > >();
+#else
+      SPDLOG_ERROR( "SHA1 check value generator requires Boost >= 1.88 (Boost.Hash2)" );
+      return {};
+#endif
 
     case Sha256:
+#if ARINC_649_HAVE_BOOST_HASH2
       return std::make_shared< HashCheckValueGenerator< Sha256, boost::hash2::sha2_256 > >();
+#else
+      SPDLOG_ERROR( "SHA256 check value generator requires Boost >= 1.88 (Boost.Hash2)" );
+      return {};
+#endif
 
     case Sha512:
+#if ARINC_649_HAVE_BOOST_HASH2
       return std::make_shared< HashCheckValueGenerator< Sha512, boost::hash2::sha2_512 > >();
+#else
+      SPDLOG_ERROR( "SHA512 check value generator requires Boost >= 1.88 (Boost.Hash2)" );
+      return {};
+#endif
 
     case Crc64:
       return std::make_shared< Crc64CheckValueGenerator >();
