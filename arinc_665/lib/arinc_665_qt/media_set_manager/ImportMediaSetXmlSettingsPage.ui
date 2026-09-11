@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Thomas Vogt</author>
+ <class>Arinc665Qt::MediaSetManager::ImportMediaSetXmlSettingsPage</class>
+ <widget class="QWizardPage" name="Arinc665Qt::MediaSetManager::ImportMediaSetXmlSettingsPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="title">
+   <string>Import ARINC 665 Media Set XML</string>
+  </property>
+  <property name="subTitle">
+   <string>Settings for importing ARINC 665 Media Set</string>
+  </property>
+  <attribute name="pageId">
+   <string notr="true">0</string>
+  </attribute>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="Arinc665Qt::ImportMediaSetXmlSettingsWidget" name="mediaSetXmlSettings">
+     <property name="title">
+      <string>ARINC 665 Media Set XML Settings</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Arinc665Qt::ExportMediaSetSettingsWidget" name="mediaSetOutputSettings">
+     <property name="title">
+      <string>ARINC 665 Media Set Output Settings</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="checkFileIntegrity">
+     <property name="text">
+      <string>Check File Integrity</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Arinc665Qt::ImportMediaSetXmlSettingsWidget</class>
+   <extends>QGroupBox</extends>
+   <header location="global">arinc_665_qt/ImportMediaSetXmlSettingsWidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Arinc665Qt::ExportMediaSetSettingsWidget</class>
+   <extends>QGroupBox</extends>
+   <header location="global">arinc_665_qt/ExportMediaSetSettingsWidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../resources/arinc_665_qt_resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

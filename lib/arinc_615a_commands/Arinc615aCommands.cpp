@@ -50,4 +50,9 @@ boost::shared_ptr< boost::program_options::option_description > targetAddress(
     "IP address of target hardware." );
 }
 
+void setLogLevel( const spdlog::level::level_enum level )
+{
+  spdlog::set_level( level );
+}
+
 }

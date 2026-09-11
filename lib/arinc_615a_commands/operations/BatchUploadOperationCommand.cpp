@@ -75,7 +75,13 @@ BatchUploadOperationCommand::BatchUploadOperationCommand(
       ->value_name( "log-level" )
       ->notifier( []( const auto &logLevel ) {
         spdlog::set_level( logLevel );
-      }),
+        Arinc615aCommands::setLogLevel( logLevel );
+        Arinc615a::setLogLevel( logLevel );
+        Tftp::setLogLevel( logLevel );
+        Arinc665::setLogLevel( logLevel );
+        Arinc649::setLogLevel( logLevel );
+        Helper::setLogLevel( logLevel );
+      } ),
     Helper::SeverityLevelDescription::instance().allLevels().c_str()
   );
   optionsDescriptionV.add( configurationV.options() );
@@ -114,7 +120,7 @@ BatchUploadOperationCommand::BatchUploadOperationCommand(
     "Required."
   )
   (
-    "check-media-set-manager-integrity,c",
+    "check-media-set-manager-integrity",
     boost::program_options::value( &checkMediaSetManagerIntegrityV )
       ->default_value( true, "true" )
       ->implicit_value( true, "true" )
@@ -421,7 +427,7 @@ void BatchUploadOperationCommand::fileRequest(
   const std::string_view filename,
   const Tftp::Packets::TftpOptions &clientTftpOptions,
   const std::string_view loadPartNumber,
-  const Arinc645::CheckValue &checkValue )
+  const Arinc649::CheckValue &checkValue )
 {
   SPDLOG_INFO(
     "{}: Request file '{}' Load Part Number '{}' Check Value '{}'",

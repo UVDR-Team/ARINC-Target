@@ -59,7 +59,7 @@ Tftp::Servers::WriteOperationPtr DownloadOperationImpl::doFileTransfer(
   boost::asio::ip::udp::endpoint remote,
   ::Tftp::Packets::TftpOptions clientTftpOptions,
   std::string partNumber,
-  Arinc645::CheckValue checkValue )
+  Arinc649::CheckValue checkValue )
 {
   Tftp::Arinc615aOptions options{};
 
@@ -72,7 +72,7 @@ Tftp::Servers::WriteOperationPtr DownloadOperationImpl::doFileTransfer(
   }
 
   // Add checksum option
-  if ( Arinc645::CheckValueType::NotUsed != checkValue.type() )
+  if ( Arinc649::CheckValueType::NotUsed != checkValue.type() )
   {
     options.checksum = std::move( checkValue );
   }

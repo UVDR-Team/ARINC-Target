@@ -1,0 +1,4 @@
+== Media Set Manger CLI Application
+
+The _Media Set Manager CLI Application_ provides interfaces to manage a
+_Media Set Manger Repository_ via a command line command interface.

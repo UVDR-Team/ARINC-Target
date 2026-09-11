@@ -1,0 +1,77 @@
+== Media Set Manger Qt Application
+
+The _Media Set Manager Qt Application_ is a GUI application, which is used to
+manage a _Media Sets Repository_.
+
+=== Setup Media Set Manager
+When the application is started, the user is asked for a *Media Set Manager
+Configuration Directory*.
+When an empty directory is selected, a new Media Set Manager Configuration is
+created within this directory.
+The application remembers its last used *Media Set Manager Configuration*
+directory.
+
+=== Configuring the Media Set Manager
+
+When selecting the _Media Set Manager Settings_ menu entry or button, a dialogue
+is shown where the user can modify the Media Set Manger Settings as required.
+When accepting the dialogue, the settings will be applied immediately.
+When discarding the dialogue, the old settings remain valid.
+
+=== Import existing ARINC 665 Media Set
+
+Imports an existing ARINC 665 Media Set from a local source and adds it to the
+Media Set Manager repository.
+
+. Start the import
+.. Activate the _Import existing ARINC 665 Media Set_ menu entry or press the corresponding toolbar button.
+.. A wizard guides you through the import.
+
+. Select source
+.. Choose the source directory (or supported archive) that contains the existing ARINC 665 Media Set.
+.. The application scans the selection and detects media set metadata (e.g., part number, revision, description) and contents (loads/batches).
+
+. Review and confirm
+.. Verify the detected metadata and the list of contained loads/batches.
+.. Optionally, provide a custom label or comment to help identify the media set in the repository.
+
+. Choose destination and conflict handling
+.. The destination inside the Media Set Manager repository is suggested automatically.
+.. If a media set with the same identity already exists, select how to proceed:
+   - Keep existing (cancel import),
+   - Replace existing (overwrite), or
+   - Import as an additional variant (e.g., auto-suffixed label).
+
+. Validate and import
+.. The application validates structure and, if enabled in settings, performs an integrity check.
+.. On success, files are copied into the repository and indexed.
+
+Result:
+
+* The media set appears in the media set list and is available for inspection and for operations that consume ARINC 665 loads.
+* Progress and any issues are shown during the import; errors include guidance for resolution (e.g. invalid structure, missing files, read/write permission issues).
+
+Notes:
+
+* Cancelling the wizard leaves the repository unchanged.
+* Integrity checks can be configured in the _Media Set Manager Settings_.
+* Large imports may take time; a progress indicator is shown.
+
+=== Import ARINC 665 Media Set via Media Set XML Description
+
+Imports a ARINC 665 Media Set given by an ARINC 665 Media Set XML description.
+When the operation is started by activating the _Import ARINC 665 Media Set_
+menu entry or button, a wizard is executed.
+
+=== Inspect ARINC 665 Media Set
+
+When activating a Media Set or selecting the _View Media Set_ menu entry, the
+active Media Set is opened in a separate view for inspection.
+
+=== Remove ARINC 665 Media Set
+
+Removes the selected media set within the media set list.
+
+. Select Media Set to Remove,
+. Active _Remove Media Set_ menu entry or press the button, and
+. Confirm the removal of the media set.

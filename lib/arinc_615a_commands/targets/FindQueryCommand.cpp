@@ -48,7 +48,10 @@ FindQueryCommand::FindQueryCommand(
       ->value_name( "log-level" )
       ->notifier( []( const auto &logLevel ) {
         spdlog::set_level( logLevel );
-      }),
+        Arinc615aCommands::setLogLevel( logLevel );
+        Arinc615a::setLogLevel( logLevel );
+        Helper::setLogLevel( logLevel );
+      } ),
     Helper::SeverityLevelDescription::instance().allLevels().c_str()
   );
   optionsDescriptionV.add( configurationV.options() );
@@ -146,7 +149,7 @@ void FindQueryCommand::help() const
 
 void FindQueryCommand::response(
   const boost::asio::ip::address &target,
-  const Arinc615a::Find::TargetInformation &information ) noexcept
+  const Arinc615a::Find::TargetInformation &information )
 {
   std::cout
     << "Response from " << target << ":\n"
@@ -160,7 +163,7 @@ void FindQueryCommand::response(
   targetsV.emplace_back( std::make_pair( target, information ) );
 }
 
-void FindQueryCommand::finishedFind() noexcept
+void FindQueryCommand::finishedFind()
 {
   std::cout << "ARINC 615A FIND Query finished\n";
 

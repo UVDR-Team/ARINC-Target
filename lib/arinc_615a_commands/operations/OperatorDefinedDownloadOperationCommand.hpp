@@ -91,7 +91,7 @@ class ARINC_615A_COMMANDS_EXPORT OperatorDefinedDownloadOperationCommand final :
       std::string_view filename,
       const Tftp::Packets::TftpOptions &clientTftpOptions,
       std::string_view partNumber,
-      const Arinc645::CheckValue &checkValue ) override;
+      const Arinc649::CheckValue &checkValue ) override;
 
     //! @copydoc Arinc615a::Host::OperatorDefinedDownloadOperationHandler::downloadingList
     void downloadingList( const Arinc615a::Information::DownloadFilesInformation &files ) override;

@@ -15,7 +15,7 @@
 
 #include <arinc_615a/tftp/Tftp.hpp>
 
-#include <arinc_645/CheckValue.hpp>
+#include <arinc_649/CheckValue.hpp>
 
 #include <tftp/packets/Packets.hpp>
 
@@ -90,7 +90,7 @@ struct ARINC_615A_EXPORT Arinc615aOptions
   //! Part Number
   std::string partNumber;
   //! Checksum Option
-  Arinc645::CheckValue checksum;
+  Arinc649::CheckValue checksum;
 
   /**
    * @brief Returns if any option is set.
@@ -99,7 +99,7 @@ struct ARINC_615A_EXPORT Arinc615aOptions
    **/
   explicit operator bool() const noexcept
   {
-    return port || !partNumber.empty() || ( Arinc645::CheckValueType::NotUsed != checksum.type() );
+    return port || !partNumber.empty() || ( Arinc649::CheckValueType::NotUsed != checksum.type() );
   }
 
   /**
@@ -128,7 +128,7 @@ struct ARINC_615A_EXPORT Arinc615aOptions
  *
  * @return Returns the option name.
  **/
-[[nodiscard]] ARINC_615A_EXPORT std::string_view Arinc615aOptions_name( Arinc645::CheckValueType type ) noexcept;
+[[nodiscard]] ARINC_615A_EXPORT std::string_view Arinc615aOptions_name( Arinc649::CheckValueType type ) noexcept;
 
 /**
  * @brief Returns a string, which describes the ARINC 615A Options.
@@ -149,7 +149,7 @@ struct ARINC_615A_EXPORT Arinc615aOptions
 /**
  * @brief Tries to decode Checksum Option from the given option list.
  *
- * The @p std::pair< bool, Arinc645::CheckValue > is used to indicate if the checksum option processing was successful
+ * The @p std::pair< bool, Arinc649::CheckValue > is used to indicate if the checksum option processing was successful
  * and the decoded check value.
  * When no checksum option is provided, success is indicated with an empty check value.
  *
@@ -158,7 +158,7 @@ struct ARINC_615A_EXPORT Arinc615aOptions
  *
  * @return Decoded Option
  **/
-[[nodiscard]] ARINC_615A_EXPORT std::pair< bool, Arinc645::CheckValue > Arinc615aOptions_checksum(
+[[nodiscard]] ARINC_615A_EXPORT std::pair< bool, Arinc649::CheckValue > Arinc615aOptions_checksum(
   ::Tftp::Packets::Options &options );
 
 /**

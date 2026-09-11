@@ -40,7 +40,10 @@ ListTargetsCommand::ListTargetsCommand() :
       ->value_name( "log-level" )
       ->notifier( []( const auto &logLevel ) {
         spdlog::set_level( logLevel );
-      }),
+        Arinc615aCommands::setLogLevel( logLevel );
+        Arinc615a::setLogLevel( logLevel );
+        Helper::setLogLevel( logLevel );
+      } ),
     Helper::SeverityLevelDescription::instance().allLevels().c_str()
   )
   (

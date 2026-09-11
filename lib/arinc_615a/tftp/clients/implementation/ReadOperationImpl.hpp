@@ -17,7 +17,7 @@
 
 #include <arinc_615a/tftp/clients/implementation/OperationImpl.hpp>
 
-#include <arinc_645/CheckValue.hpp>
+#include <arinc_649/CheckValue.hpp>
 
 #include <tftp/TftpOptionsConfiguration.hpp>
 
@@ -42,7 +42,7 @@ class ReadOperationImpl final : public ReadOperation, private OperationImpl
     ReadOperationImpl( ::Tftp::Clients::ClientPtr tftpClient, boost::asio::io_context &ioContext );
 
     //! Destructor.
-    ~ReadOperationImpl() noexcept( false ) override = default;
+    ~ReadOperationImpl() override = default;
 
     //! @copydoc ReadOperation::tftpTimeout()
     ReadOperation& tftpTimeout( std::chrono::seconds timeout ) override;
@@ -82,7 +82,7 @@ class ReadOperationImpl final : public ReadOperation, private OperationImpl
 
     //! @copydoc ReadOperation::checksumOption()
     ReadOperation& checksumOption(
-      Arinc645::CheckValue checksumOption ) override;
+      Arinc649::CheckValue checksumOption ) override;
 
     //! @copydoc ReadOperation::remote
     ReadOperation& remote( boost::asio::ip::udp::endpoint remote ) override;
@@ -127,7 +127,7 @@ class ReadOperationImpl final : public ReadOperation, private OperationImpl
     //! Part Number Option
     std::string partNumberOptionV;
     //! Checksum Option (If set to NoCheckValue, not set)
-    Arinc645::CheckValue checksumOptionV{ Arinc645::CheckValue::NoCheckValue };
+    Arinc649::CheckValue checksumOptionV{ Arinc649::CheckValue::NoCheckValue };
     //! Where the connection should be established to.
     boost::asio::ip::udp::endpoint remoteV;
     //! Parameter to define the communication source

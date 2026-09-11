@@ -13,9 +13,10 @@
 #include "OperatorDefinedDownloadOperationWizard.hpp"
 
 #include "ui_OperatorDefinedDownloadOperationWizard.h"
-#include "OperatorDefinedDownloadOperationSettingsPage.hpp"
 
 #include <arinc_615a_dla_qt/operations/OperatorDefinedDownloadOperation.hpp>
+
+#include <arinc_615a/information/InitializationResponse.hpp>
 
 #include <arinc_615a/find/TargetInformation.hpp>
 

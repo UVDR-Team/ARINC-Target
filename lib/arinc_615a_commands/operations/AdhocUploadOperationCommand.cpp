@@ -12,6 +12,8 @@
 
 #include "AdhocUploadOperationCommand.hpp"
 
+#include "arinc_665_commands/Arinc665Commands.hpp"
+
 #include <arinc_615a/find/TargetInformation.hpp>
 
 #include <arinc_615a/host/OperationConfiguration.hpp>
@@ -76,7 +78,13 @@ AdhocUploadOperationCommand::AdhocUploadOperationCommand(
       ->value_name( "log-level" )
       ->notifier( []( const auto &logLevel ) {
         spdlog::set_level( logLevel );
-      }),
+        Arinc615aCommands::setLogLevel( logLevel );
+        Arinc615a::setLogLevel( logLevel );
+        Tftp::setLogLevel( logLevel );
+        Arinc665::setLogLevel( logLevel );
+        Arinc649::setLogLevel( logLevel );
+        Helper::setLogLevel( logLevel );
+      } ),
     Helper::SeverityLevelDescription::instance().allLevels().c_str()
   );
   optionsDescriptionV.add( configurationV.options() );
@@ -128,9 +136,12 @@ AdhocUploadOperationCommand::AdhocUploadOperationCommand(
       "Must be provided for each media directory."
   )
   (
-    "check-file-integrity,c",
+    "check-file-integrity",
     boost::program_options::value( &checkFileIntegrityV )
       ->implicit_value( true, "true" )
+      ->default_value(
+        Arinc665::Utils::MediaSetDefaults::DefaultCheckFileIntegrity,
+        Arinc665::Utils::MediaSetDefaults::DefaultCheckFileIntegrity ? "true" : "false" )
       ->value_name( "true|false" ),
     "Check file integrity during media set importing and registration.\n"
       "Optional."
@@ -209,7 +220,7 @@ void AdhocUploadOperationCommand::execute( const Commands::Parameters &parameter
     assert( importer );
 
     importer
-      ->checkFileIntegrity( checkFileIntegrityV.value_or( Arinc665::Utils::MediaSetDefaults::DefaultCheckFileIntegrity ) )
+      ->checkFileIntegrity( checkFileIntegrityV )
       .mediaPaths( mediaPathsV );
 
     const auto &[ mediaSet, checkValues]{ ( *importer )() };
@@ -298,7 +309,7 @@ void AdhocUploadOperationCommand::execute( const Commands::Parameters &parameter
 void AdhocUploadOperationCommand::help() const
 {
   std::cout
-    << "Perform ARINC 615A Upload Operation\n"
+    << "Perform ARINC 615A Adhoc Upload Operation\n"
     << optionsDescriptionV;
 }
 
@@ -418,7 +429,7 @@ void AdhocUploadOperationCommand::fileRequest(
   const std::string_view filename,
   const Tftp::Packets::TftpOptions &clientTftpOptions,
   const std::string_view loadPartNumber,
-  const Arinc645::CheckValue &checkValue )
+  const Arinc649::CheckValue &checkValue )
 {
   SPDLOG_INFO(
     "Request file '{}' Load Part Number '{}' Check Value '{}'",

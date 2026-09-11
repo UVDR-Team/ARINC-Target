@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<MediaSet
+  xmlns="http://www.thomas-vogt.de/Arinc665MediaSet"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.thomas-vogt.de/Arinc665MediaSet ../xml/Arinc665MediaSet.xsd"
+
+  PartNumber="CCC" >
+
+  <FilesUserDefinedData>File Data</FilesUserDefinedData>
+  <LoadsUserDefinedData>Loads Data</LoadsUserDefinedData>
+  <BatchesUserDefinedData>Batch Data</BatchesUserDefinedData>
+
+  <Content>
+    <File Name="File1" SourcePath="File1" />
+    <Load Name="Load1.LUH" PartNumber="AABBCC" Description="Test Load Description" Type="0x0501" >
+      <TargetHardware ThwId="ABCDEF" >
+        <Position Pos="123" />
+        <Position Pos="456" />
+      </TargetHardware>
+      <TargetHardware ThwId="GHIJKL" />
+
+      <DataFile    FilePath="/File1" PartNumber="AABBCC1" />
+      <DataFile    FilePath="/Directory2/File3" PartNumber="AABBCC1" />
+      <SupportFile FilePath="/Directory1/File2" PartNumber="AABBCC2" />
+      <SupportFile FilePath="/Directory2/File4" PartNumber="AABBCC2" />
+
+      <UserDefinedData>TEST</UserDefinedData>
+    </Load>
+    <Load Name="Load2.LUH" PartNumber="AABBDD" PartFlags="0x000D" >
+      <TargetHardware ThwId="ABCDEF" />
+      <TargetHardware ThwId="GHIJKL" />
+
+      <DataFile    FilePath="/File1" PartNumber="AABBCC1" />
+      <DataFile    FilePath="/Directory2/File3" PartNumber="AABBCC1" />
+      <SupportFile FilePath="/Directory1/File2" PartNumber="AABBCC2" />
+      <SupportFile FilePath="/Directory2/File4" PartNumber="AABBCC2" />
+    </Load>
+    <Directory Name="Directory1" >
+      <File Name="File2" SourcePath="File2" />
+    </Directory>
+    <Directory Name="Directory2" >
+      <File Name="File3" SourcePath="File3" />
+      <File Name="File4" SourcePath="File4" />
+    </Directory>
+    <File Name="Readme.txt" SourcePath="Readme.txt" />
+    <Batch Name="Batch1.LUB" PartNumber="AABBEE" Comment="Comment Text" >
+      <Target ThwIdPos="ABCDEF_123" >
+        <Load FilePath="/Load1.LUH" />
+        <Load FilePath="/Load2.LUH" />
+      </Target>
+      <Target ThwIdPos="ABCDEF_456" >
+        <Load FilePath="/Load1.LUH" />
+      </Target>
+      <Target ThwIdPos="GHIJKL_123" >
+        <Load FilePath="/Load1.LUH" />
+        <Load FilePath="/Load2.LUH" />
+      </Target>
+    </Batch>
+  </Content>
+</MediaSet>

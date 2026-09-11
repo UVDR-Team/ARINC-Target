@@ -1,0 +1,46 @@
+= arinc_665_media_set_decompiler(1)
+Thomas Vogt
+
+== Name
+
+arinc_665_media_set_decompiler - Decompiles an ARINC 665 Media Set and stores the representation as an ARINC Media Set XML file.
+
+== Synopsis
+
+*arinc_665_media_set_decompiler*
+[-h|--help]
+[-l|--log-level trace|debug|info|warn|err|critical|off]
+{-d|--source-directory _Source_}...
+-f|--xml-file _XML File_
+[-i|--check-file-integrity true|false]
+
+== Options
+
+*-h|--help*::
+ Print this help screen.
+
+*-l|--log-level* _log-level_ (default: `warn`)::
+The verbosity of the logging information.
+Valid values:
+ +
+ - `trace`
+ - `debug`
+ - `info`
+ - `warn`
+ - `err`
+ - `critical`
+ - `off`
+
+*-d|--source-directory* _Source_::
+ARINC 665 media source directories. Must be repeated for each medium of the media set.
+
+*-f|--xml-file* _XML File_::
+Path to the ARINC 665 media set description XML output file to create.
+
+*-i|--check-file-integrity* _false|true_ (default: `true`)::
+Check file integrity during decompilation.
+Use `true` to enable or `false` to disable.
+
+== See Also
+
+link:[arinc_665_media_set_compiler(1)]

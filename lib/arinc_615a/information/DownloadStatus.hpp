@@ -14,8 +14,9 @@
 #define ARINC_615A_INFORMATION_DOWNLOADSTATUS_HPP
 
 #include <arinc_615a/information/Information.hpp>
-#include <arinc_615a/information/Status.hpp>
+
 #include <arinc_615a/information/DownloadFileStatus.hpp>
+#include <arinc_615a/information/Status.hpp>
 #include <arinc_615a/information/Ratio.hpp>
 
 namespace Arinc615a::Information {

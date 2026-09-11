@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Thomas Vogt</author>
+ <class>Arinc665Qt::MediaSetManager::MediaSetManagerWindow</class>
+ <widget class="QMainWindow" name="Arinc665Qt::MediaSetManager::MediaSetManagerWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc">
+    <normaloff>:/fa/solid/database.svg</normaloff>:/fa/solid/database.svg</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QTableView" name="mediaSets">
+      <property name="toolTip">
+       <string>Media Sets</string>
+      </property>
+      <property name="alternatingRowColors">
+       <bool>true</bool>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectRows</enum>
+      </property>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="mediaSetMenu">
+    <property name="title">
+     <string>&amp;Media Set</string>
+    </property>
+    <addaction name="viewMediaSet"/>
+    <addaction name="importMediaSet"/>
+    <addaction name="importMediaSetXml"/>
+    <addaction name="removeMediaSet"/>
+   </widget>
+   <widget class="QMenu" name="mediaSetManagerMenu">
+    <property name="title">
+     <string>M&amp;edia Set Manager</string>
+    </property>
+    <addaction name="openMediaSetsDirectory"/>
+    <addaction name="mediaSetManagerSettings"/>
+    <addaction name="separator"/>
+    <addaction name="about"/>
+   </widget>
+   <addaction name="mediaSetMenu"/>
+   <addaction name="mediaSetManagerMenu"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="mediaSetToolBar">
+   <property name="windowTitle">
+    <string>Media Set</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>48</width>
+     <height>48</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="viewMediaSet"/>
+   <addaction name="importMediaSet"/>
+   <addaction name="importMediaSetXml"/>
+   <addaction name="removeMediaSet"/>
+  </widget>
+  <widget class="QToolBar" name="mediaSetManagerToolBar">
+   <property name="windowTitle">
+    <string>Media Set Manager</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>48</width>
+     <height>48</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="openMediaSetsDirectory"/>
+   <addaction name="mediaSetManagerSettings"/>
+   <addaction name="separator"/>
+   <addaction name="about"/>
+  </widget>
+  <action name="viewMediaSet">
+   <property name="icon">
+    <iconset resource="../../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc">
+     <normaloff>:/fa/solid/eye.svg</normaloff>:/fa/solid/eye.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;View</string>
+   </property>
+   <property name="toolTip">
+    <string>View Media Set</string>
+   </property>
+   <property name="statusTip">
+    <string>View selected ARINC 665 Media Set</string>
+   </property>
+  </action>
+  <action name="importMediaSet">
+   <property name="icon">
+    <iconset resource="../../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc">
+     <normaloff>:/fa/solid/arrow-right-to-bracket.svg</normaloff>:/fa/solid/arrow-right-to-bracket.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Import</string>
+   </property>
+   <property name="toolTip">
+    <string>Import Media Set</string>
+   </property>
+   <property name="statusTip">
+    <string>Import ARINC 665 Media Set into Media Set Manager</string>
+   </property>
+  </action>
+  <action name="importMediaSetXml">
+   <property name="icon">
+    <iconset resource="../../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc">
+     <normaloff>:/fa/solid/file-import.svg</normaloff>:/fa/solid/file-import.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Import &amp;XML</string>
+   </property>
+   <property name="toolTip">
+    <string>Import Media Set XML</string>
+   </property>
+   <property name="statusTip">
+    <string>Import ARINC 665 Media Set XML into Media Set Manager</string>
+   </property>
+  </action>
+  <action name="removeMediaSet">
+   <property name="icon">
+    <iconset resource="../../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc">
+     <normaloff>:/fa/solid/trash-can.svg</normaloff>:/fa/solid/trash-can.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Remove</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove Media Set</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove selected ARINC 665 Media Set from Media Set Manager</string>
+   </property>
+  </action>
+  <action name="openMediaSetsDirectory">
+   <property name="icon">
+    <iconset resource="../../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc">
+     <normaloff>:/fa/solid/folder-tree.svg</normaloff>:/fa/solid/folder-tree.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Media Sets &amp;Directory</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Media Sets Directory</string>
+   </property>
+   <property name="statusTip">
+    <string>Open Media Sets Directory of Media Set Manager</string>
+   </property>
+  </action>
+  <action name="mediaSetManagerSettings">
+   <property name="icon">
+    <iconset resource="../../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc">
+     <normaloff>:/fa/solid/gear.svg</normaloff>:/fa/solid/gear.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>Media Set Manager Settings</string>
+   </property>
+   <property name="statusTip">
+    <string>Manage Media Set Manger Settings</string>
+   </property>
+  </action>
+  <action name="about">
+   <property name="icon">
+    <iconset resource="../../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc">
+     <normaloff>:/fa/solid/circle-question.svg</normaloff>:/fa/solid/circle-question.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+   <property name="toolTip">
+    <string>About Media Set Manager</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc"/>
+ </resources>
+ <connections/>
+</ui>

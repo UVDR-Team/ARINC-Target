@@ -16,7 +16,7 @@ arinc_615a_operation-adhoc-upload - executes ARINC 615A Adhoc Upload operation.
 [--dlp-timeout=_Timeout_]
 [--port-option]
 {--source-directory=_Medium Source Directory_}
-[-c|--check-file-integrity[=true|false]]
+[--check-file-integrity[=true|false]]
 {--load-header=_Load Header_}
 [--local-tftp-address=_IP-Address_]
 [--dlp-retries=_Retries_]
@@ -72,7 +72,7 @@ If set, the host uses a dynamic TFTP port.
 *--source-directory*=_Medium Source Directory_::
 This option must be provided for each medium of the _ARINC 665 Media Set_ to use.
 
-*-c, --check-file-integrity*=[true|false]::
+*--check-file-integrity*=[true|false]::
 If set, the integrity of the _ARINC 665 Media Sets_ are checked on startup.
 Defaults to `true`.
 

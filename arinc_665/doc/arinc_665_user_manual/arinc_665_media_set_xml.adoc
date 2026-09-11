@@ -1,0 +1,355 @@
+== ARINC 665 Media Set XML
+
+This XML-dialect is used to describe an _ARINC 665 Media Set_ in a user-readable
+way.
+This XML is used to create / import _ARINC 665 Media Sets_.
+
+- XML Schema
+- Checksums
+
+=== Generic `Check Value` Attributes
+The _Check Value_ attributes are used to define the Check Value Algorithm used.
+
+[cols="1,3", options="header"]
+|===
+|Attribute |Description
+|`NotUsed` |Check Value not provided.
+|`CRC8`    |CRC-8 is used.
+|`CRC16`   |CRC-16 is used.
+|`CRC32`   |CRC-32 is used.
+|`MD5`     |MD5 hash is used.
+|`SHA1`    |SHA-1 hash is used.
+|`SHA256`  |SHA-2 256-bit hash is used.
+|`SHA512`  |SHA-2 512-bit hash is used.
+|`CRC64`   |CRC-64 is used.
+|===
+
+=== Element `MediaSet`
+
+The _MediaSet_ element is the start point of a ARINC 665 XML Media Set description.
+It must contain the mandatory _PartNumber_ Attribute and a _Content_ Element.
+
+The _XSD-Schema_ `http://www.thomas-vogt.de/Arinc665MediaSet` is provided within the _XSD_ `Arinc665MediaSet.xsd` and can be used for XSD validatiation.
+
+[discrete]
+==== Example
+
+[source,xml]
+----
+<MediaSet
+  xmlns="http://www.thomas-vogt.de/Arinc665MediaSet"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.thomas-vogt.de/Arinc665MediaSet Arinc665MediaSet.xsd"
+
+  PartNumber="CCC"
+  MediaSetCheckValue="CRC64" >
+
+  <!-- Optional -->
+  <FilesUserDefinedData>Files User Defined Data</FilesUserDefinedData>
+  <!-- Optional -->
+  <LoadsUserDefinedData>Loads User Defined Data</LoadsUserDefinedData>
+  <!-- Optional -->
+  <BatchesUserDefinedData>Batches User Defined Data</BatchesUserDefinedData>
+
+  <Content>
+    <!--
+      Media Set Contents follows.
+      [...]
+    -->
+  </Content>
+</MediaSet>
+----
+
+==== Attribute `PartNumber`
+The Media Set Part Number.
+THis information is written into the Media Set Fils: _FILES.LUM_, _LOADS.LUM_, and _BATCHES.LUM_.
+
+==== Attribute `MediaSetCheckValue`
+The Media Set Default Check Value.
+If dependent elements do not set a _Check Value_ attribute, this value is used by default.
+
+=== Elements `FilesUserDefinedData`, `LoadsUserDefinedData`, and `BatchesUserDefinedData`
+These elements are optional and define the additional _User Defined Data_ which can be placed into the Media Set Files: _FILES.LUM_, _LOADS.LUM_, and _BATCHES.LUM_.
+User Defined Data for _List of Files_ file.
+
+=== Element `Content`
+This required Element contains the _Directories_, _Files_, _Loads_, and _Batches_ located on the Media Set.
+The elements corresponds to filesystem entries.
+The `Content` element is the Media Set root-directory.
+
+See also:
+
+* <<arinc_665_media_set_xml_element_directory>>
+* <<arinc_665_media_set_xml_element_file>>
+* <<arinc_665_media_set_xml_element_load>>
+* <<arinc_665_media_set_xml_element_batch>>
+
+[[arinc_665_media_set_xml_element_directory]]
+=== Element `Directory`
+Defines a directory with its name _@Name_, which is located on the Media Set in its parent directory or the root-directory.
+It contains further _Directories_, _Files_, _Loads_, and _Batches_ which are placed within this directory.
+
+* <<arinc_665_media_set_xml_element_file>>
+* <<arinc_665_media_set_xml_element_load>>
+* <<arinc_665_media_set_xml_element_batch>>
+
+==== Attribute `Name`
+The directory name.
+This attribute is mandatory.
+
+[[arinc_665_media_set_xml_element_file]]
+=== Element `File`
+This element represents a file, which is located on the Media Set named _@Name_.
+
+==== Attribute `Name`
+The file name.
+This attribute is mandatory.
+
+==== Attribute `SourcePath`
+Reference the path of the _File_ when the Media Set is created.
+
+==== Example
+[source,xml]
+----
+<File Name="File1" CheckValue="none" SourcePath="File1" />
+<File Name="File2" Medium="2" />
+----
+
+[[arinc_665_media_set_xml_element_load]]
+=== Element `Load`
+A _Load_ represents an _ARINC 665 Load Software Part_ wit its name _@Name_, which can be loaded via the _ARINC 615A Protocol_ to a target.
+A _Load_ will generate a _Load Header_ which references are relevant data and files to be loaded onto the target.
+
+==== Attribute `Name`
+The load header file name (typically using the `.LUH` extension).
+This attribute is mandatory.
+
+==== Attribute `PartNumber`
+The load part number.
+This attribute is mandatory.
+
+==== Attribute `PartFlags`
+Hexadecimal flags of the load header (e.g., `0x0000`).
+Optional.
+Default: `0x0000`.
+
+==== Attribute `Description`
+Human-readable description of the load.
+Optional.
+
+==== Attribute `Type`
+Hexadecimal load type (e.g., `0x0501`).
+Optional.
+Default: `0x0000`.
+
+==== Attribute `LoadCheckValue`
+Check Value algorithm to be used for the load header file.
+Optional.
+If omitted, the effective value is inherited (see Generic Check Value Attributes).
+
+==== Attribute `DataFilesCheckValue`
+Default Check Value algorithm for all `DataFile` entries in this load (can be overridden per file).
+Optional.
+If omitted, the effective value is inherited.
+
+==== Attribute `SupportFilesCheckValue`
+Default Check Value algorithm for all `SupportFile` entries in this load (can be overridden per file).
+Optional.
+If omitted, the effective value is inherited.
+
+==== Attribute `SourcePath`
+Reference path for the `.LUH` file at media set creation time.
+Optional.
+
+==== Subelement `TargetHardware`
+Defines a target hardware identifier and optional positions for which the load is applicable.
+At least one `TargetHardware` element is required.
+Refer to <<arinc_665_media_set_xml_element_load_target_hardware>> for subelement description.
+
+==== Subelement `DataFile`
+References a data file that belongs to the load.
+One or more `DataFile` elements are required.
+Refer to <<arinc_665_media_set_xml_element_data_support_file>> for subelement description.
+
+==== Subelement `SupportFile`
+References a support file that belongs to the load.
+Zero or more `SupportFile` elements are allowed.
+Refer to <<arinc_665_media_set_xml_element_data_support_file>> for subelement description.
+
+==== Subelement `UserDefinedData`
+Optional user-defined data blob associated with the load header and/or load description.
+
+==== Example
+[source,xml]
+----
+<Load
+  Name="Load1.LUH"
+  PartNumber="AABBCC"
+  PartFlags="0x0000"
+  Description="Test Load Description"
+  Type="0x0501"
+  LoadCheckValue="CRC64" >
+  <TargetHardware ThwId="ABCDEF" >
+    <Position Pos="123" />
+    <Position Pos="456" />
+  </TargetHardware>
+  <TargetHardware ThwId="GHIJKL" />
+
+  <DataFile    FilePath="/File1"            PartNumber="AABBCC1" />
+  <DataFile    FilePath="/File2"            PartNumber="AABBCC1" CheckValue="MD5" />
+  <SupportFile FilePath="/Directory1/File2" PartNumber="AABBCC2" />
+
+  <UserDefinedData>TEST</UserDefinedData>
+</Load>
+----
+
+[[arinc_665_media_set_xml_element_load_target_hardware]]
+=== `Load` Subelement `TargetHardware`
+Defines a target hardware identifier and optional positions for which the load is applicable.
+At least one `TargetHardware` element is required.
+
+==== Attribute `ThwId`
+Target Hardware ID.
+This attribute is mandatory.
+
+==== Subelement `Position`
+Optional target position information.
+Multiple positions or none can be provided.
+The element has an attribute `Pos`, which defines the actual position information.
+
+===== Attribute `Pos`
+Target position string.
+This attribute is mandatory.
+
+[[arinc_665_media_set_xml_element_data_support_file]]
+=== `Load` Subelement `DataFile` and `SupportFile`
+References data or support files that belong to the load.
+
+==== Attribute `FilePath`
+Path of the referenced file within the media set.
+Leading “/” denotes a path relative to the media set root; otherwise it is relative to the containing `Directory` element.
+
+==== Attribute `PartNumber`
+Part number associated with the referenced file.
+This attribute is mandatory.
+
+==== Attribute `CheckValue`
+The Check Value algorithm for this referenced file.
+Optional.
+If omitted, the effective value is inherited (e.g., from `DataFilesCheckValue`, `SupportFilesCheckValue`, or higher-level defaults).
+
+[[arinc_665_media_set_xml_element_batch]]
+=== Element `Batch`
+This element represents an _ARINC 665 Batch_ named by the attribute _@Name_, which combines multiple _ARINC 665 Loads_ to load onto different targets.
+
+==== Attribute `Name`
+The batch file name (typically using the `.LUB` extension).
+This attribute is mandatory.
+
+==== Attribute `PartNumber`
+The batch part number.
+This attribute is mandatory.
+
+==== Attribute `Comment`
+Human-readable comment for the batch.
+Optional.
+
+==== Attribute `SourcePath`
+Reference path for the `.LUB` file at media set creation time.
+Optional.
+
+==== Subelement `Target`
+Defines a target (hardware and position) and lists the loads to be applied to that target.
+One or more `Target` elements are required.
+Refer to <<arinc_665_media_set_xml_element_batch_target>> for subelement description.
+
+==== Example
+[source,xml]
+----
+<Batch Name="Batch1.LUB" PartNumber="AABBEE" Comment="Comment Text" >
+  <Target ThwIdPos="ABCDEF_123" >
+    <Load FilePath="/Load1.LUH" />
+    <Load FilePath="/Load2.LUH" />
+  </Target>
+</Batch>
+----
+
+[[arinc_665_media_set_xml_element_batch_target]]
+=== `Batch` Subelement `Target`
+Defines a _Target_ which is loaded by this _Batch_.
+
+==== Attribute `ThwIdPos`
+Target Hardware ID with position information (combined).
+The format is: `ThwId_Pos`.
+This attribute is mandatory.
+
+==== Subelement `Load`
+References a load contained in the media set that shall be executed for this target.
+One or more `Load` entries are required per `Target`.
+
+===== Attribute `FilePath`
+Path to the referenced load file within the media set (the `.LUH` file).
+A leading “/” denotes a path relative to the media set root; otherwise it is relative to the containing `Directory` element.
+
+=== Media Set Example
+
+[source,xml]
+----
+<MediaSet
+  xmlns="http://www.thomas-vogt.de/Arinc665MediaSet"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.thomas-vogt.de/Arinc665MediaSet Arinc665MediaSet.xsd"
+
+  PartNumber="CCC"
+  MediaSetCheckValue="CRC64" >
+
+  <FilesUserDefinedData>File Data</FilesUserDefinedData>
+  <LoadsUserDefinedData>Loads Data</LoadsUserDefinedData>
+  <BatchesUserDefinedData>Batch Data</BatchesUserDefinedData>
+
+  <Content>
+    <File Name="File1" SourcePath="File1" />
+    <Load
+      Name="Load1.LUH"
+      PartNumber="AABBCC"
+      PartFlags="0x0000"
+      Description="Test Load Description"
+      Type="0x0501"
+      LoadCheckValue="CRC64" >
+      <TargetHardware ThwId="ABCDEF" >
+        <Position Pos="123" />
+        <Position Pos="456" />
+      </TargetHardware>
+      <TargetHardware ThwId="GHIJKL" />
+
+      <DataFile    FilePath="/File1" PartNumber="AABBCC1" />
+      <SupportFile FilePath="/Directory1/File2" PartNumber="AABBCC2" />
+
+      <UserDefinedData>TEST</UserDefinedData>
+    </Load>
+    <Load Name="Load2.LUH" PartNumber="AABBDD" PartFlags="0x0000" >
+      <TargetHardware ThwId="ABCDEF" />
+      <TargetHardware ThwId="GHIJKL" />
+
+      <DataFile    FilePath="/File1" PartNumber="AABBCC1" />
+      <SupportFile FilePath="/Directory1/File2" PartNumber="AABBCC2" />
+    </Load>
+    <Directory Name="Directory1" >
+      <File Name="File2" SourcePath="File2" />
+    </Directory>
+    <File Name="Readme.txt" SourcePath="Readme.txt" />
+    <Batch Name="Batch1.LUB" PartNumber="AABBEE" Comment="Comment Text" >
+      <Target ThwIdPos="ABCDEF_123" >
+        <Load FilePath="/Load1.LUH" />
+        <Load FilePath="/Load2.LUH" />
+      </Target>
+    </Batch>
+    <Directory Name="Directory3" >
+      <File Name="DIR3_FILE1" />
+      <Load Name="DIR3_LOAD1.LUH" PartNumber="DIR3LOAD1" SourcePath="DIR3LOAD1.LUH" />
+      <Load Name="DIR3_LOAD2.LUH" PartNumber="DIR3LOAD2" SourcePath="DIR3LOAD2.LUH" />
+      <Batch Name="DIR3_BATCH1.LUB" PartNumber="DIR3BATCH1" SourcePath="DIR3_BATCH1.LUB" />
+    </Directory>
+  </Content>
+</MediaSet>
+----

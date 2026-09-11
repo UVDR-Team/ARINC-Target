@@ -30,7 +30,7 @@
 #include <arinc_615a/Arinc615aException.hpp>
 #include <arinc_615a/StatusCode.hpp>
 
-#include <arinc_645/CheckValueGenerator.hpp>
+#include <arinc_649/CheckValueGenerator.hpp>
 
 #include <tftp/files/MemoryFile.hpp>
 
@@ -110,7 +110,7 @@ void InformationOperationImpl::finished( const FinalStatus finalStatus, std::str
 
 void InformationOperationImpl::targetInformation(
   Information::TargetsHardware targetsHardware,
-  const Arinc645::CheckValueType checkValueType )
+  const Arinc649::CheckValueType checkValueType )
 {
   SPDLOG_INFO( "Send target information" );
 
@@ -118,7 +118,7 @@ void InformationOperationImpl::targetInformation(
 
   const auto rawFile{ std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< Helper::RawData >( configList ) ) };
 
-  const auto checkValueGenerator{ Arinc645::CheckValueGenerator::create( checkValueType ) };
+  const auto checkValueGenerator{ Arinc649::CheckValueGenerator::create( checkValueType ) };
 
   checkValueGenerator->process( std::as_bytes( rawFile->data() ) );
 

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "dependencies": [
+    "boost-asio",
+    "boost-endian",
+    "boost-exception",
+    "boost-multi-index",
+    "boost-program-options",
+    "boost-property-tree",
+    "boost-serialization",
+    "boost-test",
+    "spdlog"
+  ],
+  "features": {
+    "with-qt" : {
+      "description": "Enables Qt libraries",
+      "dependencies": [ "qtbase" ]
+    }
+  }
+}

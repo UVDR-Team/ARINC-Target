@@ -26,7 +26,11 @@ namespace Arinc615a {
 /**
  * @brief ARINC 615A %Target ID.
  *
- * A ARINC 615A target id is formed by the string `[THW_ID]_[POSITION]`
+ * A _ARINC 615A %Target ID_ is formed by the string `[THW_ID]_[POSITION]`.
+ *
+ * Validation is decoupled from storage:
+ * you can construct an invalid _%Target ID_ and later query compliance via operator bool(), rather than throwing on
+ * construction.
  **/
 class ARINC_615A_EXPORT TargetId final
 {

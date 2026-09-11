@@ -233,7 +233,7 @@ void ProtocolImpl::handleInitialisationFile(
   const ::Tftp::Packets::TftpOptions &clientTftpOptions,
   const Tftp::Arinc615aOptions &clientArinc615aOptions )
 {
-  if ( clientArinc615aOptions.checksum.type() != Arinc645::CheckValueType::NotUsed )
+  if ( clientArinc615aOptions.checksum.type() != Arinc649::CheckValueType::NotUsed )
   {
     SPDLOG_INFO( "Ignore unexpected checksum option" );
   }

@@ -44,6 +44,7 @@
 int main( int argc, char * argv[] );
 
 int main( const int argc, char * argv[] )
+try
 {
   spdlog::set_level( spdlog::level::level_enum::warn );
 
@@ -60,13 +61,11 @@ int main( const int argc, char * argv[] )
 
     const std::string versionValues{
       " - '"
-      + std::string{
-        versionDes.name( Arinc615a::Arinc615aVersion::Arinc615a2 ) }
+      + std::string{ versionDes.name( Arinc615a::Arinc615aVersion::Arinc615a2 ) }
       +   "': ARINC 615A-2\n"
 
       + " - '"
-      + std::string{
-        versionDes.name( Arinc615a::Arinc615aVersion::Arinc615a34 ) }
+      + std::string{ versionDes.name( Arinc615a::Arinc615aVersion::Arinc615a34 ) }
       +  "': ARINC 615A-3/ 615A-4" };
 
     std::filesystem::path filename;
@@ -123,11 +122,10 @@ int main( const int argc, char * argv[] )
       boost::program_options::parse_command_line( argc, argv, optionsDescription ),
       variablesMap );
 
+    // NOLINTNEXTLINE( readability-container-contains ):VCPKG/MSVC compiles boost programm_options without C++20 support
     if ( 0U != variablesMap.count( "help" ) )
     {
-      std::cout
-        << "Generates ARINC 615A Download Request File\n"
-        << optionsDescription << "\n";
+      std::cout << "Generates ARINC 615A Download Request File\n" << optionsDescription << "\n";
       return EXIT_FAILURE;
     }
 
@@ -178,4 +176,9 @@ int main( const int argc, char * argv[] )
     std::cerr << "Unknown exception occurred\n";
     return EXIT_FAILURE;
   }
+}
+catch ( ... )
+{
+  std::cerr << "Very bad exception\n";
+  return EXIT_FAILURE;
 }

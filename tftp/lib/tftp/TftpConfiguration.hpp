@@ -1,0 +1,117 @@
+// SPDX-License-Identifier: MPL-2.0
+/**
+ * @file
+ * @copyright
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * @author Thomas Vogt, thomas@thomas-vogt.de
+ *
+ * @brief Declaration of Class Tftp::TftpConfiguration.
+ **/
+
+#ifndef TFTP_TFTPCONFIGURATION_HPP
+#define TFTP_TFTPCONFIGURATION_HPP
+
+#include <tftp/Tftp.hpp>
+
+#include <boost/property_tree/ptree_fwd.hpp>
+
+#include <boost/program_options/options_description.hpp>
+
+#include <chrono>
+#include <cstdint>
+
+namespace Tftp {
+
+/**
+ * @brief TFTP Configuration Parameters.
+ *
+ * Configuration can be load/ stored as Property Tree and Command Line Parameters.
+ * TFTP Options are configured in a separate Configuration instance.
+ *
+ * @sa TftpOptionsConfiguration
+ **/
+class TFTP_EXPORT TftpConfiguration
+{
+  public:
+    /**
+     * @brief Initialises the Configuration with Default Values.
+     *
+     * @param[in] defaultTftpPort
+     *   Default TFTP Port used for Configuration.
+     **/
+    explicit TftpConfiguration( uint16_t defaultTftpPort = DefaultTftpPort ) noexcept;
+
+    /**
+     * @brief Loads the configuration via a Property Tree.
+     *
+     * @param[in] properties
+     *   Stored Configuration.
+     * @param[in] defaultTftpPort
+     *   Default TFTP Port used for Configuration.
+     **/
+    explicit TftpConfiguration(
+      const boost::property_tree::ptree &properties,
+      uint16_t defaultTftpPort = DefaultTftpPort );
+
+    //! Defaulted Copy Constructor
+    TftpConfiguration( const TftpConfiguration &other ) noexcept = default;
+
+    //! Defaulted Move Constructor
+    TftpConfiguration( TftpConfiguration &&other ) noexcept = default;
+
+    //! Defaulted Copy Assignment Operator
+    TftpConfiguration& operator=( const TftpConfiguration &other ) noexcept;
+
+    //! Defaulted Move Assignment Operator
+    TftpConfiguration& operator=( TftpConfiguration &&other ) noexcept;
+
+    /**
+     * @brief Load Configuration from given Property Tree.
+     *
+     * @param[in] properties
+     *   Configuration as Property Tree
+     **/
+    void fromProperties( const boost::property_tree::ptree &properties );
+
+    /**
+     * @brief Converts the configuration values to a Property Tree.
+     *
+     * @param[in] full
+     *   If set to true, all options are added to the property tree, even if defaulted.
+     *
+     * @return Configuration as Property Tree.
+     **/
+    [[nodiscard]] boost::property_tree::ptree toProperties( bool full = false ) const;
+
+    /**
+     * @brief Returns an option description, which can be used to parse a command line.
+     *
+     * @return TFTP Configuration Options Description.
+     **/
+    [[nodiscard]] boost::program_options::options_description options();
+
+    //! TFTP timeout - standard when no timeout option is negotiated in seconds.
+    std::chrono::seconds tftpTimeout{ DefaultTftpReceiveTimeout };
+    //! Number of Retries.
+    uint16_t tftpRetries{ DefaultTftpRetries };
+
+    //! UDP Port used for TFTP Communication.
+    uint16_t tftpServerPort;
+
+    //! Dally Option
+    bool dally{ false };
+
+  private:
+    /**
+     * @brief Default TFTP Port (can be overridden by configuration).
+     *
+     * This value is used for loading and storing to determine the default value.
+     **/
+    const uint16_t defaultTftpPort;
+};
+
+}
+
+#endif

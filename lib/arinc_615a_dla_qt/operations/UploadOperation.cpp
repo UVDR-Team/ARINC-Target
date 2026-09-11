@@ -20,6 +20,9 @@
 
 #include <arinc_615a/tftp/Arinc615aOptions.hpp>
 
+#include <arinc_615a/information/InitializationResponse.hpp>
+#include <arinc_615a/information/UploadStatus.hpp>
+
 #include <arinc_615a/StatusCodeDescription.hpp>
 
 #include <arinc_665/media/Load.hpp>
@@ -173,7 +176,7 @@ void UploadOperation::fileRequest(
   std::string_view filename,
   const Tftp::Packets::TftpOptions &clientTftpOptions,
   std::string_view loadPartNumber,
-  const Arinc645::CheckValue &checkValue )
+  const Arinc649::CheckValue &checkValue )
 {
   SPDLOG_INFO( "Request file '{}' Load Part Number '{}' Check Value '{}'", filename, loadPartNumber, checkValue.format() );
 

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Thomas Vogt</author>
+ <class>Arinc665Qt::MediaSetManager::ImportMediaSetSettingsPage</class>
+ <widget class="QWizardPage" name="Arinc665Qt::MediaSetManager::ImportMediaSetSettingsPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="title">
+   <string>Import ARINC 665 Media Set</string>
+  </property>
+  <property name="subTitle">
+   <string>Settings for importing ARINC 665 Media Set</string>
+  </property>
+  <attribute name="pageId">
+   <string notr="true">0</string>
+  </attribute>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="Arinc665Qt::MediaPathsWidget" name="mediaPaths">
+     <property name="title">
+      <string>ARINC 665 Media Paths</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="checkFileIntegrity">
+     <property name="text">
+      <string>Check File Integrity</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Arinc665Qt::MediaPathsWidget</class>
+   <extends>QGroupBox</extends>
+   <header location="global">arinc_665_qt/MediaPathsWidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../resources/arinc_665_qt_resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

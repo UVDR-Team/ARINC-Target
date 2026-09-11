@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Thomas Vogt</author>
+ <class>Arinc665Qt::MediaSetManager::ViewMediaSetDialog</class>
+ <widget class="QDialog" name="Arinc665Qt::MediaSetManager::ViewMediaSetDialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc">
+    <normaloff>:/fa/solid/eye.svg</normaloff>:/fa/solid/eye.svg</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="Arinc665Qt::Media::MediaSetViewWidget" name="mediaSetView" native="true"/>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Arinc665Qt::Media::MediaSetViewWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">arinc_665_qt/media/MediaSetViewWidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../resources/arinc_665_qt_resources.qrc"/>
+  <include location="../../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc"/>
+ </resources>
+ <connections/>
+</ui>

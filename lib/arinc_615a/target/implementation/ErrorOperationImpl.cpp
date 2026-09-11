@@ -72,7 +72,7 @@ void ErrorOperationImpl::start(
       Tftp::Arinc615aOptions{
         .port = port,
         .partNumber = {},
-        .checksum = Arinc645::CheckValue::NoCheckValue } );
+        .checksum = Arinc649::CheckValue::NoCheckValue } );
 
   initialisationFileOperationV->start();
 }

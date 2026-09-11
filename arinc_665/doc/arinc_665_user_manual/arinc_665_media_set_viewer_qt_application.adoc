@@ -1,0 +1,101 @@
+== ARINC 665 Media Set Viewer Qt Application
+
+This document describes the purpose, capabilities, and usage of the ARINC 665 Media Set Viewer application.
+It is intended for avionics engineers, test technicians, and software integrators who need to inspect ARINC 665 media sets, review their XML descriptions, and export media set definitions for downstream processes.
+
+The ARINC 665 Media Set Viewer provides a convenient way to:
+
+* Load and inspect an existing media set from media or a local directory.
+* Load and review an ARINC 665 Media Set XML description.
+* Export a loaded media set into an ARINC 665 Media Set XML document.
+
+=== Key Features
+
+* Load existing ARINC 665 media sets from a directory or removable media.
+* Parse and display ARINC 665 Media Set XML descriptions.
+* Export a loaded media set to an XML description for documentation or automation.
+* Visualize media set hierarchy (volumes, products, files).
+* View file metadata (names, sizes, timestamps, checksums if present).
+* Validate consistency between media set content and XML description.
+* Search and filter files by name, extension, or attributes.
+* Generate summary reports.
+
+NOTE:
+Actual availability of certain details such as checksums or extended metadata depends on the input media set or XML.
+
+===Supported Inputs
+
+* Media Set Source:
+** Directory representing the media contents.
+** Removable media mounted on the system.
+
+* XML Description:
+** ARINC 665 Media Set XML file (.xml).
+
+=== Typical Workflows
+==== Inspect a Media Set from a Drive or Directory
+
+- Use File > Open Media Set.
+- Select the top-level folder (or mounted drive).
+- The left pane shows the hierarchical structure; select nodes to view details on the right (metadata, file list, sizes, etc.).
+- Use the search box to filter files by name or extension.
+
+==== Review an ARINC 665 Media Set XML Description
+- Use File > Open XML Description.
+- The viewer parses and displays the structure defined in XML.
+- Validate that entries in XML correspond to expected products, files, and attributes.
+- If the corresponding media is available locally, use the validation function to compare XML vs actual files.
+
+==== Export a Media Set as XML
+- Load a media set.
+- Use File > Export as XML.
+- Choose a destination path and file name.
+- Review the generated XML for completeness and archive it with the media set.
+
+=== Error Handling and Troubleshooting
+
+[discrete]
+==== Cannot open media set
+- Verify the directory path or that the removable media is mounted.
+- Check permissions.
+
+[discrete]
+==== XML parse error
+- Ensure the file is a valid ARINC 665 Media Set XML file.
+- Review the error message for the first failing line or element.
+
+[discrete]
+==== Validation mismatches
+- Confirm that the media content corresponds to the XML version you opened.
+- Re-run validation after refreshing the media set (View > Refresh).
+
+[discrete]
+==== Export failure
+- Verify write permissions in the destination directory.
+- Check disk space.
+
+If issues persist, capture logs or screenshots of error messages to aid support.
+
+=== Best Practices
+
+- Keep the XML description and the media set content synchronized as a matched pair.
+- Use validation before distribution to catch mismatches early.
+- Archive the exported XML with a timestamp and a version tag aligned with your internal configuration management.
+- Avoid modifying media set contents after exporting XML; re-export if changes are required.
+
+=== Security and Compliance Considerations
+
+- Treat media sets as controlled artifacts in regulated environments.
+- Verify checksums/integrity before use in loading operations.
+- Store exported XML in a version-controlled repository.
+
+=== Frequently Asked Questions
+
+Can I use the viewer without the physical media?
+- Yes. You can load an XML description alone, or a directory which mirrors the media contents.
+
+Does the viewer modify the media set?
+- No. Operations are read-only except when you explicitly export XML or reports.
+
+Are checksums required?
+- They are recommended for integrity verification; availability depends on your media set or XML.

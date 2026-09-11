@@ -82,16 +82,14 @@ class ARINC_615A_COMMANDS_EXPORT FindQueryCommand final
      * @param[in] information
      *   Target Information
      **/
-    void response(
-      const boost::asio::ip::address &target,
-      const Arinc615a::Find::TargetInformation &information ) noexcept;
+    void response( const boost::asio::ip::address &target, const Arinc615a::Find::TargetInformation &information );
 
     /**
      * @brief FIND operation finished.
      *
      * Finishes the operation.
      **/
-    void finishedFind() noexcept;
+    void finishedFind();
 
     //! ASIO I/O context
     boost::asio::io_context &ioContextV;

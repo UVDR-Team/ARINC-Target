@@ -78,7 +78,7 @@ Tftp::Servers::WriteOperationPtr MediaDefinedDownloadOperationImpl::fileTransfer
   boost::asio::ip::udp::endpoint remote,
   ::Tftp::Packets::TftpOptions clientTftpOptions,
   std::string partNumber,
-  Arinc645::CheckValue checkValue )
+  Arinc649::CheckValue checkValue )
 {
   return doFileTransfer(
     std::move( dataHandler ),
@@ -172,6 +172,7 @@ void MediaDefinedDownloadOperationImpl::tftpRequest(
 
     case Write:
       // check file type
+      // NOLINTNEXTLINE( readability-trivial-switch ): Keep for better protocol file readability
       switch ( Files::ProtocolFilename{ filename }.fileType() )
       {
         using enum Files::ProtocolFileType;

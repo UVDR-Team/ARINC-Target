@@ -61,6 +61,7 @@ QVariant DownloadFilesModel::data( const QModelIndex &index, const int role ) co
   switch ( role )
   {
     case Qt::ItemDataRole::DisplayRole:
+      // NOLINTNEXTLINE( readability-trivial-switch ): Keep for further extension
       switch ( static_cast< Columns>( index.column() ) )
       {
         case Columns::Filename:
@@ -89,6 +90,7 @@ QVariant DownloadFilesModel::headerData( const int section, const Qt::Orientatio
     return section;
   }
 
+  // NOLINTNEXTLINE( readability-trivial-switch ): Keep for further extension
   switch ( Columns{ section } )
   {
     case Columns::Filename:

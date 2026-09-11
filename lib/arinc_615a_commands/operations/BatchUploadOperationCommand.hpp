@@ -123,7 +123,7 @@ class ARINC_615A_COMMANDS_EXPORT BatchUploadOperationCommand final :
       std::string_view filename,
       const Tftp::Packets::TftpOptions &clientTftpOptions,
       std::string_view loadPartNumber,
-      const Arinc645::CheckValue &checkValue ) override;
+      const Arinc649::CheckValue &checkValue ) override;
 
     /**
      * @brief File transfer completed handler.
@@ -171,7 +171,7 @@ class ARINC_615A_COMMANDS_EXPORT BatchUploadOperationCommand final :
     Arinc615a::Arinc615aConfiguration configurationV;
     //! Media Set
     Arinc665::Media::ConstMediaSetPtr mediaSetV;
-    //! ARINC 645 Check Values for file lookup
+    //! ARINC 649 Check Values for file lookup
     Arinc665::Media::CheckValues checkValuesV;
     //! Protocol
     Arinc615a::Host::ProtocolPtr protocolV;

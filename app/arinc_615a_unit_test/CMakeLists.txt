@@ -3,7 +3,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 # If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-cmake_minimum_required( VERSION 4.3 )
+cmake_minimum_required( VERSION 3.24 )
 
 add_executable( arinc_615a_unit_test )
 
@@ -32,7 +32,7 @@ target_link_libraries(
   PRIVATE
     arinc_615a_test
     arinc_665_test
-    arinc_645_test
+    arinc_649_test
     tftp_test
     commands_test
     $<TARGET_NAME_IF_EXISTS:qt_icon_resources_test> # Optionally link qt_icon_resources_test

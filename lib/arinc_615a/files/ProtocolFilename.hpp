@@ -266,8 +266,16 @@ class ARINC_615A_EXPORT ProtocolFilename final
             const ProtocolFileType,
             &ExtensionTypeInfo::type>> >>;
 
-    //! Filename extension to type mapping.
-    static const ExtensionTypeInfoIndex extensionTypeInfoIndex;
+    /**
+     * @brief Index that associates file extensions with their corresponding types in the protocol.
+     *
+     * This index allows mapping between file extensions and the protocol-defined file types, ensuring compatibility
+     * when identifying or categorizing files based on their extensions. It supports operations for retrieving file type
+     * information from an extension identifier and vice versa.
+     *
+     * @return The index used for associating extensions with their protocol file types.
+     **/
+    [[nodiscard]] static const ExtensionTypeInfoIndex& extensionTypeInfoIndex();
 
     //! Decoded Target ID.
     TargetId targetIdV;

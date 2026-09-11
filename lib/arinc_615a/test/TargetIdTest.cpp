@@ -22,11 +22,11 @@ BOOST_AUTO_TEST_SUITE( Arinc615aTest )
 BOOST_AUTO_TEST_SUITE( TargetIdTest )
 
 //! Test THW ID
-static const std::string validThwId = "THWID1";
+static constexpr auto validThwId{ "THWID1" };
 //! Test THW Position
-static const std::string validPosition = "POS1";
+static constexpr auto validPosition{ "POS1" };
 //! Test Target ID
-static const std::string validTargetId = validThwId + "_" + validPosition;
+static constexpr auto validTargetId{ "THWID1_POS1" };
 
 //! TargetId Constructor test
 BOOST_AUTO_TEST_CASE( splitTargetId )
@@ -36,8 +36,8 @@ BOOST_AUTO_TEST_CASE( splitTargetId )
   BOOST_CHECK( std::get< 0>(response) == validThwId);
   BOOST_CHECK( std::get< 1>(response) == validPosition);
 
-  BOOST_CHECK( TargetId::splitTargetId( "") == (std::make_tuple<std::string, std::string>({},{})));
-  BOOST_CHECK( TargetId::splitTargetId( "_") == (std::make_tuple<std::string, std::string>({},{})));
+  BOOST_CHECK( TargetId::splitTargetId( "" ) == ( std::make_tuple< std::string, std::string >( {}, {} ) ) );
+  BOOST_CHECK( TargetId::splitTargetId( "_" ) == ( std::make_tuple< std::string, std::string >( {}, {} ) ) );
 }
 
 //! Target ID is THW ID Test
@@ -66,17 +66,17 @@ BOOST_AUTO_TEST_CASE( isPosition )
 //! TargetId Constructor test
 BOOST_AUTO_TEST_CASE( constructor )
 {
-  BOOST_CHECK( validTargetId == TargetId( validTargetId).toString() );
-  BOOST_CHECK( validTargetId == TargetId( validThwId, validPosition).toString() );
+  BOOST_CHECK( validTargetId == TargetId( validTargetId ).toString() );
+  BOOST_CHECK( validTargetId == TargetId( validThwId, validPosition ).toString() );
 
-  BOOST_CHECK( !TargetId( validThwId + validPosition));
+  BOOST_CHECK( !TargetId( std::format( "{}{}", validThwId, validPosition ) ) );
 
-  BOOST_CHECK( !TargetId( std::string( "000") + "_" + validPosition));
-  BOOST_CHECK( !TargetId( std::string( "00") + "_" + validPosition));
-  BOOST_CHECK( !TargetId( std::string( "0") + "_" + validPosition));
-  BOOST_CHECK( !TargetId( std::string( "") + "_" + validPosition));
+  BOOST_CHECK( !TargetId( std::string( "000" ) + "_" + validPosition ) );
+  BOOST_CHECK( !TargetId( std::string( "00" ) + "_" + validPosition ) );
+  BOOST_CHECK( !TargetId( std::string( "0" ) + "_" + validPosition ) );
+  BOOST_CHECK( !TargetId( std::string( "" ) + "_" + validPosition ) );
 
-  BOOST_CHECK( !TargetId( validThwId + "_" + "000000000"));
+  BOOST_CHECK( !TargetId( std::format( "{}_{}", validThwId, "000000000" ) ) );
 
   BOOST_CHECK( !TargetId( "*000_001"));
 

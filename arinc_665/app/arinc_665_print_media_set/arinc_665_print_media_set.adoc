@@ -1,0 +1,29 @@
+= arinc_665_print_media_set(1)
+Thomas Vogt
+
+== Name
+
+arinc_665_print_media_set - Prints content of ARINC 665 Media Set.
+
+== Synopsis
+
+*arinc_665_print_media_set*
+--directory _Media Directory_ ...
+--check-file-integrity _true|false_
+
+== Options
+
+// tag::options[]
+*--directory* _Media Directory_::
+Media Set Directory.
+Must be provided for each medium.
+
+*--check-file-integrity* _true|false_::
+If set to `true`, the media set integrity is checked on import.
+When not provided, the Media Set integrity is checked.
+
+== See Also
+
+link:[arinc_665_media_set_compiler(1)]
+link:[arinc_665_media_set_decompiler(1)]
+link:[arinc_665_ls(1)]

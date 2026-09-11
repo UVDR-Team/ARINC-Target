@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 96 96"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="ProjectLogo.svg"
+   width="96"
+   height="96"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   inkscape:export-filename="ProjectLogo.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     id="namedview6"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="18.0625"
+     inkscape:cx="51.986159"
+     inkscape:cy="48"
+     inkscape:window-width="3840"
+     inkscape:window-height="2008"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+  <path
+     d="m 3.497456,20.933896 c -1.9966081,-1.996615 -1.9966081,-5.223144 0,-7.219759 1.996619,-1.996614 5.239116,-1.996614 7.235735,0 l 30.667994,30.667999 c 1.996619,1.996614 1.996619,5.239116 0,7.23573 L 10.733191,82.285864 c -1.996619,1.996613 -5.239116,1.996613 -7.235735,0 -1.9966081,-1.996614 -1.9966081,-5.239116 0,-7.235731 L 30.539608,47.992014 Z M 42.886673,73.54868 h 46.001996 c 2.827208,0 5.111331,2.284127 5.111331,5.111332 0,2.827206 -2.284123,5.111333 -5.111331,5.111333 H 42.886673 c -2.827208,0 -5.111331,-2.284127 -5.111331,-5.111333 0,-2.827205 2.284123,-5.111332 5.111331,-5.111332 z"
+     id="path2"
+     style="stroke-width:0.159729" />
+</svg>

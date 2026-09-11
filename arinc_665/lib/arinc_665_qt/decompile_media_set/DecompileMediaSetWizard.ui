@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Arinc665Qt::DecompileMediaSetWizard</class>
+ <widget class="QWizard" name="Arinc665Qt::DecompileMediaSetWizard">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Decompile ARINC 665 Media Set</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc">
+    <normaloff>:/fa/solid/arrow-right-to-bracket.svg</normaloff>:/fa/solid/arrow-right-to-bracket.svg</iconset>
+  </property>
+  <property name="wizardStyle">
+   <enum>QWizard::ModernStyle</enum>
+  </property>
+  <property name="options">
+   <set>QWizard::NoBackButtonOnStartPage</set>
+  </property>
+  <widget class="Arinc665Qt::DecompileMediaSetSettingsPage" name="settings">
+   <property name="title">
+    <string>Decompilation Settings</string>
+   </property>
+   <property name="subTitle">
+    <string>Select ARINC 665 Media Directories</string>
+   </property>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Arinc665Qt::DecompileMediaSetSettingsPage</class>
+   <extends>QWizardPage</extends>
+   <header location="global">arinc_665_qt/decompile_media_set/DecompileMediaSetSettingsPage.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../resources/arinc_665_qt_resources.qrc"/>
+  <include location="../../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc"/>
+ </resources>
+ <connections/>
+</ui>

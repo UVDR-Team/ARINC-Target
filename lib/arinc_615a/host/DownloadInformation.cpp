@@ -12,7 +12,7 @@
 
 #include "DownloadInformation.hpp"
 
-#include <arinc_645/CheckValueGenerator.hpp>
+#include <arinc_649/CheckValueGenerator.hpp>
 
 #include <spdlog/spdlog.h>
 
@@ -66,7 +66,7 @@ void DownloadInformation::fileStart(
   const std::string_view filename,
   std::filesystem::path filePath,
   std::string partNumber,
-  Arinc645::CheckValue checkValue )
+  Arinc649::CheckValue checkValue )
 {
   std::unique_lock lock{ mutexV };
 
@@ -165,13 +165,13 @@ void DownloadInformation::save( const std::filesystem::path &downloadInformation
       downloadInformationStream << std::format( "  {:23} {}\n", "Part Number:", status.partNumber );
     }
 
-    if ( status.checkValue != Arinc645::CheckValue::NoCheckValue )
+    if ( status.checkValue != Arinc649::CheckValue::NoCheckValue )
     {
       downloadInformationStream << std::format( "  {:23} {}\n", "Check Value:", status.checkValue );
 
       if ( checkIntegrity )
       {
-        auto calculatedCheckValue{ Arinc645::CheckValueGenerator::checkValue( status.checkValue.type(), status.filePath ) };
+        auto calculatedCheckValue{ Arinc649::CheckValueGenerator::checkValue( status.checkValue.type(), status.filePath ) };
 
         downloadInformationStream << std::format(
           "  {:23} {} *{}*\n",

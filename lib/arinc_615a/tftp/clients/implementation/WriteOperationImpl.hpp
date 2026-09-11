@@ -17,7 +17,7 @@
 
 #include <arinc_615a/tftp/clients/implementation/OperationImpl.hpp>
 
-#include <arinc_645/CheckValue.hpp>
+#include <arinc_649/CheckValue.hpp>
 
 #include <tftp/TftpOptionsConfiguration.hpp>
 
@@ -42,7 +42,7 @@ class WriteOperationImpl final : public WriteOperation, private OperationImpl
     WriteOperationImpl( ::Tftp::Clients::ClientPtr tftpClient, boost::asio::io_context &ioContext );
 
     //! Destructor.
-    ~WriteOperationImpl() noexcept( false ) override = default;
+    ~WriteOperationImpl() override = default;
 
     //! @copydoc WriteOperation::tftpTimeout()
     WriteOperation& tftpTimeout( std::chrono::seconds timeout ) override;
@@ -78,7 +78,7 @@ class WriteOperationImpl final : public WriteOperation, private OperationImpl
     WriteOperation& partNumberOption( std::string partNumberOption ) override;
 
     //! @copydoc WriteOperation::checksumOption()
-    WriteOperation& checksumOption( Arinc645::CheckValue checksumOption ) override;
+    WriteOperation& checksumOption( Arinc649::CheckValue checksumOption ) override;
 
     //! @copydoc WriteOperation::remote
     WriteOperation& remote( boost::asio::ip::udp::endpoint remote ) override;
@@ -119,7 +119,7 @@ class WriteOperationImpl final : public WriteOperation, private OperationImpl
     //! Part Number Option
     std::string partNumberOptionV;
     //! Checksum Option (If set to NoCheckValue, not set)
-    Arinc645::CheckValue checksumOptionV{ Arinc645::CheckValue::NoCheckValue };
+    Arinc649::CheckValue checksumOptionV{ Arinc649::CheckValue::NoCheckValue };
     //! Where the connection should be established to.
     boost::asio::ip::udp::endpoint remoteV;
     //! Parameter to define the communication source

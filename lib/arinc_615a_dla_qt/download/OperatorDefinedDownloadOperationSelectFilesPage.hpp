@@ -17,7 +17,7 @@
 
 #include <arinc_615a_qt/Arinc615aQt.hpp>
 
-#include <arinc_615a/information/Information.hpp>
+#include <arinc_615a/information/DownloadFileInformation.hpp>
 
 #include <QWizardPage>
 

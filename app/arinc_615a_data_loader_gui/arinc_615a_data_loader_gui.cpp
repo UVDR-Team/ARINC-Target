@@ -42,6 +42,7 @@
 int main( int argc, char * argv[] );
 
 int main( int argc, char * argv[] )
+try
 {
   spdlog::default_logger()->sinks().emplace_back(
     std::make_shared< spdlog::sinks::basic_file_sink_mt >(
@@ -86,4 +87,9 @@ int main( int argc, char * argv[] )
     QMessageBox::critical( nullptr, "Error", "Unknown Error" );
     return EXIT_FAILURE;
   }
+}
+catch ( ... )
+{
+  std::cerr << "Very bad exception\n";
+  return EXIT_FAILURE;
 }

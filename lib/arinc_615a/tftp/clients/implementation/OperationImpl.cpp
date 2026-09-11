@@ -96,7 +96,7 @@ OperationImpl::OperationImpl( boost::asio::io_context &ioContext ) :
 {
 }
 
-OperationImpl::~OperationImpl() noexcept( false )
+OperationImpl::~OperationImpl()
 try
 {
   if ( operationV )
@@ -178,9 +178,10 @@ void OperationImpl::handleCompletion( const ::Tftp::TransferStatus status )
 
   if ( ::Tftp::TransferStatus::Aborted == status )
   {
+    // explicit user abort
+
     SPDLOG_INFO( "TFTP client operation aborted by local instance" );
 
-    // explicit user abort
     if ( operationCompletionHandlerV )
     {
       operationCompletionHandlerV( TransferStatus::Aborted );

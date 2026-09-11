@@ -28,8 +28,8 @@
 #include <arinc_615a/StatusCodeDescription.hpp>
 #include <arinc_615a/TargetId.hpp>
 
-#include <arinc_645/CheckValue.hpp>
-#include <arinc_645/CheckValueGenerator.hpp>
+#include <arinc_649/CheckValue.hpp>
+#include <arinc_649/CheckValueGenerator.hpp>
 
 #include <tftp/packets/TftpOptions.hpp>
 
@@ -210,7 +210,7 @@ void OperatorDefinedDownloadOperation::fileRequest(
   std::string_view filename,
   const Tftp::Packets::TftpOptions &clientTftpOptions,
   std::string_view partNumber,
-  const Arinc645::CheckValue &checkValue )
+  const Arinc649::CheckValue &checkValue )
 {
   const std::filesystem::path filePath{ downloadDataPathV / Helper::normaliseFilename( filename ) };
 

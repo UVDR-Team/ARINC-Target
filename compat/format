@@ -1,0 +1,26 @@
+// SPDX-License-Identifier: MPL-2.0
+/**
+ * @file
+ * @brief Compatibility header providing std::format via fmt for platforms lacking <format>.
+ **/
+
+#ifndef COMPAT_FORMAT_HPP
+#define COMPAT_FORMAT_HPP
+
+#if defined(__has_include) && __has_include(<format>) && !defined(__VXWORKS__)
+#  include <format>
+#else
+#  ifndef FMT_HEADER_ONLY
+#    define FMT_HEADER_ONLY 1
+#  endif
+#  include <fmt/core.h>
+#  include <fmt/format.h>
+
+namespace std {
+  using ::fmt::format;
+  using ::fmt::format_to;
+  using ::fmt::formatter;
+}
+#endif
+
+#endif // COMPAT_FORMAT_HPP

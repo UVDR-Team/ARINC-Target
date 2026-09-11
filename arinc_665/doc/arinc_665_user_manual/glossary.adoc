@@ -1,0 +1,36 @@
+[glossary]
+== Glossary
+
+[glossary]
+
+ARINC:: **Aeronautical Radio, Incorporated**
+
+ARINC 649 Check Value:: Integrity value defined by ARINC 649 used to verify transferred files or lists.
+
+ARINC 665 Media Set::
+Group of files and metadata organized per ARINC 665 specifications.
+
+ARINC 665 XML Description::
+A structured representation of the media set contents and attributes.
+
+BFP:: **B**atch **F**ile **P**art
+
+CLI:: **C**ommand-**L**ine **I**nterface
+
+GUI:: **G**raphical **U**ser **I**nterface
+
+Load (ARINC 665 Load):: A loadable software/data item conforming to ARINC 665, referenced by a Load Upload Header.
+
+Load Upload Header:: Header file representing a specific ARINC 665 load selected during Upload.
+
+LSP:: **L**oadable **S**oftware **P**art
+
+Manufacturer Code:: Code indicating the equipment manufacturer as reported by FIND.
+
+MSP:: **M**edia **S**et **P**art
+
+Part Number:: Identifier for a load or file item; may be used to disambiguate files during Upload/Download.
+
+THW:: **T**arget **H**ard**w**are
+
+UI:: **U**ser **I**nterface

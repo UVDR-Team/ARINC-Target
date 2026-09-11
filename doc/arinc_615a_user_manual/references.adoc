@@ -14,10 +14,10 @@ ARINC Report 665-5:
 Loadable Software Standards;
 2019-08-13
 
-* [[[arinc_645_1,ARINC 645-1]]]
-ARINC Report 645-1:
+* [[[arinc_649,ARINC 649]]]
+ARINC Report 649:
 Common Terminology and Functions for Software Distribution and Loading;
-2021-08-11
+2025-12-02
 
 [discrete]
 === IETF RFCs

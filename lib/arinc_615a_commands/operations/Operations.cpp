@@ -18,6 +18,7 @@
 #include <arinc_615a_commands/operations/MediaDefinedDownloadOperationCommand.hpp>
 #include <arinc_615a_commands/operations/OperatorDefinedDownloadOperationCommand.hpp>
 #include <arinc_615a_commands/operations/UploadOperationCommand.hpp>
+#include <arinc_615a_commands/operations/UploadLoadsOperationCommand.hpp>
 
 #include <commands/CommandRegistry.hpp>
 
@@ -53,6 +54,14 @@ void registerCommands(
     "ARINC 615A Adhoc Upload Operation",
     std::bind_front( &AdhocUploadOperationCommand::execute, adhocUploadOperationCommand ),
     std::bind_front( &AdhocUploadOperationCommand::help, adhocUploadOperationCommand ) );
+
+  auto uploadLoadsOperationCommand{ std::make_shared< UploadLoadsOperationCommand >( ioContext, abortSignal, terminateSignal ) };
+
+  registry->command(
+    "UploadLoads",
+    "ARINC 615A Upload Loads Operation",
+    std::bind_front( &UploadLoadsOperationCommand::execute, uploadLoadsOperationCommand ),
+    std::bind_front( &UploadLoadsOperationCommand::help, uploadLoadsOperationCommand ) );
 
   auto batchUploadOperationCommand{
     std::make_shared< BatchUploadOperationCommand >( ioContext, abortSignal, terminateSignal ) };

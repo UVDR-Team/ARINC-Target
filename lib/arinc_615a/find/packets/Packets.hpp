@@ -69,8 +69,16 @@ enum class ParameterList : size_t
 //! Parameter Max length map type
 using ParameterMaxLengthMap = std::map< ParameterList, size_t >;
 
-//! Parameter max lengths
-ARINC_615A_EXPORT extern const ParameterMaxLengthMap ParameterMaxLengths;
+/**
+ * @brief Retrieves a map defining the maximum length for each parameter in the FIND response.
+ *
+ * The map associates entries from the ParameterList enumeration with their corresponding
+ * maximum allowable length.
+ *
+ * @return A constant reference to a map (ParameterMaxLengthMap) with entries specifying
+ *   parameter identifiers (ParameterList) and their respective maximum lengths (size_t).
+ **/
+[[nodiscard]] ARINC_615A_EXPORT const ParameterMaxLengthMap& parameterMaxLengths();
 
 }
 

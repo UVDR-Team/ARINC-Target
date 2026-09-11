@@ -86,6 +86,7 @@ QVariant DownloadFilesStatusModel::data( const QModelIndex &index, const int rol
       return QBrush{ Qt::black, Qt::SolidPattern };
 
     case Qt::ItemDataRole::ToolTipRole:
+      // NOLINTNEXTLINE( readability-trivial-switch ): Keep for further extension
       switch ( Columns{ index.column() } )
       {
         case Columns::Status:

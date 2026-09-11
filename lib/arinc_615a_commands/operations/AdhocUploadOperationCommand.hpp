@@ -73,6 +73,16 @@ class ARINC_615A_COMMANDS_EXPORT AdhocUploadOperationCommand final : private Ari
     void help() const;
 
   private:
+    /**
+     * @brief Return the Path of the given File.
+     *
+     * @param[in] file
+     *   File to get the path for.
+     *
+     * @return Path of the given file.
+     * @retval {}
+     *   When the file is null or invalid.
+     **/
     std::filesystem::path filePath( const Arinc665::Media::ConstFilePtr &file );
 
     /**
@@ -108,7 +118,7 @@ class ARINC_615A_COMMANDS_EXPORT AdhocUploadOperationCommand final : private Ari
       std::string_view filename,
       const Tftp::Packets::TftpOptions &clientTftpOptions,
       std::string_view loadPartNumber,
-      const Arinc645::CheckValue &checkValue ) override;
+      const Arinc649::CheckValue &checkValue ) override;
 
     /**
      * @brief File transfer completed handler.
@@ -148,7 +158,7 @@ class ARINC_615A_COMMANDS_EXPORT AdhocUploadOperationCommand final : private Ari
     //! Media Source Directories.
     std::vector< std::filesystem::path > mediaSourceDirectoriesV;
     //! Check File Integrity.
-    boost::optional< bool > checkFileIntegrityV;
+    bool checkFileIntegrityV;
 
     //! ARINC 615A Data Loader Configuration
     Arinc615a::Arinc615aConfiguration configurationV;
@@ -156,7 +166,7 @@ class ARINC_615A_COMMANDS_EXPORT AdhocUploadOperationCommand final : private Ari
     Arinc665::Utils::MediaPaths mediaPathsV;
     //! ARINC 665 Media Set
     Arinc665::Media::ConstMediaSetPtr mediaSetV;
-    //! ARINC 645 Check Values for file lookup
+    //! ARINC 649 Check Values for file lookup
     Arinc665::Media::CheckValues checkValuesV;
     //! ARINC 665 Loads
     Arinc665::Media::ConstLoads loadsV;

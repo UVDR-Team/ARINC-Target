@@ -3,7 +3,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 # If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-cmake_minimum_required( VERSION 4.3 )
+cmake_minimum_required( VERSION 3.24 )
 
 if( WIN32 )
   find_program( WIN_DEPLOY_QT NAMES windeployqt6 windeployqt )
@@ -15,8 +15,8 @@ if( WIN32 )
 
     $<$<TARGET_EXISTS:qt_icon_resources>:$<TARGET_FILE_DIR:qt_icon_resources>>
 
-    $<TARGET_FILE_DIR:arinc_645>
-    $<$<TARGET_EXISTS:arinc_645_qt>:$<TARGET_FILE_DIR:arinc_645_qt>>
+    $<TARGET_FILE_DIR:arinc_649>
+    $<$<TARGET_EXISTS:arinc_649_qt>:$<TARGET_FILE_DIR:arinc_649_qt>>
 
     $<TARGET_FILE_DIR:commands>
 
@@ -43,7 +43,7 @@ if( WIN32 )
   set(
     POST_EXCLUDE_REGEXES
     # Exclude Application Directories
-    "$<TARGET_FILE_DIR:arinc_645_check_value>/.*"
+    "$<TARGET_FILE_DIR:arinc_649_check_value>/.*"
     "$<TARGET_FILE_DIR:arinc_615a_download_request_file>/.*"
 
     # Exclude windows system32 directory"
@@ -52,7 +52,7 @@ if( WIN32 )
   foreach( RUNTIME_DEP_SET IN ITEMS
     helper-runtime-deps
     qt_icon_resources-runtime-deps
-    arinc_645-runtime-deps
+    arinc_649-runtime-deps
     arinc_665-runtime-deps
     commands-runtime-deps
     tftp-runtime-deps

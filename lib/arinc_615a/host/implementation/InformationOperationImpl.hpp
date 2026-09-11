@@ -17,7 +17,7 @@
 #include <arinc_615a/host/InformationOperation.hpp>
 #include <arinc_615a/host/implementation/OperationImpl.hpp>
 
-#include <arinc_645/Arinc645.hpp>
+#include <arinc_649/Arinc649.hpp>
 
 #include <tftp/servers/Servers.hpp>
 
@@ -147,7 +147,7 @@ class InformationOperationImpl final : public InformationOperation, public Opera
      **/
     void listFileCompleted(
       ::Tftp::Files::MemoryFilePtr rawListFile,
-      Arinc645::CheckValue checkValue,
+      Arinc649::CheckValue checkValue,
       ::Tftp::TransferStatus status );
 
     //! Operation Handler

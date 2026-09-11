@@ -16,25 +16,6 @@
 
 namespace Arinc615a::Files {
 
-const ProtocolFilename::ExtensionTypeInfoIndex ProtocolFilename::extensionTypeInfoIndex{
-  { "LCI", ProtocolFileType::LoadConfigurationInitialization },
-  { "LCL", ProtocolFileType::LoadConfigurationList },
-  { "LCS", ProtocolFileType::LoadConfigurationStatus },
-
-  { "LUI", ProtocolFileType::UploadInitialization },
-  { "LUR", ProtocolFileType::UploadRequest },
-  { "LUS", ProtocolFileType::UploadStatus },
-
-  { "LND", ProtocolFileType::MediaDefinedDownloadInitialization },
-  { "LNR", ProtocolFileType::MediaDefinedDownloadRequest },
-
-  { "LNO", ProtocolFileType::OperatorDefinedDownloadInitialization },
-  { "LNL", ProtocolFileType::OperatorDefinedDownloadList },
-  { "LNA", ProtocolFileType::OperatorDefinedDownloadAnswer },
-
-  { "LNS", ProtocolFileType::DownloadStatus }
-};
-
 std::tuple< std::string_view, std::string_view> ProtocolFilename::split( std::string_view filename )
 {
   const auto pointPos{ filename.find( '.' ) };
@@ -58,7 +39,7 @@ bool ProtocolFilename::isProtocolFilename( const std::string_view filename )
 
 std::string_view ProtocolFilename::extension( const ProtocolFileType fileType )
 {
-  const auto &index{ extensionTypeInfoIndex.get< ByType>() };
+  const auto &index{ extensionTypeInfoIndex().get< ByType>() };
 
   const auto element{ index.find( fileType ) };
 
@@ -72,7 +53,7 @@ std::string_view ProtocolFilename::extension( const ProtocolFileType fileType )
 
 ProtocolFileType ProtocolFilename::fileType( std::string_view extension )
 {
-  const auto &index{ extensionTypeInfoIndex.get< ByExtension>() };
+  const auto &index{ extensionTypeInfoIndex().get< ByExtension>() };
 
   auto element{ index.find( extension ) };
 
@@ -162,6 +143,29 @@ ProtocolFilename::operator std::string() const
 ProtocolFilename::operator bool() const noexcept
 {
   return targetIdV && ( ProtocolFileType::Invalid != fileTypeV );
+}
+
+const ProtocolFilename::ExtensionTypeInfoIndex& ProtocolFilename::extensionTypeInfoIndex()
+{
+  static const ExtensionTypeInfoIndex extensionTypeInfoIndex{
+    { "LCI", ProtocolFileType::LoadConfigurationInitialization },
+    { "LCL", ProtocolFileType::LoadConfigurationList },
+    { "LCS", ProtocolFileType::LoadConfigurationStatus },
+
+    { "LUI", ProtocolFileType::UploadInitialization },
+    { "LUR", ProtocolFileType::UploadRequest },
+    { "LUS", ProtocolFileType::UploadStatus },
+
+    { "LND", ProtocolFileType::MediaDefinedDownloadInitialization },
+    { "LNR", ProtocolFileType::MediaDefinedDownloadRequest },
+
+    { "LNO", ProtocolFileType::OperatorDefinedDownloadInitialization },
+    { "LNL", ProtocolFileType::OperatorDefinedDownloadList },
+    { "LNA", ProtocolFileType::OperatorDefinedDownloadAnswer },
+
+    { "LNS", ProtocolFileType::DownloadStatus }
+  };
+  return extensionTypeInfoIndex;
 }
 
 }

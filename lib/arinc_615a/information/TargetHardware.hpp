@@ -26,6 +26,8 @@ namespace Arinc615a::Information {
 /**
  * @brief The target hardware information, which is part of the load configuration list.
  *
+ * This information is provided during the _ARINC 615A Information Operation_.
+ *
  * @note
  * In ARINC 615A-2 The field Literal Name was named %Target Hardware Code.
  *

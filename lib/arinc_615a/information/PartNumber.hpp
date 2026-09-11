@@ -24,6 +24,8 @@ namespace Arinc615a::Information {
 /**
  * @brief Part Number information, which is part of the load configuration list.
  *
+ * This information is provided during the _ARINC 615A Information Operation_.
+ *
  * @ref Arinc615a::Information::TargetHardware
  **/
 struct ARINC_615A_EXPORT PartNumber final

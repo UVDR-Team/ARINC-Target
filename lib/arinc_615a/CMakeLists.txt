@@ -3,12 +3,11 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 # If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-cmake_minimum_required( VERSION 4.3 )
+cmake_minimum_required( VERSION 3.24 )
 
-# The VxWorks integration may supply Boost::boost from its kernel SDK.  Fall
-# back to CMake discovery only when it has not already provided that target.
-if( NOT TARGET Boost::boost )
-  find_package( Boost REQUIRED )
+find_package( Boost REQUIRED )
+if( NOT ARINC_615A_VXWORKS )
+  find_package( spdlog REQUIRED )
 endif()
 
 # prepare Version.cpp
@@ -37,7 +36,6 @@ target_sources(
         StatusCode.hpp
         StatusCodeDescription.hpp
         TargetId.hpp
-        ../spdlog/spdlog.h
         ${CMAKE_CURRENT_BINARY_DIR}/arinc_615a_export.h
         ${CMAKE_CURRENT_BINARY_DIR}/Version.hpp
 
@@ -50,7 +48,11 @@ target_sources(
     StatusCodeDescription.cpp
     TargetId.cpp )
 
-target_compile_features( arinc_615a PUBLIC cxx_std_23 )
+if( ARINC_615A_VXWORKS )
+  target_compile_features( arinc_615a PUBLIC cxx_std_17 )
+else()
+  target_compile_features( arinc_615a PUBLIC cxx_std_23 )
+endif()
 
 target_compile_definitions(
   arinc_615a
@@ -90,66 +92,64 @@ target_link_libraries(
 
   PUBLIC
     tftp
-    arinc_645
+    arinc_649
     helper
     Boost::boost
 
   PRIVATE
+    $<$<NOT:$<BOOL:${ARINC_615A_VXWORKS}>>:spdlog::spdlog_header_only>
     # Windows Socket must be explicitly linked in MinGW
     $<$<PLATFORM_ID:Windows>:wsock32 ws2_32> )
 
-if( NOT ARINC615A_DKM_PROFILE )
-  add_library( arinc_615a_test OBJECT )
+if( NOT ARINC_615A_VXWORKS )
+add_library( arinc_615a_test OBJECT )
 
-  target_sources(
-    arinc_615a_test
+target_sources(
+  arinc_615a_test
 
-    PRIVATE
-      test/StatusCodeTest.cpp
-      test/TargetIdTest.cpp
-      test/VersionTest.cpp )
+  PRIVATE
+    test/StatusCodeTest.cpp
+    test/TargetIdTest.cpp
+    test/VersionTest.cpp )
 
-  target_compile_features( arinc_615a_test PUBLIC cxx_std_23 )
+target_compile_features( arinc_615a_test PUBLIC cxx_std_23 )
 
-  target_compile_options(
-    arinc_615a_test
+target_compile_options(
+  arinc_615a_test
 
-    PRIVATE
-      $<$<CXX_COMPILER_ID:MSVC>:/W4>
-      #$<$<CXX_COMPILER_ID:MSVC>:/Wall>
-      # Disable Warning for exporting classes with std::* private members
-      $<$<CXX_COMPILER_ID:MSVC>:/wd4251>
-      # Disable Warning for exporting classes, which derives from std::*
-      $<$<CXX_COMPILER_ID:MSVC>:/wd4275>
+  PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4>
+    #$<$<CXX_COMPILER_ID:MSVC>:/Wall>
+    # Disable Warning for exporting classes with std::* private members
+    $<$<CXX_COMPILER_ID:MSVC>:/wd4251>
+    # Disable Warning for exporting classes, which derives from std::*
+    $<$<CXX_COMPILER_ID:MSVC>:/wd4275>
 
-      $<$<CXX_COMPILER_ID:GNU>:-Wall>
-      $<$<CXX_COMPILER_ID:GNU>:-Wextra>
-      $<$<CXX_COMPILER_ID:GNU>:-Wpedantic>
+    $<$<CXX_COMPILER_ID:GNU>:-Wall>
+    $<$<CXX_COMPILER_ID:GNU>:-Wextra>
+    $<$<CXX_COMPILER_ID:GNU>:-Wpedantic>
 
-      $<$<CXX_COMPILER_ID:Clang>:-Wall>
-      $<$<CXX_COMPILER_ID:Clang>:-Wextra>
-      $<$<CXX_COMPILER_ID:Clang>:-Wpedantic> )
+    $<$<CXX_COMPILER_ID:Clang>:-Wall>
+    $<$<CXX_COMPILER_ID:Clang>:-Wextra>
+    $<$<CXX_COMPILER_ID:Clang>:-Wpedantic>
+    # Disable new Clang-22 Warning for usage of c2y-extensions (__COUNTER__) within boost::test
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-c2y-extensions> )
 
-  target_link_libraries(
-    arinc_615a_test
+target_link_libraries(
+  arinc_615a_test
 
-    PRIVATE
-      arinc_615a
-      # Windows Socket must be explicitly linked in MinGW
-      $<$<PLATFORM_ID:Windows>:wsock32 ws2_32> )
+  PRIVATE
+    arinc_615a
+    # Windows Socket must be explicitly linked in MinGW
+    $<$<PLATFORM_ID:Windows>:wsock32 ws2_32> )
 endif()
 
 add_subdirectory( find )
 add_subdirectory( files )
 add_subdirectory( information )
 add_subdirectory( tftp )
+add_subdirectory( host )
 add_subdirectory( target )
-
-# Host operations are not part of a target-side DKM and pull in host-only
-# filesystem/reporting code.  The target protocol and TFTP server remain.
-if( NOT ARINC615A_DKM_PROFILE )
-  add_subdirectory( host )
-endif()
 
 set_property(
   DIRECTORY ${PROJECT_SOURCE_DIR}
@@ -161,6 +161,7 @@ set_property(
 
 install(
   TARGETS arinc_615a
+  RUNTIME_DEPENDENCY_SET arinc_615a-runtime-deps
   EXPORT arinc_615a-config
   COMPONENT runtime
   ARCHIVE COMPONENT development

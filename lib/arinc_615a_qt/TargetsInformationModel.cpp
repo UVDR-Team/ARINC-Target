@@ -123,6 +123,7 @@ bool TargetsInformationModel::setData( const QModelIndex &index, const QVariant 
 
   auto &[ targetAddress, targetInformation ]{ *std::next( targetsInformationV.begin(), index.row() ) };
 
+  // NOLINTNEXTLINE( readability-trivial-switch ): Keep for further extension
   switch ( role )
   {
     case Qt::ItemDataRole::EditRole:

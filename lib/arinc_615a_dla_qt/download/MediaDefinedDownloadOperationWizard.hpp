@@ -15,14 +15,11 @@
 
 #include <arinc_615a_dla_qt/download/Download.hpp>
 
-#include <arinc_615a_qt/Arinc615aQt.hpp>
-
 #include <arinc_615a_dla_qt/operations/Operations.hpp>
 
-#include <arinc_615a/information/InitializationResponse.hpp>
-#include <arinc_615a/information/DownloadStatus.hpp>
-
 #include <arinc_615a/host/Host.hpp>
+
+#include <arinc_615a/information/Information.hpp>
 
 #include <arinc_615a/find/Find.hpp>
 

@@ -34,7 +34,7 @@ For further detailed information refer to <<arinc_615a_4>> Section 5.4.2.
 [discrete]
 === ARINC 615A Checksum Option (for Load Configuration List)
 
-When the Target Hardware Data Loader transmits the _Load Configuration List_, this file can be protected by an _ARINC 645 Check Value_.
+When the Target Hardware Data Loader transmits the _Load Configuration List_, this file can be protected by an _ARINC 649 Check Value_.
 The ARINC 615A Host Data Loader checks the file integrity when the check value is received.
 If the integrity check fails, the operator is informed and the transmitted information must be considered as unreliable.
 

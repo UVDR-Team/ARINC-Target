@@ -18,6 +18,9 @@
 
 #include <arinc_615a/find/TargetInformation.hpp>
 
+#include <arinc_615a/information/InitializationResponse.hpp>
+#include <arinc_615a/information/DownloadStatus.hpp>
+
 #include <helper_qt/String.hpp>
 
 #include <QIcon>
@@ -149,6 +152,7 @@ MediaDefinedDownloadOperationWizard::~MediaDefinedDownloadOperationWizard() = de
 
 void MediaDefinedDownloadOperationWizard::pageChanged( const int pageId )
 {
+  // NOLINTNEXTLINE( readability-trivial-switch ): Keep for further extension
   switch ( Pages{ pageId } )
   {
     case Pages::Status:

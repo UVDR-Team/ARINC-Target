@@ -14,7 +14,11 @@
 
 #include <boost/exception/exception.hpp>
 
+#ifdef ARINC_615A_NO_PROGRAM_OPTIONS
+#include <stdexcept>
+#else
 #include <boost/program_options.hpp>
+#endif
 
 namespace Arinc615a {
 
@@ -44,7 +48,11 @@ std::istream& operator>>( std::istream& stream, Arinc615aVersion &version )
 
   if ( !optionalVersion )
   {
+#ifdef ARINC_615A_NO_PROGRAM_OPTIONS
+    throw std::invalid_argument{ "Invalid ARINC 615A version: " + versionStr };
+#else
     BOOST_THROW_EXCEPTION( boost::program_options::invalid_option_value{ versionStr } );
+#endif
   }
 
   version = *optionalVersion;

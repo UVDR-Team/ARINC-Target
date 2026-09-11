@@ -23,8 +23,8 @@ namespace Arinc615a::Information {
 /**
  * @brief Represents the ratio within the status files.
  *
- * The Ratio element is used within the Download and Upload status information to indicate the operation and load upload
- * progress.
+ * The Ratio element is used within the _ARINC 615A Download_ and _ARINC 615A Upload_ status information to indicate the
+ * operation and load upload progress.
  *
  * @sa @ref DownloadStatus
  * @sa @ref UploadStatus

@@ -112,7 +112,7 @@ DataLoaderMainWindow::DataLoaderMainWindow():
       Arinc615a::arinc615aVersion(),
       Tftp::tftpVersion(),
       Arinc665::arinc665Version(),
-      Arinc645::arinc645Version(),
+      Arinc649::arinc649Version(),
       QtIconResources::qtIconResourcesVersion(),
       Helper::helperVersion(),
       Helper::boostVersion(),
@@ -188,7 +188,7 @@ DataLoaderMainWindow::DataLoaderMainWindow():
     QOverload<>::of( &HelperQt::AboutDialog::open ) );
 
   ioThread = std::jthread{
-    [ this ]()
+    [ this ]
     {
       try
       {

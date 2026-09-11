@@ -12,7 +12,9 @@
 
 #include "FindConfiguration.hpp"
 
+#ifndef ARINC_615A_NO_PROGRAM_OPTIONS
 #include <helper/BoostAsioProgramOptions.hpp>
+#endif
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -48,6 +50,7 @@ boost::property_tree::ptree FindConfiguration::toProperties( const bool full ) c
   return properties;
 }
 
+#ifndef ARINC_615A_NO_PROGRAM_OPTIONS
 boost::program_options::options_description FindConfiguration::options()
 {
   boost::program_options::options_description options{ "ARINC 615A FIND Options" };
@@ -68,5 +71,6 @@ boost::program_options::options_description FindConfiguration::options()
 
   return options;
 }
+#endif
 
 }

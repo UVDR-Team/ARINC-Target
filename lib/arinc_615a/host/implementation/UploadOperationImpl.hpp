@@ -62,7 +62,7 @@ class UploadOperationImpl final : public UploadOperation, public OperationImpl
       boost::asio::ip::udp::endpoint remote,
       ::Tftp::Packets::TftpOptions clientTftpOptions,
       std::string partNumber,
-      Arinc645::CheckValue checkValue ) override;
+      Arinc649::CheckValue checkValue ) override;
 
     //! @copydoc UploadOperation::waitOperation()
     void waitOperation(

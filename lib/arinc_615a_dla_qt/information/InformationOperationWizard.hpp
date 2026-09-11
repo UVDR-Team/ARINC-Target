@@ -19,11 +19,9 @@
 
 #include <arinc_615a_qt/Arinc615aQt.hpp>
 
-#include <arinc_615a/information/InitializationResponse.hpp>
-#include <arinc_615a/information/Status.hpp>
-#include <arinc_615a/information/TargetHardware.hpp>
-
 #include <arinc_615a/host/Host.hpp>
+
+#include <arinc_615a/information/Information.hpp>
 
 #include <arinc_615a/find/Find.hpp>
 
@@ -90,9 +88,7 @@ class ARINC_615A_DLA_QT_EXPORT InformationOperationWizard final : public QWizard
      * @param[in] targetId
      *   Target ID
      **/
-    void targetSelected(
-      const boost::asio::ip::address &targetAddress,
-      const Arinc615a::TargetId &targetId );
+    void targetSelected( const boost::asio::ip::address &targetAddress, const Arinc615a::TargetId &targetId );
 
     /**
      * @brief Slot called when user requests start of Operation.
@@ -115,8 +111,7 @@ class ARINC_615A_DLA_QT_EXPORT InformationOperationWizard final : public QWizard
      * @param[in] response
      *   Initialisation Response
      **/
-    void operationInitialised(
-      const Arinc615a::Information::InitializationResponse &response );
+    void operationInitialised( const Arinc615a::Information::InitializationResponse &response );
 
     /**
      * @brief ARINC 615A Operation Finished Slot

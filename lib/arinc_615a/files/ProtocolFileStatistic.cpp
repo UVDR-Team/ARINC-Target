@@ -50,7 +50,7 @@ size_t ProtocolFileStatistic::total( const Statistic &statistic )
 void ProtocolFileStatistic::protocolFile( const Arinc615a::Files::ProtocolFileType type )
 {
   std::unique_lock lock{ mutex };
-  ++( statisticV[ type ] );
+  ++statisticV[ type ];
 }
 
 ProtocolFileStatistic::Statistic ProtocolFileStatistic::statistic() const

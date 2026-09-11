@@ -1,0 +1,61 @@
+= arinc_649_check_value(1)
+Thomas Vogt
+
+== Name
+
+arinc_649_check_value - calculates ARINC 649 check values for files.
+
+== Synopsis
+
+*arinc_649_check_value*
+[-h|--help]
+[-v|--version]
+{-f|--filename _filename_}...
+{-t|--check-value-type _type_}...
+
+== Description
+
+Calculates one or more ARINC 649 check values for one or more input files.
+Both -f/--filename and -t/--check-value-type options can be specified multiple times.
+
+The program prints a header, then for each input file a “File: …” line, followed by a line per requested check value in the form:
+“ - Check Value: VALUE”.
+
+*-f|--filename* _filename_::
+Filename to calculate check values. May be specified multiple times to process several files.
+
+*-t|--check-value-type* _type_::
+Selects the _Check Value_ type to calculate.
+May be specified multiple times.
+Supported types are:
+
+- _CRC8_
+- _CRC16_
+- _CRC32_
+- _MD5_
+- _SHA1_
+- _SHA256_
+- _SHA512_
+- _CRC64_
+
+== Exit Status
+
+Returns 0 on success.
+Returns a non-zero status on errors, and also when printing --help or --version.
+
+== Examples
+
+- Calculate CRC32 and SHA256 for a single file:
+  arinc_649_check_value -f firmware.bin -t CRC32 -t SHA256
+
+- Calculate MD5 for multiple files:
+  arinc_649_check_value -f a.bin -f b.bin -t MD5
+
+- Show help:
+  arinc_649_check_value --help
+
+- Show version:
+  arinc_649_check_value --version
+
+== See Also
+ARINC 649

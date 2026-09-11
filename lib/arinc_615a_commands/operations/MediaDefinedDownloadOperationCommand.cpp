@@ -30,7 +30,7 @@
 #include <arinc_615a/StatusCode.hpp>
 #include <arinc_615a/StatusCodeDescription.hpp>
 
-#include <arinc_645/CheckValueGenerator.hpp>
+#include <arinc_649/CheckValueGenerator.hpp>
 
 #include <tftp/packets/TftpOptions.hpp>
 #include <tftp/packets/PacketStatistic.hpp>
@@ -73,7 +73,12 @@ MediaDefinedDownloadOperationCommand::MediaDefinedDownloadOperationCommand(
       ->value_name( "log-level" )
       ->notifier( []( const auto &logLevel ) {
         spdlog::set_level( logLevel );
-      }),
+        Arinc615aCommands::setLogLevel( logLevel );
+        Arinc615a::setLogLevel( logLevel );
+        Tftp::setLogLevel( logLevel );
+        Arinc649::setLogLevel( logLevel );
+        Helper::setLogLevel( logLevel );
+      } ),
     Helper::SeverityLevelDescription::instance().allLevels().c_str()
   );
   optionsDescriptionV.add( configurationV.options() );
@@ -355,7 +360,7 @@ void MediaDefinedDownloadOperationCommand::fileRequest(
   std::string_view filename,
   const Tftp::Packets::TftpOptions &clientTftpOptions,
   std::string_view partNumber,
-  const Arinc645::CheckValue &checkValue )
+  const Arinc649::CheckValue &checkValue )
 {
   const std::filesystem::path filePath{ downloadDataPathV / Helper::normaliseFilename( filename ) };
 

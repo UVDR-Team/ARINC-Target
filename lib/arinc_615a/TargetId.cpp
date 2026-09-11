@@ -21,7 +21,7 @@
 
 namespace Arinc615a {
 
-std::tuple< std::string_view, std::string_view> TargetId::splitTargetId( std::string_view targetId )
+std::tuple< std::string_view, std::string_view> TargetId::splitTargetId( const std::string_view targetId )
 {
   // find the first occurrence of '_'
   const auto underscorePos{ targetId.find( '_' ) };
@@ -35,24 +35,24 @@ std::tuple< std::string_view, std::string_view> TargetId::splitTargetId( std::st
   return std::make_tuple( targetId.substr( 0U, underscorePos ), targetId.substr( underscorePos + 1U ) );
 }
 
-bool TargetId::isTargetId( std::string_view targetId ) noexcept
+bool TargetId::isTargetId( const std::string_view targetId ) noexcept
 {
   const auto [ thwId, position ] = splitTargetId( targetId );
 
   return isThwId( thwId ) && isPosition( position );
 }
 
-bool TargetId::isThwId( std::string_view thwId ) noexcept
+bool TargetId::isThwId( const std::string_view thwId ) noexcept
 {
   return isCompliant( thwId, ThwIdSizeMin, ThwIdSizeMax );
 }
 
-bool TargetId::isPosition( std::string_view position ) noexcept
+bool TargetId::isPosition( const std::string_view position ) noexcept
 {
   return isCompliant( position, PositionSizeMin, PositionSizeMax );
 }
 
-TargetId::TargetId( std::string_view targetId )
+TargetId::TargetId( const std::string_view targetId )
 {
   std::tie( thwIdV, positionV) = splitTargetId( targetId );
 }

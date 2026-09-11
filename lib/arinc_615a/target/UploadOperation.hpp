@@ -20,7 +20,7 @@
 
 #include <arinc_615a/tftp/clients/Client.hpp>
 
-#include <arinc_645/CheckValue.hpp>
+#include <arinc_649/CheckValue.hpp>
 
 #include <string_view>
 
@@ -130,7 +130,7 @@ class ARINC_615A_EXPORT UploadOperation : public Operation
      *   Part Number of the load (part) containing the file being requested.
      * @param[in] checkValue
      *   Check value of the file to request.
-     *   Set to @p Arinc645::CheckValue::NoCheckValue if not used.
+     *   Set to @p Arinc649::CheckValue::NoCheckValue if not used.
      *
      * @return TFTP Client Operation.
      **/
@@ -140,7 +140,7 @@ class ARINC_615A_EXPORT UploadOperation : public Operation
       Tftp::ReceiveDataHandlerPtr dataHandler,
       std::string filename,
       std::string partNumber = {},
-      Arinc645::CheckValue checkValue = Arinc645::CheckValue::NoCheckValue ) = 0;
+      Arinc649::CheckValue checkValue = Arinc649::CheckValue::NoCheckValue ) = 0;
 };
 
 }

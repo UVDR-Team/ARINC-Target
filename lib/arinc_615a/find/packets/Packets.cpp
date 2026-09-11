@@ -14,12 +14,17 @@
 
 namespace Arinc615a::Find::Packets {
 
-const ParameterMaxLengthMap ParameterMaxLengths{
-  { ParameterList::ThwId,            15U },
-  { ParameterList::ThwTypeName,       8U },
-  { ParameterList::ThwPosition,       8U },
-  { ParameterList::LiteralName,      20U },
-  { ParameterList::ManufacturerCode,  3U }
-};
+const ParameterMaxLengthMap& parameterMaxLengths()
+{
+  static const ParameterMaxLengthMap ParameterMaxLengths{
+    { ParameterList::ThwId,            15U },
+    { ParameterList::ThwTypeName,       8U },
+    { ParameterList::ThwPosition,       8U },
+    { ParameterList::LiteralName,      20U },
+    { ParameterList::ManufacturerCode,  3U }
+  };
+
+  return ParameterMaxLengths;
+}
 
 }

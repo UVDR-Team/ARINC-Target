@@ -9,7 +9,7 @@ This section clarifies who the ARINC 615A toolchain is intended for and the esse
 - QA/compliance personnel verifying process adherence and traceability
 
 === Prerequisites
-- Standards familiarity: basic understanding of ARINC 615A, ARINC 665 media sets, and ARINC 645 terminology
+- Standards familiarity: basic understanding of ARINC 615A, ARINC 665 media sets, and ARINC 649 terminology
 - Networking basics: IPv4 addressing/subnets, UDP, broadcast vs. unicast, firewalls/NAT, MTU/fragmentation
 - OS permissions: awareness that privileged ports (<1024) on Unix-like systems typically require elevated privileges; Windows may require admin rights for some networking operations
 - Access and environment: reachable Target Hardware on a network that allows required UDP ports (e.g., 1001 for FIND, 59 or dynamic ports for TFTP), and any site security approvals for data loading

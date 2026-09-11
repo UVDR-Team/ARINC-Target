@@ -89,16 +89,34 @@ class ProtocolFile;
 
 class InitializationFile;
 
+/**
+ * @brief  @name Information Operation
+ *
+ * @{
+ **/
 class InformationOperationStatusFile;
 class LoadConfigurationListFile;
+/** @} **/
 
+/**
+ * @brief  @name Upload Operation
+ *
+ * @{
+ **/
 class UploadOperationStatusFile;
 class UploadOperationRequestFile;
+/** @} **/
 
+/**
+ * @brief  @name Download Operations
+ *
+ * @{
+ **/
 class DownloadOperationStatusFile;
 class DownloadOperationRequestFile;
 class DownloadOperationAnswerFile;
 class DownloadOperationListFile;
+/** @} **/
 
 class ProtocolFileStatistic;
 

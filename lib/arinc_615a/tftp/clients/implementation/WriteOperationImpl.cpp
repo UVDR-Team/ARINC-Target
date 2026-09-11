@@ -93,7 +93,7 @@ WriteOperation& WriteOperationImpl::partNumberOption( std::string partNumberOpti
   return *this;
 }
 
-WriteOperation& WriteOperationImpl::checksumOption( Arinc645::CheckValue checksumOption )
+WriteOperation& WriteOperationImpl::checksumOption( Arinc649::CheckValue checksumOption )
 {
   checksumOptionV = std::move( checksumOption );
   return *this;
@@ -144,7 +144,7 @@ const ::Tftp::Packets::ErrorInformation& WriteOperationImpl::errorInformation() 
   }
 
   // Add Checksum Option
-  if ( Arinc645::CheckValueType::NotUsed != checksumOptionV.type() )
+  if ( Arinc649::CheckValueType::NotUsed != checksumOptionV.type() )
   {
     additionalOptions.try_emplace(
       std::string{ Arinc615aOptions_name( checksumOptionV.type() ) },

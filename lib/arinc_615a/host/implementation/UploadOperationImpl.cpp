@@ -34,7 +34,7 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <arinc_645/CheckValue.hpp>
+#include <arinc_649/CheckValue.hpp>
 
 #include <tftp/files/MemoryFile.hpp>
 
@@ -130,7 +130,7 @@ Tftp::Servers::ReadOperationPtr UploadOperationImpl::fileTransfer(
   boost::asio::ip::udp::endpoint remote,
   ::Tftp::Packets::TftpOptions clientTftpOptions,
   std::string partNumber,
-  Arinc645::CheckValue checkValue )
+  Arinc649::CheckValue checkValue )
 {
   Tftp::Arinc615aOptions options{};
 
@@ -143,7 +143,7 @@ Tftp::Servers::ReadOperationPtr UploadOperationImpl::fileTransfer(
   }
 
   // Add ARINC 615A checksum option
-  if ( Arinc645::CheckValueType::NotUsed != checkValue.type() )
+  if ( Arinc649::CheckValueType::NotUsed != checkValue.type() )
   {
     options.checksum = std::move( checkValue );
   }
@@ -210,13 +210,14 @@ void UploadOperationImpl::tftpRequest(
 
     case Write:
     {
-      Files::ProtocolFilename file{ filename };
+      const Files::ProtocolFilename file{ filename };
 
       SPDLOG_INFO(
         "Received protocol file {}",
         Files::ProtocolFileTypeDescription::instance().name( file.fileType() ) );
 
       // Check file type
+      // NOLINTNEXTLINE( readability-trivial-switch ): Keep for better protocol file readability
       switch ( file.fileType() )
       {
         case Files::ProtocolFileType::UploadStatus:

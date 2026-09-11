@@ -14,10 +14,10 @@ This tool suite contains the components:
   - ARINC 665 CLI %Commands Namespace @ref Arinc665Commands,
   - ARINC 665 Standard Qt Framework Namespace @ref Arinc665Qt,
   - @subpage arinc_665_applications,
-- ARINC 645
-  - ARINC 645 Standard Namespace @ref Arinc645,
-  - ARINC 645 Standard Qt Framework Namespace @ref Arinc645Qt,
-  - @subpage arinc_645_applications,
+- ARINC 649
+  - ARINC 649 Standard Namespace @ref Arinc649,
+  - ARINC 649 Standard Qt Framework Namespace @ref Arinc649Qt,
+  - @subpage arinc_649_applications,
 - TFTP Protocol
   - TFTP Protocol Namespace @ref Tftp,
   - TFTP Protocol Qt Framework: @ref TftpQt,

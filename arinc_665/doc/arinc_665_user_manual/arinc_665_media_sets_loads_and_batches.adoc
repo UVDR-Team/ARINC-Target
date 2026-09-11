@@ -1,0 +1,31 @@
+== ARINC 665 Media Sets, Loads, and Batches
+
+**ARINC 665** defines the structure for distributing loadable software on removable media.
+It defines
+
+* _Media Sets_,
+* _Loads_, and
+* _Batches_.
+
+=== ARINC 665 Media Set
+
+An **ARINC 665 Media Set** is a collection of files organized according to the ARINC 665 specification.
+It typically contains one or more **Loads**, **Batches**, **Data**, and **Support Files** along with metadata files that describe the contents and structure of the media set.
+These metadata files include the _List of Files_, _List of Loads_, and _List of Batches_.
+An **ARINC 665 Media Set** can be splittet into multiple media (1 to 255).
+The Media Set is identified by its _Part Number_.
+The Media Sets are designed to contain loads, which are loadable onto target hardware using a Data Loader (such as an ARINC 615A Data Loader).
+
+=== ARINC 665 Load
+
+An **ARINC 665 Load** (often referred to as a Loadable Software Part or LSP) is a specific software or data item that can be loaded into a target system.
+A Load is defined by a **Load Upload Header** (LUH) file, which acts as the entry point and description for the load.
+The LUH references the actual files (support files and data files) that make up the load.
+The Data Loader uses the LUH to understand which files need to be transferred to the target and to verify the integrity of the load.
+
+=== ARINC 665 Batches
+
+An **ARINC 665 Batch** file provides a mechanism to group multiple Loads together.
+This allows for the definition of a sequence of loads or a collection of related software parts that should be handled as a group.
+Batches are useful for simplifying the loading process by allowing the operator to select a single batch file instead of individually selecting multiple loads.
+Similar to Loads, Batches are defined by a batch files that lists the member loads.

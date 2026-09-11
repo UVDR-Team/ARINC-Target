@@ -7,7 +7,7 @@
  *
  * @author Thomas Vogt, thomas@thomas-vogt.de
  *
- * @brief Definition of Class Arinc615a::StatusCode.
+ * @brief Definition of Module Arinc615a::StatusCode.
  **/
 
 #include "StatusCode.hpp"
@@ -82,14 +82,14 @@ FinalStatus finalStatus( const AbortRequest abortRequest )
     using enum AbortRequest;
 
     case AbortByDlp:
-      return Arinc615a::FinalStatus::AbortedByDlp;
+      return FinalStatus::AbortedByDlp;
 
     case AbortByOperator:
-      return Arinc615a::FinalStatus::AbortedByOperator;
+      return FinalStatus::AbortedByOperator;
 
     default:
       SPDLOG_WARN( "Invalid abort request" );
-      return Arinc615a::FinalStatus::AbortedByTargetHardware;
+      return FinalStatus::AbortedByTargetHardware;
   }
 }
 

@@ -33,7 +33,7 @@
 
 #include <arinc_615a/Arinc615aException.hpp>
 
-#include <arinc_645/CheckValueGenerator.hpp>
+#include <arinc_649/CheckValueGenerator.hpp>
 
 #include <tftp/files/MemoryFile.hpp>
 
@@ -272,7 +272,7 @@ void InformationOperationImpl::listFileRequest(
     }
 
     // ARINC 615A Checksum Option is allowed, all others are discarded
-    if ( clientArinc615aOptions.checksum != Arinc645::CheckValue::NoCheckValue )
+    if ( clientArinc615aOptions.checksum != Arinc649::CheckValue::NoCheckValue )
     {
       SPDLOG_INFO( "Received ARINC 615A Checksum Option '{}'", clientArinc615aOptions.checksum.format() );
     }
@@ -318,7 +318,7 @@ void InformationOperationImpl::listFileRequest(
 
 void InformationOperationImpl::listFileCompleted(
   ::Tftp::Files::MemoryFilePtr rawListFile,
-  Arinc645::CheckValue checkValue,
+  Arinc649::CheckValue checkValue,
   const ::Tftp::TransferStatus status )
 {
   listFileOperationV.reset();
@@ -341,7 +341,7 @@ void InformationOperationImpl::listFileCompleted(
   try
   {
     // Check checksum
-    const auto checkValueGenerator{ Arinc645::CheckValueGenerator::create( checkValue.type() ) };
+    const auto checkValueGenerator{ Arinc649::CheckValueGenerator::create( checkValue.type() ) };
     assert( checkValueGenerator );
 
     bool integrityInformation{ true };

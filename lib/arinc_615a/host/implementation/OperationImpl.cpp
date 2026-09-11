@@ -341,7 +341,7 @@ void OperationImpl::initialisationFileDeferred( const std::chrono::seconds waitT
 
 bool OperationImpl::initialisationFileOptionsNegotiation( const Tftp::Arinc615aOptions &options )
 {
-  if ( options.checksum != Arinc645::CheckValue::NoCheckValue )
+  if ( options.checksum != Arinc649::CheckValue::NoCheckValue )
   {
     SPDLOG_ERROR( "Received checksum option, when never requested" );
     return false;

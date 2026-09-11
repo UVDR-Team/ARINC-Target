@@ -59,6 +59,7 @@ QVariant FindPacketStatisticModel::data( const QModelIndex &index, const int rol
 
   const auto packet{ std::next( statisticV.begin(), index.row() ) };
 
+  // NOLINTNEXTLINE( readability-trivial-switch ): Keep for further extension
   switch ( role )
   {
     case Qt::ItemDataRole::DisplayRole:

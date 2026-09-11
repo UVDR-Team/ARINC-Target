@@ -3,7 +3,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 # If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-cmake_minimum_required( VERSION 4.3 )
+cmake_minimum_required( VERSION 3.24 )
 
 find_package( Doxygen )
 find_package( Boost )
@@ -33,8 +33,8 @@ get_property(
   PROPERTY DOC_PATHS )
 
 get_property(
-  ARINC_645_DOC_PATHS
-  DIRECTORY ${arinc_645_SOURCE_DIR}
+  ARINC_649_DOC_PATHS
+  DIRECTORY ${arinc_649_SOURCE_DIR}
   PROPERTY DOC_PATHS )
 
 get_property(
@@ -68,6 +68,11 @@ endif()
 set( DOXYGEN_DOT_NUM_THREADS 1 )
 
 set(
+  DOXYGEN_EXCLUDE_PATTERNS
+
+  */boost/* )
+
+set(
   DOXYGEN_STRIP_FROM_PATH
 
   ${helper_SOURCE_DIR}/lib
@@ -82,9 +87,9 @@ set(
   ${tftp_SOURCE_DIR}/lib
   ${tftp_BINARY_DIR}/lib
   ${tftp_SOURCE_DIR}/app
-  ${arinc_645_SOURCE_DIR}/lib
-  ${arinc_645_BINARY_DIR}/lib
-  ${arinc_645_SOURCE_DIR}/app
+  ${arinc_649_SOURCE_DIR}/lib
+  ${arinc_649_BINARY_DIR}/lib
+  ${arinc_649_SOURCE_DIR}/app
   ${arinc_665_SOURCE_DIR}/lib
   ${arinc_665_BINARY_DIR}/lib
   ${arinc_665_SOURCE_DIR}/app
@@ -104,8 +109,8 @@ set(
   ${commands_BINARY_DIR}/lib
   ${tftp_SOURCE_DIR}/lib
   ${tftp_BINARY_DIR}/lib
-  ${arinc_645_SOURCE_DIR}/lib
-  ${arinc_645_BINARY_DIR}/lib
+  ${arinc_649_SOURCE_DIR}/lib
+  ${arinc_649_BINARY_DIR}/lib
   ${arinc_665_SOURCE_DIR}/lib
   ${arinc_665_BINARY_DIR}/lib
   ${arinc_615a_SOURCE_DIR}/lib
@@ -119,7 +124,7 @@ doxygen_add_docs(
   ${QT_ICON_RESOURCES_DOC_PATHS}
   ${COMMANDS_DOC_PATHS}
   ${TFTP_DOC_PATHS}
-  ${ARINC_645_DOC_PATHS}
+  ${ARINC_649_DOC_PATHS}
   ${ARINC_665_DOC_PATHS}
   ${ARINC_615A_DOC_PATHS} )
 

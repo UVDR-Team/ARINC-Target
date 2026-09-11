@@ -29,7 +29,7 @@
 #include <arinc_615a/Arinc615aConfiguration.hpp>
 #include <arinc_615a/TargetId.hpp>
 
-#include <arinc_645/CheckValue.hpp>
+#include <arinc_649/CheckValue.hpp>
 
 #include <boost/asio/ip/udp.hpp>
 #include <boost/asio/io_context.hpp>
@@ -183,7 +183,7 @@ class OperationImpl
       Tftp::ReceiveDataHandlerPtr dataHandler,
       std::string filename,
       std::string partNumberOption,
-      Arinc645::CheckValue checksumOption );
+      Arinc649::CheckValue checksumOption );
 
     /**
      * @brief Creates a TFTP Client Write Operation.
@@ -212,7 +212,7 @@ class OperationImpl
       Tftp::TransmitDataHandlerPtr dataHandler,
       std::string filename,
       std::string partNumberOption,
-      Arinc645::CheckValue checksumOption );
+      Arinc649::CheckValue checksumOption );
 
     /**
      * @copydoc Operation::start()
@@ -274,7 +274,7 @@ class OperationImpl
       Tftp::Clients::OperationDeferredHandler operationDeferredHandler,
       Tftp::Clients::OperationCompletedHandler completionHandler,
       Tftp::TransmitDataHandlerPtr dataHandler,
-      Arinc645::CheckValue checkValue = Arinc645::CheckValue::NoCheckValue );
+      Arinc649::CheckValue checkValue = Arinc649::CheckValue::NoCheckValue );
 
     /**
      * @brief Triggers immediate Status Transmission.
@@ -349,7 +349,7 @@ class OperationImpl
      * @return If Option Negotiation was successful.
      **/
     bool protocolFileOptionsNegotiation(
-      const Arinc645::CheckValue &providedCheckValue,
+      const Arinc649::CheckValue &providedCheckValue,
       const Tftp::Arinc615aOptions &serverOptions );
 
     //! Data Loader Configuration

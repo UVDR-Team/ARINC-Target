@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Thomas Vogt</author>
+ <class>Arinc665Qt::ImportMediaSetXmlSettingsWidget</class>
+ <widget class="QGroupBox" name="Arinc665Qt::ImportMediaSetXmlSettingsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="title">
+   <string>ARINC 665 Media Set XML</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="xmlFileLabel">
+     <property name="text">
+      <string>XML File</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QWidget" name="xmlFileWidget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLineEdit" name="xmlFile">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="selectXmlFile">
+        <property name="toolTip">
+         <string>Select ARINC 665 Media Set XML file</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc">
+          <normaloff>:/fa/solid/file-code.svg</normaloff>:/fa/solid/file-code.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="inputDirecoryLabel">
+     <property name="text">
+      <string>Input Directory</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QWidget" name="inputDirectoryWidget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLineEdit" name="inputDirectory">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="selectInputDirectory">
+        <property name="toolTip">
+         <string>Select Import Directory</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc">
+          <normaloff>:/fa/solid/folder-open.svg</normaloff>:/fa/solid/folder-open.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="resources/arinc_665_qt_resources.qrc"/>
+  <include location="../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc"/>
+ </resources>
+ <connections/>
+</ui>

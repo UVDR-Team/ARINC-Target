@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<schema
+  targetNamespace="http://www.thomas-vogt.de/Arinc665MediaSet"
+  elementFormDefault="qualified"
+  xmlns="http://www.w3.org/2001/XMLSchema"
+  xmlns:ams="http://www.thomas-vogt.de/Arinc665MediaSet" >
+
+  <element name="MediaSet" type="ams:MediaSetType" >
+    <annotation><documentation>
+      Media Set Definition
+    </documentation></annotation>
+    <key name="FileKey" >
+      <selector xpath="ams:RegularFile" />
+      <field    xpath="@Name" />
+    </key>
+    <key name="LoadKey" >
+      <selector xpath="ams:LoadFile" />
+      <field    xpath="@Name" />
+    </key>
+    <key name="BatchKey" >
+      <selector xpath="ams:BatchFile" />
+      <field    xpath="@Name" />
+    </key>
+    <keyref name="FileRef" refer="ams:FileKey" >
+      <selector xpath="ams:DataFile|ams:SupportFile" />
+      <field    xpath="@NameRef" />
+    </keyref>
+    <keyref name="LoadRef" refer="ams:LoadKey" >
+      <selector xpath="ams:Load" />
+      <field    xpath="@NameRef" />
+    </keyref>
+    <keyref name="BatchRef" refer="ams:BatchKey" >
+      <selector xpath="ams:Batch" />
+      <field    xpath="@NameRef" />
+    </keyref>
+  </element>
+
+  <element name="Content"   type="ams:ContentType" />
+
+  <complexType name="MediaSetType" >
+    <annotation><documentation>
+      Media Set
+    </documentation></annotation>
+    <sequence>
+      <element name="FilesUserDefinedData"   type="ams:UserDefinedDataType" minOccurs="0" maxOccurs="1" />
+      <element name="LoadsUserDefinedData"   type="ams:UserDefinedDataType" minOccurs="0" maxOccurs="1" />
+      <element name="BatchesUserDefinedData" type="ams:UserDefinedDataType" minOccurs="0" maxOccurs="1" />
+
+      <element ref="ams:Content" minOccurs="1" maxOccurs="1" />
+    </sequence>
+    <attribute name="PartNumber"              type="ams:PartNumberType" use="required" />
+    <attribute name="MediaSetCheckValue"      type="ams:CheckValueType" use="optional" />
+    <attribute name="ListOfFilesCheckValue"   type="ams:CheckValueType" use="optional" />
+    <attribute name="ListOfLoadsCheckValue"   type="ams:CheckValueType" use="optional" />
+    <attribute name="ListOfBatchesCheckValue" type="ams:CheckValueType" use="optional" />
+    <attribute name="FilesCheckValue"         type="ams:CheckValueType" use="optional" />
+  </complexType>
+
+  <complexType name="ContentType" >
+    <annotation><documentation>
+      Content
+    </documentation></annotation>
+    <sequence>
+      <group ref="ams:DirectoryFileGroup" minOccurs="0" maxOccurs="unbounded" />
+    </sequence>
+    <attribute name="DefaultMedium" type="ams:MediumType" use="optional" default="1" />
+  </complexType>
+
+  <complexType name="FileType" abstract="true" >
+    <annotation><documentation>
+      Base of all Files
+    </documentation></annotation>
+    <attribute name="Name"       type="ams:FilenameType"   use="required" />
+    <attribute name="CheckValue" type="ams:CheckValueType" use="optional" />
+    <attribute name="SourcePath" type="string"             use="optional" />
+    <attribute name="Medium"     type="ams:MediumType"     use="optional" />
+  </complexType>
+
+  <complexType name="RegularFileType" >
+    <annotation><documentation>
+      Regular Data File.
+    </documentation></annotation>
+    <complexContent>
+      <extension base="ams:FileType" />
+    </complexContent>
+  </complexType>
+
+  <complexType name="LoadType" >
+    <annotation><documentation>
+      Load Header File and Load description
+    </documentation></annotation>
+    <complexContent>
+      <extension base="ams:FileType" >
+        <sequence minOccurs="0" maxOccurs="1" >
+          <element name="TargetHardware"  type="ams:TargetHardwareType"  minOccurs="1" maxOccurs="unbounded" />
+          <element name="DataFile"        type="ams:FileReferenceType"   minOccurs="1" maxOccurs="unbounded" />
+          <element name="SupportFile"     type="ams:FileReferenceType"   minOccurs="0" maxOccurs="unbounded" />
+          <element name="UserDefinedData" type="ams:UserDefinedDataType" minOccurs="0" maxOccurs="1" />
+        </sequence>
+
+        <attribute name="PartNumber"  type="ams:PartNumberType" use="required" />
+        <attribute name="PartFlags"   type="ams:HexValueType"   use="optional" default="0x0000" />
+        <attribute name="Description" type="ams:StringType"     use="optional" />
+        <attribute name="Type"        type="ams:HexValueType"   use="optional" default="0x0000" />
+        <attribute name="LoadCheckValue"         type="ams:CheckValueType" use="optional" />
+        <attribute name="DataFilesCheckValue"    type="ams:CheckValueType" use="optional" />
+        <attribute name="SupportFilesCheckValue" type="ams:CheckValueType" use="optional" />
+      </extension>
+    </complexContent>
+  </complexType>
+
+  <complexType name="BatchType" >
+    <annotation><documentation>
+      Batch File and Batch description
+    </documentation></annotation>
+    <complexContent>
+      <extension base="ams:FileType" >
+        <sequence minOccurs="0" maxOccurs="1" >
+          <element name="Target" type="ams:BatchTargetType" minOccurs="1" maxOccurs="unbounded" />
+        </sequence>
+
+        <attribute name="PartNumber" type="ams:PartNumberType" use="required" />
+        <attribute name="Comment"    type="ams:StringType"     use="optional" />
+      </extension>
+    </complexContent>
+  </complexType>
+
+  <complexType name="DirectoryType" >
+    <annotation><documentation>
+      Directory within Medium.
+    </documentation></annotation>
+    <sequence>
+      <group ref="ams:DirectoryFileGroup" minOccurs="0" maxOccurs="unbounded" />
+    </sequence>
+    <attribute name="Name"          type="ams:FilenameType" use="required" />
+    <attribute name="DefaultMedium" type="ams:MediumType"   use="optional" />
+  </complexType>
+
+  <complexType name="TargetHardwareType" >
+    <annotation><documentation>
+      Target Hardware Definition (Part of Load)
+    </documentation></annotation>
+    <sequence>
+      <element name="Position" type="ams:PositionType" minOccurs="0" maxOccurs="unbounded" />
+    </sequence>
+    <attribute name="ThwId" type="ams:TargetHardwareIdType" use="required" />
+  </complexType>
+
+  <complexType name="PositionType" >
+    <annotation><documentation>
+      Target Position Information (Part of Load)
+    </documentation></annotation>
+    <attribute name="Pos" type="ams:PosType" use="required" />
+  </complexType>
+
+  <complexType name="FileReferenceType" >
+    <annotation><documentation>
+      File Reference (part of Load)
+    </documentation></annotation>
+    <attribute name="FilePath"   type="ams:FilePathType"   use="required" />
+    <attribute name="PartNumber" type="ams:PartNumberType" use="required" />
+    <attribute name="CheckValue" type="ams:CheckValueType" use="optional" />
+  </complexType>
+
+  <complexType name="BatchTargetType" >
+    <annotation><documentation>
+      Batch Target Definition
+    </documentation></annotation>
+    <sequence>
+      <element name="Load" type="ams:LoadReferenceType" minOccurs="1" maxOccurs="unbounded" />
+    </sequence>
+    <attribute name="ThwIdPos" type="ams:TargetHardwareIdPosType" use="required" />
+  </complexType>
+
+  <complexType name="LoadReferenceType" >
+    <annotation><documentation>
+      References a Load contained in the Media Set
+    </documentation></annotation>
+    <attribute name="FilePath" type="ams:FilePathType" use="required" />
+  </complexType>
+
+  <simpleType name="UserDefinedDataType" >
+    <annotation><documentation>
+      User Defined Data, which can be part of Load Files.
+      Additionally, it can be added to File, Batches and Load Lists.
+    </documentation></annotation>
+    <restriction base="string" />
+  </simpleType>
+
+  <simpleType name="MediumType" >
+    <annotation><documentation>
+      Medium Number allowed 1..255.
+    </documentation></annotation>
+    <restriction base="unsignedByte" />
+  </simpleType>
+
+  <simpleType name="PartNumberType" >
+    <annotation><documentation>
+      Part Number of Media Set, Load, Batch, File
+    </documentation></annotation>
+    <restriction base="string" />
+  </simpleType>
+
+  <simpleType name="StringType" >
+    <annotation><documentation>
+      String
+    </documentation></annotation>
+    <restriction base="string" />
+  </simpleType>
+
+  <simpleType name="FilenameType" >
+    <annotation><documentation>
+      File Name.
+      Restricted to Characters A-Z, a-z, 0-9, '.', '_', '-'.
+      Not allowed, but not checked: "." and ".."
+    </documentation></annotation>
+    <restriction base="string" >
+      <minLength value="1" />
+      <pattern value="[A-Za-z0-9._-]+" />
+    </restriction>
+  </simpleType>
+
+  <simpleType name="FilePathType" >
+    <annotation><documentation>
+      File Path Reference separated by "/"
+      Restricted to Characters.
+      Not allowed, but not checked: "." and "..".
+      The path can be absolute (to the root of the media set) or relative to the load.
+    </documentation></annotation>
+    <restriction base="string" >
+      <minLength value="2" />
+      <pattern value="/?([A-Za-z0-9._-]+/)*[A-Za-z0-9._-]+" />
+    </restriction>
+  </simpleType>
+
+  <simpleType name="TargetHardwareIdType" >
+    <annotation><documentation>
+      Target Hardware ID
+    </documentation></annotation>
+    <restriction base="string" />
+  </simpleType>
+
+  <simpleType name="PosType" >
+    <annotation><documentation>
+      Target Position
+    </documentation></annotation>
+    <restriction base="string" />
+  </simpleType>
+
+  <simpleType name="TargetHardwareIdPosType" >
+    <annotation><documentation>
+      Target Hardware ID with position information.
+      Target Hardware ID with position is available since ARINC 665-3.
+    </documentation></annotation>
+    <restriction base="string" />
+  </simpleType>
+
+  <simpleType name="CheckValueType" final="restriction" >
+    <annotation><documentation>
+      Valid Check Values.
+      There is a difference between 'NotUsed' and omitted attribute.
+      If no check value is given, the parent setting is used.
+      With this handling a check value can be explicitly disabled again.
+      Load Check Values are used since ARINC 665-3.
+    </documentation></annotation>
+    <restriction base="string" >
+      <enumeration value="NotUsed" />
+      <enumeration value="CRC8" />
+      <enumeration value="CRC16" />
+      <enumeration value="CRC32" />
+      <enumeration value="MD5" />
+      <enumeration value="SHA1" />
+      <enumeration value="SHA256" />
+      <enumeration value="SHA512" />
+      <enumeration value="CRC64" />
+    </restriction>
+  </simpleType >
+
+  <simpleType name="HexValueType" >
+    <annotation><documentation>
+      Hexadecimal Value
+    </documentation></annotation>
+    <restriction base="string" >
+      <minLength value="3" />
+      <pattern value="0x([0-9a-fA-F])+" />
+    </restriction>
+  </simpleType>
+
+  <group name="DirectoryFileGroup" >
+    <annotation>
+      <documentation>Contents of media-set and directories</documentation>
+    </annotation>
+    <choice>
+      <element name="Directory" type="ams:DirectoryType" />
+      <element name="File"      type="ams:RegularFileType" />
+      <element name="Load"      type="ams:LoadType" />
+      <element name="Batch"     type="ams:BatchType" />
+    </choice>
+  </group>
+</schema>

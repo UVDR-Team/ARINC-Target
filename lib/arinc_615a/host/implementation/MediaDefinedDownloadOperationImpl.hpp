@@ -54,7 +54,7 @@ class MediaDefinedDownloadOperationImpl final : public MediaDefinedDownloadOpera
       boost::asio::ip::udp::endpoint remote,
       ::Tftp::Packets::TftpOptions clientTftpOptions,
       std::string partNumber,
-      Arinc645::CheckValue checkValue ) override;
+      Arinc649::CheckValue checkValue ) override;
 
     //! @copydoc DownloadOperation::waitOperation()
     void waitOperation(

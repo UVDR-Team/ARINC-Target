@@ -1,0 +1,129 @@
+// SPDX-License-Identifier: MPL-2.0
+/**
+ * @file
+ * @copyright
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * @author Thomas Vogt, thomas@thomas-vogt.de
+ *
+ * @brief Definition of Class Tftp::TftpOptionsConfiguration.
+ **/
+
+#include "TftpOptionsConfiguration.hpp"
+
+#include <tftp/packets/Packets.hpp>
+
+#include <boost/property_tree/ptree.hpp>
+
+namespace Tftp {
+
+TftpOptionsConfiguration::TftpOptionsConfiguration( const boost::property_tree::ptree &properties )
+{
+  fromProperties( properties );
+}
+
+void TftpOptionsConfiguration::fromProperties( const boost::property_tree::ptree &properties )
+{
+  handleTransferSizeOption = properties.get( "transfer_size", handleTransferSizeOption );
+  blockSizeOption = properties.get_optional< uint16_t >( "block_size" ).map( []( const auto &blockSize ) {
+    return std::clamp( blockSize, Packets::BlockSizeOptionMin, Packets::BlockSizeOptionMax );
+  } );
+  // convert to std::chrono (is similar to std::optional::transform)
+  timeoutOption =
+    properties.get_optional< std::chrono::seconds::rep >( "timeout" )
+      .map(
+        []( const auto timeout )
+        {
+    return std::chrono::seconds{ std::clamp(
+      timeout,
+      std::chrono::seconds::rep{ Packets::TimeoutOptionMin },
+      std::chrono::seconds::rep{ Packets::TimeoutOptionMax } ) };
+        } );
+}
+
+boost::property_tree::ptree TftpOptionsConfiguration::toProperties( const bool full ) const
+{
+  boost::property_tree::ptree properties{};
+
+  if ( full || handleTransferSizeOption )
+  {
+    properties.add( "transfer_size", handleTransferSizeOption );
+  }
+
+  if ( full || blockSizeOption )
+  {
+    properties.add( "block_size", blockSizeOption );
+  }
+
+  if ( full || timeoutOption )
+  {
+    // like std::optional::transform
+    properties.add(
+      "timeout",
+      timeoutOption.map(
+        []( const auto &timeOut )
+        {
+          return timeOut.count();
+        } ) );
+  }
+
+  return properties;
+}
+
+#ifndef ARINC_615A_NO_PROGRAM_OPTIONS
+boost::program_options::options_description TftpOptionsConfiguration::options()
+{
+  boost::program_options::options_description options{ "TFTP Option Negotiation Options" };
+
+  options.add_options()
+  (
+    "block-size-option,b",
+    boost::program_options::value( &blockSizeOption )
+      ->value_name( "block-size" )
+      ->implicit_value( Packets::BlockSizeOptionDefault )
+      ->notifier( []( const auto blockSizeOption ) {
+        if ( blockSizeOption && ( blockSizeOption < Packets::BlockSizeOptionMin || blockSizeOption > Packets::BlockSizeOptionMax ) )
+        {
+          BOOST_THROW_EXCEPTION( boost::program_options::invalid_option_value{ std::to_string( blockSizeOption.value() ) } );
+        }
+      } ),
+    std::format(
+      "Negotiates the TFTP block size for transfers.\n"
+      "Valid values between [{},{}].",
+      Packets::BlockSizeOptionMin,
+      Packets::BlockSizeOptionMax )
+      .c_str()
+  )
+  (
+    "timeout-option,i",
+    boost::program_options::value< std::chrono::seconds::rep >()
+      ->value_name( "timeout" )
+      ->implicit_value( DefaultTftpReceiveTimeout.count() )
+      ->notifier( [ this ]( const auto timeoutOptionInt ) {
+        if ( timeoutOptionInt < Packets::TimeoutOptionMin || timeoutOptionInt > Packets::TimeoutOptionMax )
+        {
+          BOOST_THROW_EXCEPTION( boost::program_options::invalid_option_value{ std::to_string( timeoutOptionInt ) } );
+        }
+        timeoutOption = std::chrono::seconds{ timeoutOptionInt };
+      } ),
+    std::format(
+      "Handles the TFTP timeout option negotiation with the given timeout in seconds.\n"
+      "Valid values between [{},{}].",
+      Packets::TimeoutOptionMin,
+      Packets::TimeoutOptionMax )
+      .c_str()
+  )
+  (
+    "handle-transfer-size-option,s",
+    boost::program_options::value( &handleTransferSizeOption )
+      ->implicit_value( true, "true" )
+      ->value_name( "true|false" ),
+    "Handles the TFTP transfer size option negotiation."
+  );
+
+  return options;
+}
+#endif
+
+}

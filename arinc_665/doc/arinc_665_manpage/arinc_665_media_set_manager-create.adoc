@@ -1,0 +1,22 @@
+= arinc_665_media_set_manager-create(1)
+Thomas Vogt
+
+== Name
+
+arinc_665_media_set_manager-create - Create ARINC 665 Media Set Manger Database.
+
+== Synopsis
+
+*arinc_665_media_set_manager*
+--command=_Create_
+--media-set-manager-dir=_Directory_
+
+== Options
+
+// tag::options[]
+*--media-set-manager-dir*=_Directory_::
+Media Set Manager Directory.
+
+== See Also
+
+link:[arinc_665_media_set_manager(1)]

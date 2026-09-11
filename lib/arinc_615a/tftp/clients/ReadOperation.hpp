@@ -103,7 +103,7 @@ class ARINC_615A_EXPORT ReadOperation : public Operation
     ReadOperation& partNumberOption( std::string partNumberOption ) override = 0;
 
     //! @copydoc Operation::checksumOption()
-    ReadOperation& checksumOption( Arinc645::CheckValue checksumOption ) override = 0;
+    ReadOperation& checksumOption( Arinc649::CheckValue checksumOption ) override = 0;
 
     //! @copydoc Operation::remote()
     ReadOperation& remote( boost::asio::ip::udp::endpoint remote ) override = 0;

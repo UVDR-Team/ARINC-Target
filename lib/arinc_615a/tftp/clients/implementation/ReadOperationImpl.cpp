@@ -99,7 +99,7 @@ ReadOperation& ReadOperationImpl::partNumberOption( std::string partNumberOption
   return *this;
 }
 
-ReadOperation& ReadOperationImpl::checksumOption( Arinc645::CheckValue checksumOption )
+ReadOperation& ReadOperationImpl::checksumOption( Arinc649::CheckValue checksumOption )
 {
   checksumOptionV = std::move( checksumOption );
   return *this;
@@ -158,7 +158,7 @@ const ::Tftp::Packets::ErrorInformation& ReadOperationImpl::errorInformation() c
   }
 
   // Add Checksum Option
-  if ( Arinc645::CheckValueType::NotUsed != checksumOptionV.type() )
+  if ( Arinc649::CheckValueType::NotUsed != checksumOptionV.type() )
   {
     additionalOptions.try_emplace(
       std::string{ Arinc615aOptions_name( checksumOptionV.type() ) },

@@ -12,7 +12,7 @@
 
 #include "Arinc615aOptions.hpp"
 
-#include <arinc_645/Arinc645Exception.hpp>
+#include <arinc_649/Arinc649Exception.hpp>
 
 #include <ostream>
 #include <format>
@@ -36,7 +36,7 @@ namespace Arinc615a::Tftp {
   }
 
   // ARINC 615A Checksum Option
-  if ( checksum != Arinc645::CheckValue::NoCheckValue )
+  if ( checksum != Arinc649::CheckValue::NoCheckValue )
   {
     tftpOptions.try_emplace( std::string{ Arinc615aOptions_name( checksum.type() ) }, checksum.toString() );
   }
@@ -83,11 +83,11 @@ std::string_view Arinc615aOptions_name( const KnownOptions option ) noexcept
   }
 }
 
-std::string_view Arinc615aOptions_name( const Arinc645::CheckValueType type ) noexcept
+std::string_view Arinc615aOptions_name( const Arinc649::CheckValueType type ) noexcept
 {
   switch ( type )
   {
-    using enum Arinc645::CheckValueType;
+    using enum Arinc649::CheckValueType;
 
     case Crc8:
       return "checksum_1";
@@ -137,7 +137,7 @@ std::string Arinc615aOptions_toString( const Arinc615aOptions &options )
     retStr += std::format( "[{}:{}]", Arinc615aOptions_name( KnownOptions::PartNumber ), options.partNumber );
   }
 
-  if ( options.checksum.type() != Arinc645::CheckValueType::NotUsed )
+  if ( options.checksum.type() != Arinc649::CheckValueType::NotUsed )
   {
     retStr += std::format( "[{}:{}]", Arinc615aOptions_name( options.checksum.type() ), options.checksum.toString() );
   }
@@ -145,22 +145,22 @@ std::string Arinc615aOptions_toString( const Arinc615aOptions &options )
   return retStr;
 }
 
-std::pair< bool, Arinc645::CheckValue > Arinc615aOptions_checksum( ::Tftp::Packets::Options &options )
+std::pair< bool, Arinc649::CheckValue > Arinc615aOptions_checksum( ::Tftp::Packets::Options &options )
 {
   try
   {
     // Initialise return value: success, no checksum option found.
-    std::pair< bool, Arinc645::CheckValue > retVal{ true, {} };
+    std::pair< bool, Arinc649::CheckValue > retVal{ true, {} };
 
     for ( const auto type :
-      { Arinc645::CheckValueType::Crc8,
-        Arinc645::CheckValueType::Crc16,
-        Arinc645::CheckValueType::Crc32,
-        Arinc645::CheckValueType::Md5,
-        Arinc645::CheckValueType::Sha1,
-        Arinc645::CheckValueType::Sha256,
-        Arinc645::CheckValueType::Sha512,
-        Arinc645::CheckValueType::Crc64 } )
+      { Arinc649::CheckValueType::Crc8,
+        Arinc649::CheckValueType::Crc16,
+        Arinc649::CheckValueType::Crc32,
+        Arinc649::CheckValueType::Md5,
+        Arinc649::CheckValueType::Sha1,
+        Arinc649::CheckValueType::Sha256,
+        Arinc649::CheckValueType::Sha512,
+        Arinc649::CheckValueType::Crc64 } )
     {
       // Try to extract the checksum option
       if (
@@ -168,14 +168,14 @@ std::pair< bool, Arinc645::CheckValue > Arinc615aOptions_checksum( ::Tftp::Packe
         auto option{ options.extract( std::string{ Arinc615aOptions_name( type ) } ) };
         option )
       {
-        if ( retVal != std::pair< bool, Arinc645::CheckValue >{ true, {} } )
+        if ( retVal != std::pair< bool, Arinc649::CheckValue >{ true, {} } )
         {
           // Already some checksum option found
           return { false, {} };
         }
 
         // use check value if it is valid
-        Arinc645::CheckValue checkValue{ type, option.mapped() };
+        Arinc649::CheckValue checkValue{ type, option.mapped() };
 
         if ( !checkValue )
         {
@@ -189,7 +189,7 @@ std::pair< bool, Arinc645::CheckValue > Arinc615aOptions_checksum( ::Tftp::Packe
 
     return retVal;
   }
-  catch ( const Arinc645::Arinc645Exception& )
+  catch ( const Arinc649::Arinc649Exception& )
   {
     //! @todo Check if we really need exceptions
     return { false, {} };

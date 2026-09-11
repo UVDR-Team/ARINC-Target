@@ -16,6 +16,8 @@
 
 #include <arinc_615a_dla_qt/operations/InformationOperation.hpp>
 
+#include <arinc_615a/information/InitializationResponse.hpp>
+
 #include <QIcon>
 
 #include <format>

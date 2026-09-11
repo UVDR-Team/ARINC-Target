@@ -1,0 +1,13 @@
+---
+Checks: >-
+  clang-diagnostic-*,
+  clang-analyzer-*,
+  bugprone-*,
+  readability-*,
+  -llvmlibc-*
+SystemHeaders: false
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+FormatStyle: none
+CheckOptions:
+  readability-trailing-comma.MultiLineCommaPolicy: 'Ignore'

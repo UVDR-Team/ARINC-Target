@@ -187,7 +187,7 @@ Tftp::Clients::OperationPtr MediaDefinedDownloadOperationImpl::transferFile(
   Tftp::TransmitDataHandlerPtr dataHandler,
   std::string filename,
   std::string partNumber,
-  Arinc645::CheckValue checkValue )
+  Arinc649::CheckValue checkValue )
 {
   SPDLOG_INFO( "Send file {}", filename );
 
@@ -198,7 +198,7 @@ Tftp::Clients::OperationPtr MediaDefinedDownloadOperationImpl::transferFile(
   }
 
   // check for the checksum option
-  if ( ( Arinc645::CheckValue::NoCheckValue != checkValue ) && ( Arinc615aVersion::Arinc615a34 != protocolVersion() ) )
+  if ( ( Arinc649::CheckValue::NoCheckValue != checkValue ) && ( Arinc615aVersion::Arinc615a34 != protocolVersion() ) )
   {
     SPDLOG_INFO( "Checksum option requested when not in ARINC 615A-3/4 mode" );
   }

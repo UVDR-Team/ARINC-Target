@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Thomas Vogt</author>
+ <class>Arinc665Qt::MediaSetManager::ImportMediaSetWizard</class>
+ <widget class="QWizard" name="Arinc665Qt::MediaSetManager::ImportMediaSetWizard">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Import ARINC 665 Media Set</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc">
+    <normaloff>:/fa/solid/arrow-right-to-bracket.svg</normaloff>:/fa/solid/arrow-right-to-bracket.svg</iconset>
+  </property>
+  <property name="wizardStyle">
+   <enum>QWizard::ModernStyle</enum>
+  </property>
+  <property name="options">
+   <set>QWizard::NoBackButtonOnStartPage</set>
+  </property>
+  <widget class="Arinc665Qt::MediaSetManager::ImportMediaSetSettingsPage" name="settings"/>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Arinc665Qt::MediaSetManager::ImportMediaSetSettingsPage</class>
+   <extends>QWizardPage</extends>
+   <header location="global">arinc_665_qt/media_set_manager/ImportMediaSetSettingsPage.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../resources/arinc_665_qt_resources.qrc"/>
+  <include location="../../../qt_icon_resources/lib/qt_icon_resources/font_awesome/font_awesome.qrc"/>
+ </resources>
+ <connections/>
+</ui>

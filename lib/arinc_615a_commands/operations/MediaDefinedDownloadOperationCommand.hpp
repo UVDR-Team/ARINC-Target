@@ -90,7 +90,7 @@ class ARINC_615A_COMMANDS_EXPORT MediaDefinedDownloadOperationCommand final :
       std::string_view filename,
       const Tftp::Packets::TftpOptions &clientTftpOptions,
       std::string_view partNumber,
-      const Arinc645::CheckValue &checkValue ) override;
+      const Arinc649::CheckValue &checkValue ) override;
 
     /**
      * @brief File transfer completed handler.

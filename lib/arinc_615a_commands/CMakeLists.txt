@@ -3,7 +3,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 # If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-cmake_minimum_required( VERSION 4.3 )
+cmake_minimum_required( VERSION 3.24 )
 
 find_package( spdlog REQUIRED )
 
@@ -44,6 +44,9 @@ target_compile_options(
     $<$<CXX_COMPILER_ID:GNU>:-Wall>
     $<$<CXX_COMPILER_ID:GNU>:-Wextra>
     $<$<CXX_COMPILER_ID:GNU>:-Wpedantic>
+
+    # Big Objects for MinGW under Windows or Cross
+    $<$<AND:$<PLATFORM_ID:Windows>,$<CXX_COMPILER_ID:GNU>>:-Wa,-mbig-obj>
 
     $<$<CXX_COMPILER_ID:Clang>:-Wall>
     $<$<CXX_COMPILER_ID:Clang>:-Wextra>

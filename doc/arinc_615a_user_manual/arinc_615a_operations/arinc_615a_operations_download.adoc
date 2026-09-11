@@ -28,7 +28,7 @@ For further detailed information refer to <<arinc_615a_4>> Section 5.4.4.
 [discrete]
 === ARINC 615A Checksum Option
 
-When the Target Hardware Data Loader transmits the requested files, these files can be protected by an _ARINC 645 Check Value_.
+When the Target Hardware Data Loader transmits the requested files, these files can be protected by an _ARINC 649 Check Value_.
 The ARINC 615A Host Data Loader checks the file integrity when the check value is received.
 If the integrity check fails, the operator is informed and the transmitted information must be considered as unreliable.
 

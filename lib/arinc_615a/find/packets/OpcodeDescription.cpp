@@ -13,7 +13,6 @@
 #include "OpcodeDescription.hpp"
 
 #include <boost/exception/exception.hpp>
-#include <boost/program_options.hpp>
 
 namespace Arinc615a::Find::Packets {
 

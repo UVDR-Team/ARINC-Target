@@ -3,7 +3,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 # If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-cmake_minimum_required( VERSION 4.3 )
+cmake_minimum_required( VERSION 3.24 )
 
 find_package( Qt6 COMPONENTS Widgets Network QUIET )
 find_package( spdlog REQUIRED )
@@ -40,6 +40,7 @@ target_sources(
         ${CMAKE_CURRENT_BINARY_DIR}/arinc_615a_dla_qt_export.h
 
   PRIVATE
+    Arinc615aDlaQt.cpp
     Configuration.cpp
     DataLoaderConfiguration.cpp
     DataLoaderMainWindow.cpp

@@ -14,7 +14,7 @@
 
 #include <arinc_615a/tftp/clients/Clients.hpp>
 
-#include <arinc_645/Arinc645.hpp>
+#include <arinc_649/Arinc649.hpp>
 
 #include <tftp/clients/Clients.hpp>
 
@@ -38,7 +38,7 @@ class ARINC_615A_EXPORT Operation
 {
   public:
     //! Destructor.
-    virtual ~Operation() noexcept( false ) = default;
+    virtual ~Operation() = default;
 
     /**
      * @name Configuration Operations
@@ -167,15 +167,15 @@ class ARINC_615A_EXPORT Operation
      * Provides a Check Value to the TFTP Server during TFTP option negotiation.
      * The meaning of this option depends on the ARINC 615A operation.
      * By default, no checksum option is transmitted.
-     * If this option is set to @p Arinc645::NoCheckValue, no checksum option is transmitted.
+     * If this option is set to @p Arinc649::NoCheckValue, no checksum option is transmitted.
      *
      * @param[in] checksumOption
      *   ARINC 615A Checksum Option.
-     *   Set to @p Arinc645::NoCheckValue for deactivation.
+     *   Set to @p Arinc649::NoCheckValue for deactivation.
      *
      * @return @p *this for chaining.
      **/
-    virtual Operation& checksumOption( Arinc645::CheckValue checksumOption ) = 0;
+    virtual Operation& checksumOption( Arinc649::CheckValue checksumOption ) = 0;
 
     /**
      * @brief Updates the remote (server address).

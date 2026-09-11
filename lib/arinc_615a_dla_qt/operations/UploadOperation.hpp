@@ -17,8 +17,6 @@
 
 #include <arinc_615a_dla_qt/DataLoaderConfiguration.hpp>
 
-#include <arinc_615a/information/InitializationResponse.hpp>
-#include <arinc_615a/information/UploadStatus.hpp>
 #include <arinc_615a/information/UploadLoad.hpp>
 
 #include <arinc_615a/host/UploadOperationHandler.hpp>
@@ -142,7 +140,7 @@ class ARINC_615A_DLA_QT_EXPORT UploadOperation final :
       std::string_view filename,
       const Tftp::Packets::TftpOptions &clientTftpOptions,
       std::string_view loadPartNumber,
-      const Arinc645::CheckValue &checkValue ) override;
+      const Arinc649::CheckValue &checkValue ) override;
 
     /**
      * @brief File transfer completed handler.

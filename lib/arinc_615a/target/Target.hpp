@@ -15,7 +15,7 @@
 
 #include <arinc_615a/Arinc615a.hpp>
 
-#include <arinc_645/Arinc645.hpp>
+#include <arinc_649/Arinc649.hpp>
 
 #include <tftp/packets/Packets.hpp>
 
@@ -183,7 +183,7 @@ using NewOperationRequestHandler = std::function< void(
  * For file transfers the *checksum* and *part number* option can be transmitted.
  * This callback is used to validate the returned checksum and part number from the TFTP Server (Host Data Loader).
  * The Part Number must be empty or the same as sent.
- * The Checksum must be empty (@p Arinc645::CheckValue::NoCheckValue) or the same as sent.
+ * The Checksum must be empty (@p Arinc649::CheckValue::NoCheckValue) or the same as sent.
  *
  * @param[in] partNumber
  *   Received Part Number Option
@@ -193,7 +193,7 @@ using NewOperationRequestHandler = std::function< void(
  * @return If the Checksum Option Negotiation was successful.
  **/
 using Arinc615aOptionNegotiationHandler =
-  std::function< bool( std::string_view partNumber, const Arinc645::CheckValue &checksum ) >;
+  std::function< bool( std::string_view partNumber, const Arinc649::CheckValue &checksum ) >;
 
 }
 

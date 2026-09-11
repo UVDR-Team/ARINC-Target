@@ -1,0 +1,22 @@
+= arinc_665_print_xml(1)
+Thomas Vogt
+
+== Name
+
+arinc_665_print_xml - Prints content of ARINC 665 Media Set XML.
+
+== Synopsis
+
+*arinc_665_print_xml*
+--xml-file _File_
+
+== Options
+
+// tag::options[]
+*--xml-file* _File_::
+Media Set XML File.
+
+== See Also
+
+link:[arinc_665_ls(1)]
+link:[arinc_665_print_media_set(1)]

@@ -109,7 +109,7 @@ class OperationImpl
     explicit OperationImpl( boost::asio::io_context &ioContext );
 
     //! Destructor
-    virtual ~OperationImpl() noexcept( false );
+    virtual ~OperationImpl();
 
     /**
      * @brief TFTP Option Negotiation handler.

@@ -18,7 +18,7 @@
 
 #include <arinc_615a/information/Information.hpp>
 
-#include <arinc_645/Arinc645.hpp>
+#include <arinc_649/Arinc649.hpp>
 
 #include <tftp/packets/Packets.hpp>
 
@@ -88,7 +88,7 @@ class DownloadOperationHandler : public OperationHandler
       std::string_view filename,
       const ::Tftp::Packets::TftpOptions &clientTftpOptions,
       std::string_view partNumber,
-      const Arinc645::CheckValue &checkValue ) = 0;
+      const Arinc649::CheckValue &checkValue ) = 0;
 };
 
 }

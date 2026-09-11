@@ -1,0 +1,16 @@
+---
+Checks: >-
+  clang-diagnostic-*,
+  clang-analyzer-*,
+  bugprone-*,
+  readability-*,
+  -readability-magic-numbers,
+  -google-default-arguments,
+  -llvmlibc-*
+SystemHeaders: false
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+FormatStyle: none
+CheckOptions:
+  readability-identifier-length.IgnoredVariableNames: '_'
+  readability-trailing-comma.MultiLineCommaPolicy: 'Ignore'

@@ -31,4 +31,9 @@ Helper::VersionsInformation::value_type arinc615aVersion()
   };
 }
 
+void setLogLevel( const spdlog::level::level_enum level )
+{
+  spdlog::set_level( level );
+}
+
 }

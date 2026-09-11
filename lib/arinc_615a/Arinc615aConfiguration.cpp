@@ -12,7 +12,9 @@
 
 #include "Arinc615aConfiguration.hpp"
 
+#ifndef ARINC_615A_NO_PROGRAM_OPTIONS
 #include <helper/BoostAsioProgramOptions.hpp>
+#endif
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -86,6 +88,7 @@ boost::property_tree::ptree Arinc615aConfiguration::toProperties( const bool ful
   return properties;
 }
 
+#ifndef ARINC_615A_NO_PROGRAM_OPTIONS
 boost::program_options::options_description Arinc615aConfiguration::options()
 {
   boost::program_options::options_description options{ "ARINC 615A Options" };
@@ -116,5 +119,6 @@ boost::program_options::options_description Arinc615aConfiguration::options()
 
   return options;
 }
+#endif
 
 }

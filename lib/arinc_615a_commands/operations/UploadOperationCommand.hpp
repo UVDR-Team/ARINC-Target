@@ -105,7 +105,7 @@ class ARINC_615A_COMMANDS_EXPORT UploadOperationCommand final : private Arinc615
       std::string_view filename,
       const Tftp::Packets::TftpOptions &clientTftpOptions,
       std::string_view loadPartNumber,
-      const Arinc645::CheckValue &checkValue ) override;
+      const Arinc649::CheckValue &checkValue ) override;
 
     /**
      * @brief File transfer completed handler.
@@ -153,7 +153,7 @@ class ARINC_615A_COMMANDS_EXPORT UploadOperationCommand final : private Arinc615
     Arinc665::Utils::MediaSetManagerPtr mediaSetManagerV;
     //! ARINC 615A Data Loader Configuration
     Arinc615a::Arinc615aConfiguration configurationV;
-    //! ARINC 645 Check Values for file lookup
+    //! ARINC 649 Check Values for file lookup
     Arinc665::Media::CheckValues checkValuesV;
     //! ARINC 665 Loads
     Arinc665::Media::ConstLoads loadsV;

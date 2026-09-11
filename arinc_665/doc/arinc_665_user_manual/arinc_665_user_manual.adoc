@@ -1,0 +1,77 @@
+= ARINC 665 User Manual
+Thomas Vogt
+:description: User Manual of ARINC 665 Toolchain.
+:doctype: book
+:sectanchors:
+:sectnums: all
+:sectnumlevels: 4
+:url-repo: https://git.thomas-vogt.de/thomas-vogt/arinc_665.git
+:imagesdir: ./images
+:icons: font
+:toc:
+
+Thomas Vogt
+
+include::references.adoc[]
+
+include::glossary.adoc[]
+
+include::arinc_665_overview.adoc[]
+
+= Common Concepts and Setup
+
+* Introduction
+** Domain overview, key concepts, typical workflows across applications
+** Safety and compliance notes
+
+* Installation and Update
+** Prerequisites (OS, permissions, dependencies)
+** Installation, update, uninstallation
+** Verifying the installation
+
+* Shared Configuration and Components
+** Common environment variables, paths, network prerequisites
+** Shared data formats and protocols (short overview)
+** Logging, diagnostics collection, how to report issues
+
+include::arinc_665_media_sets_loads_and_batches.adoc[]
+
+include::media_set_manager.adoc[]
+
+= Applications
+
+include::arinc_665_media_set_manager_qt_application.adoc[]
+
+include::arinc_665_media_set_manager_cli_application.adoc[]
+
+include::arinc_665_media_set_compiler_qt_application.adoc[]
+
+include::arinc_665_media_set_compiler_cli_application.adoc[]
+
+include::arinc_665_media_set_decompiler_cli_application.adoc[]
+
+include::arinc_665_media_set_viewer_qt_application.adoc[]
+
+* arinc_665_media_set_check
+* arinc_665_ls
+* arinc_665_print_media_set
+* arinc_665_print_xml
+
+= Troubleshooting and FAQ
+
+- General troubleshooting flow (all apps)
+- Common error patterns and remedies
+- App-specific subsections (short pointers linking back to the app chapters)
+- Checklists (network, permissions, configuration)
+
+== Troubleshooting
+
+= References
+
+include::arinc_665_media_set_xml.adoc[]
+
+== Man Pages
+include::../../app/arinc_665_media_set_manager/arinc_665_media_set_manager.adoc[leveloffset=+2]
+include::../arinc_665_manpage/arinc_665_media_set_manager-create.adoc[leveloffset=+2]
+include::../arinc_665_manpage/arinc_665_media_set_manager-list-loads.adoc[leveloffset=+2]
+include::../arinc_665_manpage/arinc_665_media_set_manager-list-media-sets.adoc[leveloffset=+2]

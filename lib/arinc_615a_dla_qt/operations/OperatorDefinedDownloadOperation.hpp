@@ -17,8 +17,6 @@
 
 #include <arinc_615a_dla_qt/DataLoaderConfiguration.hpp>
 
-#include <arinc_615a/information/DownloadStatus.hpp>
-
 #include <arinc_615a/host/DownloadInformation.hpp>
 #include <arinc_615a/host/OperatorDefinedDownloadOperationHandler.hpp>
 
@@ -143,7 +141,7 @@ class ARINC_615A_DLA_QT_EXPORT OperatorDefinedDownloadOperation final :
       std::string_view filename,
       const Tftp::Packets::TftpOptions &clientTftpOptions,
       std::string_view partNumber,
-      const Arinc645::CheckValue &checkValue ) override;
+      const Arinc649::CheckValue &checkValue ) override;
 
     //! @copydoc Arinc615a::Host::OperatorDefinedDownloadOperationHandler::downloadingList
     void downloadingList( const Arinc615a::Information::DownloadFilesInformation &files ) override;

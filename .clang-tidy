@@ -11,8 +11,10 @@ Checks: >-
   -readability-make-member-function-const,
   -google-default-arguments,
   -llvmlibc-*
+SystemHeaders: false
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
 FormatStyle: none
 CheckOptions:
   readability-identifier-length.IgnoredVariableNames: '_'
+  readability-trailing-comma.MultiLineCommaPolicy: 'Ignore'

@@ -1,0 +1,50 @@
+== ARINC 665 Media Set Manager
+
+The _ARINC 665 Media Set Manager_ manages a repository of ARINC 665 Media Sets to:
+
+- create,
+- import,
+- view, and
+- delete
+
+ARINC 665 Media Sets.
+
+=== Media Set Manager Repository
+The _Media Set Manager Repository_ is a directory where the _Media Set Manager_ holds its _Media Set Manager Configuration_ and the contained ARINC 665 Media Sets.
+
+=== Configuration Parameters
+
+Check Integrity on Startup::
+  When this Parameter is set, the Media Set Manager checks the integrity of all Media Sets on startup of the application.
+
+[discrete]
+==== Default Parameters for Media Set Creation and Import
+
+Check Integrity::
+  When this Parameter is set, the integrity of the new generated or imported media set is checked.
+
+ARINC 665 Supplement::
+  This parameter defines which ARINC 665 Supplement shall be used for Media Set generation.
+
+Create Load Header Files::
+  This parameter defines how _ARINC 665 Load Header Files_ should be generated.
+
+Create Load Batch Files::
+  This parameter defines how _ARINC 665 Batch Files_ should be generated.
+
+[discrete]
+==== ARINC 665 File Generation Policies
+
+The _ARINC 665 File Generation Policies_ provides a configuration setting for defining if ARINC 665 specific files (_Load Headers_ and _Batch_ Files) shall be generated automatically or must be provided by the operator.
+
+The following values are used for _Create Load Header Files_ and
+_Create Load Batch Files_ parameters.
+
+None::
+  ARINC 665 Files are never generated, if they do not exist, the Media Set Generation fails.
+
+None Existing::
+  ARINC 665 Files are generated if they do not exist within the source.
+
+All::
+  All ARINC 665 files are generated.

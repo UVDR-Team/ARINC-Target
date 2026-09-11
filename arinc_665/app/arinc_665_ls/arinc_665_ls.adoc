@@ -1,0 +1,43 @@
+= arinc_665_ls(1)
+Thomas Vogt
+
+== Name
+
+arinc_665_ls - Prints ARINC 665 Media Set information.
+
+== Synopsis
+
+*arinc_665_ls*
+[ -h | --help ]
+[ -l | --log-level=_log-level_ ]
+--directory _Directory_
+
+Recursively iterates over _Directory_ and prints ARINC 665 media file information.
+
+== Options
+
+// tag::options[]
+*-h, --help*::
+Print this help screen.
+
+*-l, --log-level*=_log-level_::
+The verbosity of the logging information:
++
+--
+- trace
+- debug
+- info
+- warn
+- err
+- critical
+- off
+--
+Defaults to `warn`.
+
+*--directory* _Directory_::
+Start directory.
+// end::options[]
+
+== See Also
+
+link:[arinc_665_media_set_print(1)]

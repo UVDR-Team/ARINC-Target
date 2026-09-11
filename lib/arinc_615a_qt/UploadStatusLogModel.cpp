@@ -89,6 +89,7 @@ QVariant UploadStatusLogModel::data( const QModelIndex &index, const int role ) 
       return QBrush{ Qt::black, Qt::SolidPattern };
 
     case Qt::ItemDataRole::ToolTipRole:
+      // NOLINTNEXTLINE( readability-trivial-switch ): Keep for further extension
       switch ( Columns{ index.column() } )
       {
         case Columns::Status:

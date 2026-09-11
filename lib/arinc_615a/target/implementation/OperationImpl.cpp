@@ -121,7 +121,7 @@ Tftp::Clients::ReadOperationPtr OperationImpl::tftpClientReadOperation(
   Tftp::ReceiveDataHandlerPtr dataHandler,
   std::string filename,
   std::string partNumberOption,
-  Arinc645::CheckValue checksumOption )
+  Arinc649::CheckValue checksumOption )
 {
   auto operation{ tftpClientV->readOperation() };
   assert( operation );
@@ -152,7 +152,7 @@ Tftp::Clients::WriteOperationPtr OperationImpl::tftpClientWriteOperation(
   Tftp::TransmitDataHandlerPtr dataHandler,
   std::string filename,
   std::string partNumberOption,
-  Arinc645::CheckValue checksumOption )
+  Arinc649::CheckValue checksumOption )
 {
   auto operation{ tftpClientV->writeOperation() };
 
@@ -177,7 +177,7 @@ Tftp::Clients::WriteOperationPtr OperationImpl::tftpClientWriteOperation(
 void OperationImpl::sendInitFile(
   boost::asio::ip::udp::endpoint hostAddress,
   ::Tftp::Packets::TftpOptions clientTftpOptions,
-  std::optional< uint16_t > port )
+  const std::optional< uint16_t > port )
 {
   SPDLOG_INFO( "Send initialisation file with status 'Operation Accepted'" );
 
@@ -209,7 +209,7 @@ void OperationImpl::sendInitFile(
         Tftp::Arinc615aOptions{
           .port = port,
           .partNumber = {},
-          .checksum = Arinc645::CheckValue::NoCheckValue } );
+          .checksum = Arinc649::CheckValue::NoCheckValue } );
 
     initialisationOperationV->start();
   }
@@ -244,12 +244,12 @@ Tftp::Clients::WriteOperationPtr OperationImpl::protocolFileOperation(
   Tftp::Clients::OperationDeferredHandler operationDeferredHandler,
   Tftp::Clients::OperationCompletedHandler completionHandler,
   Tftp::TransmitDataHandlerPtr dataHandler,
-  Arinc645::CheckValue checkValue )
+  Arinc649::CheckValue checkValue )
 {
   SPDLOG_INFO( "Send protocol file {}", Files::ProtocolFileTypeDescription::instance().name( fileType ) );
 
   // check for the checksum option
-  if ( ( Arinc645::CheckValue::NoCheckValue != checkValue ) && ( Arinc615aVersion::Arinc615a34 != protocolVersion() ) )
+  if ( ( Arinc649::CheckValue::NoCheckValue != checkValue ) && ( Arinc615aVersion::Arinc615a34 != protocolVersion() ) )
   {
     SPDLOG_INFO( "Checksum option requested when not in ARINC 615A-3/4 mode" );
   }
@@ -350,7 +350,7 @@ void OperationImpl::statusTransmissionTimerHandler( const boost::system::error_c
 }
 
 bool OperationImpl::protocolFileOptionsNegotiation(
-  [[maybe_unused]] const Arinc645::CheckValue &providedCheckValue,
+  [[maybe_unused]] const Arinc649::CheckValue &providedCheckValue,
   const Tftp::Arinc615aOptions &serverOptions )
 {
   // ARINC 615A Port Option is only provided on Initialisation File Request.
@@ -367,9 +367,9 @@ bool OperationImpl::protocolFileOptionsNegotiation(
     return false;
   }
 
-  if ( Arinc645::CheckValue::NoCheckValue == providedCheckValue )
+  if ( Arinc649::CheckValue::NoCheckValue == providedCheckValue )
   {
-    if ( Arinc645::CheckValue::NoCheckValue != serverOptions.checksum )
+    if ( Arinc649::CheckValue::NoCheckValue != serverOptions.checksum )
     {
       SPDLOG_ERROR( "Received unexpected ARINC 615A Checksum Option for protocol file" );
       return false;

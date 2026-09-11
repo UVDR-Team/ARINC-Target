@@ -1,0 +1,27 @@
+= arinc_665_media_set_manager-list-loads(1)
+Thomas Vogt
+
+== Name
+
+arinc_665_media_set_manager-list-loads - List Loads contained on all ARINC 665 Media Sets.
+
+== Synopsis
+
+*arinc_665_media_set_manager*
+--command=_ListLoads_
+--media-set-manager-dir=_Directory_
+[--check-media-set-manager-integrity=_true_|_false_]
+
+== Options
+
+// tag::options[]
+*--media-set-manager-dir*=_Directory_::
+Media Set Manager Directory.
+
+*--check-media-set-manager-integrity*=_true_|_false_::
+If value is set to `true`, the media set integrity is checked in loading.
+Default is `true`.
+
+== See Also
+
+link:[arinc_665_media_set_manager(1)]

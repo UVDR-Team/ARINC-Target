@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Arinc665Qt::Media::MediaSetViewWidget</class>
+ <widget class="QWidget" name="Arinc665Qt::Media::MediaSetViewWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>700</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QTreeView" name="mediaSetTreeView">
+      <property name="uniformRowHeights">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QStackedWidget" name="detailsStackedWidget">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="Arinc665Qt::Media::MediaSetWidget" name="mediaSetWidget"/>
+      <widget class="Arinc665Qt::Media::DirectoryWidget" name="directoryWidget"/>
+      <widget class="Arinc665Qt::Media::FileWidget" name="fileWidget"/>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Arinc665Qt::Media::MediaSetWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">arinc_665_qt/media/MediaSetWidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Arinc665Qt::Media::FileWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">arinc_665_qt/media/FileWidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Arinc665Qt::Media::DirectoryWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">arinc_665_qt/media/DirectoryWidget.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

@@ -9,7 +9,7 @@ ARINC:: **Aeronautical Radio, Incorporated**
 
 ARINC 615A Port Option:: Option for the host to use a dynamically selected local TFTP port to support parallel loads and avoid privileged ports.
 
-ARINC 645 Check Value:: Integrity value defined by ARINC 645 used to verify transferred files or lists.
+ARINC 649 Check Value:: Integrity value defined by ARINC 649 used to verify transferred files or lists.
 
 ARINC 665 Media Set::
 Group of files and metadata organized per ARINC 665 specifications.

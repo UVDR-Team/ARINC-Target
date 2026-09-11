@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="48"
+   height="48"
+   viewBox="0 0 12.7 12.7"
+   version="1.1"
+   id="svg4290"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="arinc665_directory.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview4292"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="px"
+     showgrid="true"
+     units="px"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="9.1699221"
+     inkscape:cx="55.125877"
+     inkscape:cy="29.771245"
+     inkscape:window-width="1920"
+     inkscape:window-height="1135"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid13"
+       empspacing="8" />
+  </sodipodi:namedview>
+  <defs
+     id="defs4287" />
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-102.5981,-83.173336)">
+    <path
+       d="m 113.42565,92.590099 c 0,0.338622 -0.27349,0.613352 -0.61057,0.613352 h -7.73396 c -0.33709,0 -0.61058,-0.27473 -0.61058,-0.613352 v -6.133527 c 0,-0.338621 0.27349,-0.613353 0.61058,-0.613353 h 2.03525 c 0.33709,0 0.61058,0.274732 0.61058,0.613353 v 0.408902 c 0,0.338622 0.27348,0.613352 0.61057,0.613352 h 4.47756 c 0.33708,0 0.61057,0.274732 0.61057,0.613353 z m 0.8141,-4.49792 c 0,-0.785858 -0.64237,-1.431156 -1.42467,-1.431156 h -4.27403 v -0.204451 c 0,-0.785858 -0.64237,-1.431157 -1.42468,-1.431157 h -2.03525 c -0.7823,0 -1.42468,0.645299 -1.42468,1.431157 v 6.133527 c 0,0.785858 0.64238,1.431156 1.42468,1.431156 h 7.73396 c 0.7823,0 1.42467,-0.645298 1.42467,-1.431156 z"
+       style="font-size:11.4233px;line-height:1.25;font-family:FontAwesome;-inkscape-font-specification:FontAwesome;letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       id="path16" />
+  </g>
+</svg>

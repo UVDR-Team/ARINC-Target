@@ -18,7 +18,7 @@
 
 #include <arinc_615a/information/Information.hpp>
 
-#include <arinc_645/Arinc645.hpp>
+#include <arinc_649/Arinc649.hpp>
 
 namespace Arinc615a::Target {
 
@@ -40,7 +40,7 @@ class ARINC_615A_EXPORT InformationOperation : public Operation
      **/
     virtual void targetInformation(
       Information::TargetsHardware targetsHardware,
-      Arinc645::CheckValueType checkValueType = Arinc645::CheckValueType::NotUsed ) = 0;
+      Arinc649::CheckValueType checkValueType = Arinc649::CheckValueType::NotUsed ) = 0;
 };
 
 }

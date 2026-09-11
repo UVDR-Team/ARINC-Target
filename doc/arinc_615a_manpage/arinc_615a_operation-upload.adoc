@@ -16,7 +16,7 @@ arinc_615a_operation-upload - executes ARINC 615A Upload operation.
 [--dlp-timeout=_Timeout_]
 [--port-option]
 --media-set-manager-dir=_Media Set Manager Directory_
-[-c|--check-file-integrity[=true|false]]
+[--check-file-integrity[=true|false]]
 --media-set-pn=_Media Set Part Number_
 {--load-header=_Load Header_}
 [--local-tftp-address=_IP-Address_]
@@ -30,6 +30,7 @@ arinc_615a_operation-upload - executes ARINC 615A Upload operation.
 [-s|--handle-transfer-size-option[=*true*|*false*]]
 
 == Description
+
 Initiates the _ARINC 615A Upload Operation_ to the given target.
 The provided list of _ARINC 665 Loads_ is advertised to the target and loaded to it.
 
@@ -73,7 +74,7 @@ If set, the host uses a dynamic TFTP port.
 The configuration directory of the _Media Set Manager_.
 Within this location the actual _ARINC 665 Media Sets_ containing the _ARINC 665 Loads_ are stored.
 
-*-c, --check-file-integrity*=[true|false]::
+*--check-file-integrity*=[true|false]::
 If set, the integrity of the _ARINC 665 Media Sets_ are checked on startup.
 Defaults to `true`.
 

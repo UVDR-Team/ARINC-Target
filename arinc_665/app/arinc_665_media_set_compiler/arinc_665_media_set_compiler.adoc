@@ -1,0 +1,65 @@
+= arinc_665_media_set_compiler(1)
+Thomas Vogt
+
+== Name
+
+arinc_665_media_set_compiler - compiles ARINC 665 Media Sets based on an XML configuration file.
+
+== Synopsis
+
+*arinc_665_media_set_compiler*
+[ -h | --help ]
+[ -l | --log-level trace|debug|info|warn|err|critical|off]
+-f|--xml-file _XML File_
+{-s|--source-directory _Source_}
+[-b|--create-batch-files None|NoneExisting|All]
+[-c|--create-load-header-files None|NoneExisting|All]
+[-v|--version Supplement2|Supplement345]
+[-d|--destination-directory _Destination_]
+[-n|--media-set-name _Name_]
+
+The media set is generated within the directory `_Destination_/_Name_`.
+
+== Options
+
+// tag::options[]
+*-h, --help*::
+Print this help screen.
+
+*--log-level* trace|debug|info|warn|err|critical|off (=warn)::
+The verbosity of the logging information.
+
+*-f|--xml-file* _XML File_::
+Path to ARINC 665 media set description XML file.
+
+*-s|--source-directory* _Source_::
+Source directory containing the media set files.
+
+*-b|--create-batch-files* None|NoneExisting|All (=NoneExisting)::
+Batch-files creation policy:
+- 'None': Create never
+- 'NoneExisting': Create non-existing
+- 'All': Create all
+
+*-c|--create-load-header-files* None|NoneExisting|All (=NoneExisting)::
+Load-header-files creation policy:
+- 'None': Create never
+- 'NoneExisting': Create non-existing
+- 'All': Create all
+
+*-v|--version* Supplement2|Supplement345 (=Supplement345)::
+ARINC 665 version to use:
+- 'Supplement2': ARINC 665-2
+- 'Supplement345': ARINC 665-3/4/5
+
+*-d|--destination-directory* _Destination_::
+Output directory for the ARINC 665 media set.
+
+*-n|--media-set-name* _Name_::
+Media Set name to be used.
+If not provided, the part number of the media set is used.
+// end::options[]
+
+== See Also
+
+link:[arinc_665_media_set_decompiler(1)]

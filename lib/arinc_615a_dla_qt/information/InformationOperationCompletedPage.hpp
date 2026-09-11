@@ -7,8 +7,7 @@
  *
  * @author Thomas Vogt, thomas@thomas-vogt.de
  *
- * @brief Declaration of Class
- *   Arinc615aDlaQt::InformationOperationCompletedPage.
+ * @brief Declaration of Class Arinc615aDlaQt::InformationOperationCompletedPage.
  **/
 
 #ifndef ARINC_615A_DLA_QT_INFORMATION_INFORMATIONOPERATIONCOMPLETEDPAGE_HPP
@@ -18,7 +17,7 @@
 
 #include <arinc_615a_qt/Arinc615aQt.hpp>
 
-#include <arinc_615a/information/Information.hpp>
+#include <arinc_615a/information/TargetHardware.hpp>
 
 #include <QWizardPage>
 #include <QFileDialog>
@@ -67,9 +66,7 @@ class InformationOperationCompletedPage final : public QWizardPage
      * @param description
      *   Final Status Description
      **/
-    void operationFinished(
-      Arinc615a::StatusCode code,
-      const std::string &description );
+    void operationFinished( Arinc615a::StatusCode code, const std::string &description );
 
     /**
      * @brief ARINC 615A Information Operation Status Slot.
@@ -77,8 +74,7 @@ class InformationOperationCompletedPage final : public QWizardPage
      * @param[in] status
      *   Received Status
      **/
-    void operationStatus(
-      const Arinc615a::Information::InformationStatus &status );
+    void operationStatus( const Arinc615a::Information::InformationStatus &status );
 
     /**
      * @brief ARINC 615A Information Operation Information Result Slot.
@@ -86,8 +82,7 @@ class InformationOperationCompletedPage final : public QWizardPage
      * @param[in] targetsHardware
      *   Received Targets Hardware Information
      **/
-    void information(
-      const Arinc615a::Information::TargetsHardware &targetsHardware );
+    void information( const Arinc615a::Information::TargetsHardware &targetsHardware );
 
   private slots:
     /**

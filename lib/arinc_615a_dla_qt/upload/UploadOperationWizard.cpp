@@ -16,6 +16,9 @@
 
 #include <arinc_615a_dla_qt/operations/UploadOperation.hpp>
 
+#include <arinc_615a/information/InitializationResponse.hpp>
+#include <arinc_615a/information/UploadStatus.hpp>
+
 #include <arinc_615a/find/TargetInformation.hpp>
 
 #include <arinc_665/utils/MediaSetManager.hpp>

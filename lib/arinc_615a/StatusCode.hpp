@@ -7,7 +7,7 @@
  *
  * @author Thomas Vogt, thomas@thomas-vogt.de
  *
- * @brief Declaration of Class Arinc615a::StatusCode.
+ * @brief Declaration of Module Arinc615a::StatusCode.
  **/
 
 #ifndef ARINC_615A_STATUSCODE_HPP

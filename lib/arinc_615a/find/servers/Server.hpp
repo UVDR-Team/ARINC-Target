@@ -84,7 +84,7 @@ class ARINC_615A_EXPORT Server
      * @brief Sends the FIND information @p targetsInformation to @p remote.
      *
      * This operation should be used to send the FIND response after reception of the FIND request via
-     * FindRequestHandler::receivedFindRequest().
+     * @ref FindRequestHandler.
      *
      * @param[in] remote
      *   Address of the response receiver.
