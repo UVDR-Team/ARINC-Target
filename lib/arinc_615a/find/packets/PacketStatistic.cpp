@@ -15,7 +15,7 @@
 #include <arinc_615a/find/packets/OpcodeDescription.hpp>
 
 #include <algorithm>
-#include <format>
+#include <helper/Format.hpp>
 #include <mutex>
 #include <ostream>
 
@@ -75,7 +75,7 @@ std::string PacketStatistic::toString() const
 
   for ( const auto &[ packetType, statistic ] : statistic() )
   {
-    str += std::format(
+    str += ARINC_FORMAT_NAMESPACE::format(
       "{:22}: Count: {} Total Size: {}\n",
       packetType,
       std::get< 0 >( statistic ),
@@ -85,7 +85,7 @@ std::string PacketStatistic::toString() const
     size += std::get< 1 >( statistic );
   }
 
-  str += std::format( "{:22}: Count: {} Total Size: {}\n", "Total", count, size );
+  str += ARINC_FORMAT_NAMESPACE::format( "{:22}: Count: {} Total Size: {}\n", "Total", count, size );
 
   return str;
 }

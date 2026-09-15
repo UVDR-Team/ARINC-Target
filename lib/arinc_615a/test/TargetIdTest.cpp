@@ -69,14 +69,14 @@ BOOST_AUTO_TEST_CASE( constructor )
   BOOST_CHECK( validTargetId == TargetId( validTargetId ).toString() );
   BOOST_CHECK( validTargetId == TargetId( validThwId, validPosition ).toString() );
 
-  BOOST_CHECK( !TargetId( std::format( "{}{}", validThwId, validPosition ) ) );
+  BOOST_CHECK( !TargetId( ARINC_FORMAT_NAMESPACE::format( "{}{}", validThwId, validPosition ) ) );
 
   BOOST_CHECK( !TargetId( std::string( "000" ) + "_" + validPosition ) );
   BOOST_CHECK( !TargetId( std::string( "00" ) + "_" + validPosition ) );
   BOOST_CHECK( !TargetId( std::string( "0" ) + "_" + validPosition ) );
   BOOST_CHECK( !TargetId( std::string( "" ) + "_" + validPosition ) );
 
-  BOOST_CHECK( !TargetId( std::format( "{}_{}", validThwId, "000000000" ) ) );
+  BOOST_CHECK( !TargetId( ARINC_FORMAT_NAMESPACE::format( "{}_{}", validThwId, "000000000" ) ) );
 
   BOOST_CHECK( !TargetId( "*000_001"));
 

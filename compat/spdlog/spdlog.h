@@ -18,11 +18,12 @@
 #include <cstdio>
 #include <string>
 #include <string_view>
+#include <atomic>
 
 namespace spdlog {
 
-inline level::level_enum& default_log_level() noexcept {
-  static level::level_enum current_level = level::info;
+inline std::atomic<level::level_enum>& default_log_level() noexcept {
+  static std::atomic<level::level_enum> current_level{level::info};
   return current_level;
 }
 
@@ -31,11 +32,11 @@ inline void set_level( level::level_enum log_level ) noexcept {
 }
 
 inline level::level_enum get_level() noexcept {
-  return default_log_level();
+  return default_log_level().load(std::memory_order_relaxed);
 }
 
 inline bool should_log( level::level_enum lvl ) noexcept {
-  return lvl >= default_log_level();
+  return lvl != level::off && lvl >= get_level();
 }
 
 template< typename... Args >

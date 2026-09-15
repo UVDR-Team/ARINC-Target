@@ -12,6 +12,7 @@
  **/
 
 #include "TargetMediaDefinedDownloadOperation.hpp"
+#include <helper/Underlying.hpp>
 
 #include "TargetDataLoaderConfiguration.hpp"
 
@@ -40,7 +41,7 @@
 
 #include <boost/exception/diagnostic_information.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 #include <fstream>
 
 namespace Arinc615aTha {
@@ -182,7 +183,7 @@ void TargetMediaDefinedDownloadOperation::status( const Arinc615a::Information::
     "\tEstimated Time:  {}\n",
     status.counter(),
     Arinc615a::StatusCodeDescription::instance().name( status.code() ),
-    std::to_underlying( status.code() ),
+    Helper::toUnderlying( status.code() ),
     status.description(),
     status.exceptionTimer(),
     status.estimatedTime() );

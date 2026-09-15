@@ -37,7 +37,7 @@ std::endian EndianDescription::toEndian( const boost::endian::order order )
   }
 }
 
-boost::endian::order EndianDescription::toOrder( const std::endian endian )
+boost::endian::order EndianDescription::toEndian( const std::endian endian )
 {
   switch ( endian )
   {
@@ -54,7 +54,6 @@ boost::endian::order EndianDescription::toOrder( const std::endian endian )
 
 EndianDescription::EndianDescription() :
   Description{
-    { "native", std::endian::native },
     { "big",    std::endian::big },
     { "little", std::endian::little }
   }

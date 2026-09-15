@@ -20,7 +20,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 
 namespace Arinc665::Utils {
 
@@ -76,7 +76,7 @@ MediaSetPaths FilesystemMediaSetCopierImpl::operator()()
   MediaPaths destinationMediaPaths{};
   for ( auto const &[ mediumNumber, mediumPath ] : mediaPathsV )
   {
-    auto destinationMediumDir{ std::format( "MEDIUM_{:03d}", static_cast< uint8_t >( mediumNumber ) ) };
+    auto destinationMediumDir{ ARINC_FORMAT_NAMESPACE::format( "MEDIUM_{:03d}", static_cast< uint8_t >( mediumNumber ) ) };
 
     // copy medium
     std::filesystem::copy(

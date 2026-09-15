@@ -32,6 +32,7 @@ extern "C" {
 #define ARINC615A_OK           0
 #define ARINC615A_ERROR       -1
 #define ARINC615A_ALREADY_RUN -2
+#define ARINC615A_UNSUPPORTED -3
 
 /**
  * @brief Initialize the THA Target with default configuration.
@@ -67,6 +68,7 @@ int arinc615a_tha_init_file( const char * json_file_path );
  *
  * @param[in] run_in_background
  *   If non-zero, spawns a background thread/task and returns immediately.
+ *   Returns ARINC615A_UNSUPPORTED if background threads were disabled at build time.
  *   If zero, blocks the calling task/thread until arinc615a_tha_stop() is called.
  *
  * @return ARINC615A_OK on success, or negative error code.
@@ -75,6 +77,9 @@ int arinc615a_tha_start( int run_in_background );
 
 /**
  * @brief Stop the ARINC 615A THA Target service gracefully.
+ * Call from a different task than blocking start(). Waits for all callbacks to
+ * exit before releasing resources. Before unloading the DKM, stop must finish
+ * and the application-owned task that called blocking start() must return.
  */
 void arinc615a_tha_stop( void );
 

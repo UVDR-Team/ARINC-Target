@@ -191,7 +191,7 @@ void OperationImpl::sendInitFile(
     const auto file{ std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< Helper::RawData >( initFile ) ) };
     assert( file );
 
-    protocolFileLoggerV.transmitProtocolFile( std::format( "{}.INIT", targetIdV ), file->data() );
+    protocolFileLoggerV.transmitProtocolFile( ARINC_FORMAT_NAMESPACE::format( "{}.INIT", targetIdV ), file->data() );
 
     // TFTP server response to read request
     initialisationOperationV = tftpServerV->readOperation();

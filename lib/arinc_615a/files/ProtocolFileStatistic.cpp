@@ -15,7 +15,7 @@
 #include <arinc_615a/files/ProtocolFileTypeDescription.hpp>
 
 #include <algorithm>
-#include <format>
+#include <helper/Format.hpp>
 #include <mutex>
 #include <ostream>
 
@@ -73,7 +73,7 @@ std::string ProtocolFileStatistic::toString() const
 
   for ( const auto &[ packetType, statistic ] : statistic() )
   {
-    str += std::format(
+    str += ARINC_FORMAT_NAMESPACE::format(
       "{:22}: Count: {}\n",
       ProtocolFileTypeDescription::instance().name( packetType ),
       statistic );
@@ -81,7 +81,7 @@ std::string ProtocolFileStatistic::toString() const
     count += statistic;
   }
 
-  str += std::format( "{:22}: Count: {}\n", "Total", count );
+  str += ARINC_FORMAT_NAMESPACE::format( "{:22}: Count: {}\n", "Total", count );
 
   return str;
 }

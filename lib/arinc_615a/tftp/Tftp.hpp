@@ -14,6 +14,7 @@
 #define ARINC_615A_TFTP_TFTP_HPP
 
 #include <arinc_615a/Arinc615a.hpp>
+#include <helper/Underlying.hpp>
 
 #include <tftp/Tftp.hpp>
 
@@ -36,17 +37,17 @@ namespace Arinc615a::Tftp {
 enum class TransferStatus
 {
   //! Transfer completed successfully
-  Successful = std::to_underlying( ::Tftp::TransferStatus::Successful ),
+  Successful = Helper::toUnderlying( ::Tftp::TransferStatus::Successful ),
   //! Communication error (i.e. timeout, read error) occurred
-  CommunicationError = std::to_underlying( ::Tftp::TransferStatus::CommunicationError ),
+  CommunicationError = Helper::toUnderlying( ::Tftp::TransferStatus::CommunicationError ),
   //! Error received/ transmitted - RRQ/ WRQ rejected
-  RequestError = std::to_underlying( ::Tftp::TransferStatus::RequestError ),
+  RequestError = Helper::toUnderlying( ::Tftp::TransferStatus::RequestError ),
   //! Error received/ transmitted - Option Negotiation Failed
-  OptionNegotiationError = std::to_underlying( ::Tftp::TransferStatus::OptionNegotiationError ),
+  OptionNegotiationError = Helper::toUnderlying( ::Tftp::TransferStatus::OptionNegotiationError ),
   //! Error received/ transmitted - Invalid data or packets
-  TransferError = std::to_underlying( ::Tftp::TransferStatus::TransferError ),
+  TransferError = Helper::toUnderlying( ::Tftp::TransferStatus::TransferError ),
   //! User (own side) requested abort (gracefully or not gracefully)
-  Aborted = std::to_underlying( ::Tftp::TransferStatus::Aborted ),
+  Aborted = Helper::toUnderlying( ::Tftp::TransferStatus::Aborted ),
 
   //! Operation aborted by DLP
   OperationAbortedByDlp,

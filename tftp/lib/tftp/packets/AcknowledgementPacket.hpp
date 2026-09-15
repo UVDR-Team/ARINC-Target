@@ -14,6 +14,7 @@
 #define TFTP_PACKETS_ACKNOWLEDGEMENTPACKET_HPP
 
 #include <tftp/packets/Packets.hpp>
+#include <cstddef>
 #include <tftp/packets/BlockNumber.hpp>
 #include <tftp/packets/Packet.hpp>
 
@@ -33,7 +34,7 @@ class TFTP_EXPORT AcknowledgementPacket final : public Packet
 {
   public:
     //! Packet Size ( Opcode + Block Number)
-    static constexpr auto PacketSize{ HeaderSize + 2UZ };
+    static constexpr auto PacketSize{ HeaderSize + std::size_t{2} };
 
     /**
      * @brief Creates the packet with the given block number.

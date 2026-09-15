@@ -20,7 +20,7 @@
 #include <boost/exception/all.hpp>
 
 #include <algorithm>
-#include <format>
+#include <helper/Format.hpp>
 #include <utility>
 #include <locale>
 
@@ -54,7 +54,7 @@ TransferMode ReadWriteRequestPacket::decodeMode( std::string_view mode )
     mode,
     "OCTET"sv,
     std::ranges::equal_to{},
-    std::bind_back( std::toupper< std::string::value_type >, std::locale{} ),
+    [](char c) { return c >= 'a' && c <= 'z' ? static_cast<char>(c - 'a' + 'A') : c; },
     std::identity{} ) )
   {
     return TransferMode::OCTET;
@@ -64,7 +64,7 @@ TransferMode ReadWriteRequestPacket::decodeMode( std::string_view mode )
     mode,
     "NETASCII"sv,
     std::ranges::equal_to{},
-    std::bind_back( std::toupper< std::string::value_type >, std::locale{} ),
+    [](char c) { return c >= 'a' && c <= 'z' ? static_cast<char>(c - 'a' + 'A') : c; },
     std::identity{} ) )
   {
     return TransferMode::NETASCII;
@@ -74,7 +74,7 @@ TransferMode ReadWriteRequestPacket::decodeMode( std::string_view mode )
     mode,
     "MAIL"sv,
     std::ranges::equal_to{},
-    std::bind_back( std::toupper< std::string::value_type >, std::locale{} ),
+    [](char c) { return c >= 'a' && c <= 'z' ? static_cast<char>(c - 'a' + 'A') : c; },
     std::identity{} ) )
   {
     return TransferMode::MAIL;
@@ -120,7 +120,7 @@ void ReadWriteRequestPacket::options( Options options )
 
 ReadWriteRequestPacket::operator std::string() const
 {
-  return std::format(
+  return ARINC_FORMAT_NAMESPACE::format(
     "{}: FILE: '{}' MODE: '{}' OPT: '{}'",
     Packet::operator std::string(),
     filenameV,

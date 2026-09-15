@@ -17,7 +17,7 @@
 
 #include <helper/Description.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 #include <iosfwd>
 
 namespace Arinc615a::Find::Packets {
@@ -59,12 +59,12 @@ ARINC_615A_EXPORT std::ostream &operator<<( std::ostream &stream, Opcode opcode 
 }
 
 
-namespace std {
+namespace ARINC_FORMAT_NAMESPACE {
 /**
- * @brief Specialisation of @p std::formatter for @ref Arinc615a::Find::Packets::Opcode.
+ * @brief Specialisation of @p ARINC_FORMAT_NAMESPACE::formatter for @ref Arinc615a::Find::Packets::Opcode.
  **/
 template<>
-struct formatter< Arinc615a::Find::Packets::Opcode > : std::formatter< std::string_view >
+struct formatter< Arinc615a::Find::Packets::Opcode > : ARINC_FORMAT_NAMESPACE::formatter< std::string_view >
 {
   /**
    * @brief Arinc615a::Find::Packets::Opcode format routine.
@@ -81,7 +81,7 @@ struct formatter< Arinc615a::Find::Packets::Opcode > : std::formatter< std::stri
   template< class FmtContext >
   FmtContext::iterator format( const Arinc615a::Find::Packets::Opcode &opcode, FmtContext &ctx ) const
   {
-    return std::formatter< string_view >::format(
+    return ARINC_FORMAT_NAMESPACE::formatter< std::string_view >::format(
       Arinc615a::Find::Packets::OpcodeDescription::instance().name( opcode ),
       ctx );
   }

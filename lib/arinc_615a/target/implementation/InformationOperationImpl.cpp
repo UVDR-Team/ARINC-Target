@@ -120,6 +120,12 @@ void InformationOperationImpl::targetInformation(
 
   const auto checkValueGenerator{ Arinc649::CheckValueGenerator::create( checkValueType ) };
 
+  if (!checkValueGenerator)
+  {
+    finished(FinalStatus::AbortedByTargetHardware, "Unsupported check value algorithm");
+    return;
+  }
+
   checkValueGenerator->process( std::as_bytes( rawFile->data() ) );
 
   // send the protocol file

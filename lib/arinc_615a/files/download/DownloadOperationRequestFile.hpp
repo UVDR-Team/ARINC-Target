@@ -14,6 +14,7 @@
 #define ARINC_615A_FILES_DOWNLOADOPERATIONREQUESTFILE_HPP
 
 #include <arinc_615a/files/Files.hpp>
+#include <cstddef>
 #include <arinc_615a/files/ProtocolFile.hpp>
 
 #include <arinc_615a/information/Information.hpp>
@@ -49,7 +50,7 @@ class ARINC_615A_EXPORT DownloadOperationRequestFile final : public ProtocolFile
 {
   public:
     //! Minimum size of this file. It's the header size + number of files field + user defined data length.
-    static constexpr std::size_t MinimumSize{ HeaderSize + 3UZ };
+    static constexpr std::size_t MinimumSize{ HeaderSize + std::size_t{3} };
 
     //! Default Construction of Download Operation Request File.
     DownloadOperationRequestFile() = default;

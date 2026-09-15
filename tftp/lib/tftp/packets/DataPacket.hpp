@@ -14,6 +14,7 @@
 #define TFTP_PACKETS_DATAPACKET_HPP
 
 #include <tftp/packets/Packets.hpp>
+#include <cstddef>
 #include <tftp/packets/Packet.hpp>
 #include <tftp/packets/BlockNumber.hpp>
 
@@ -33,7 +34,7 @@ class TFTP_EXPORT DataPacket final : public Packet
 {
   public:
     //! Minimum Packet Size (Opcode + Block Number)
-    static constexpr auto MinPacketSize{ HeaderSize + 2UZ };
+    static constexpr auto MinPacketSize{ HeaderSize + std::size_t{2} };
 
     //! Data Type
     using Data = std::vector< std::byte >;

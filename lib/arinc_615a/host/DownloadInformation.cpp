@@ -16,7 +16,7 @@
 
 #include <spdlog/spdlog.h>
 
-#include <format>
+#include <helper/Format.hpp>
 #include <fstream>
 #include <ranges>
 
@@ -35,7 +35,7 @@ std::filesystem::path DownloadInformation::downloadDataPath( const std::filesyst
 {
   std::unique_lock lock{ mutexV };
 
-  const auto downloadDataName{ std::format(
+  const auto downloadDataName{ ARINC_FORMAT_NAMESPACE::format(
     "DNLD_DATA_{:}_{:L%Y%m%d_%H%M%S%Z}",
     static_cast< std::string >( targetIdV ),
     std::chrono::zoned_time( std::chrono::current_zone(), std::chrono::floor< std::chrono::seconds >( startV ) ) ) };
@@ -47,7 +47,7 @@ std::filesystem::path DownloadInformation::downloadInformationPath( const std::f
 {
   std::unique_lock lock{ mutexV };
 
-  const auto downloadInfoName{ std::format(
+  const auto downloadInfoName{ ARINC_FORMAT_NAMESPACE::format(
     "DNLD_INFO_{:}_{:L%Y%m%d_%H%M%S%Z}.txt",
     static_cast< std::string >( targetIdV ),
     std::chrono::zoned_time( std::chrono::current_zone(), std::chrono::floor< std::chrono::seconds >( startV ) ) ) };
@@ -118,8 +118,8 @@ void DownloadInformation::save( const std::filesystem::path &downloadInformation
   }
 
   downloadInformationStream
-    << std::format( "{:25} {}\n", "Target ID:", static_cast< std::string >( targetIdV ) )
-    << std::format( "{:25} {}\n", "Target Address:", targetAddressV.to_string() )
+    << ARINC_FORMAT_NAMESPACE::format( "{:25} {}\n", "Target ID:", static_cast< std::string >( targetIdV ) )
+    << ARINC_FORMAT_NAMESPACE::format( "{:25} {}\n", "Target Address:", targetAddressV.to_string() )
     << "Requested Files:\n";
   for ( const auto &file : filesV )
   {
@@ -127,11 +127,11 @@ void DownloadInformation::save( const std::filesystem::path &downloadInformation
   }
 
   downloadInformationStream
-    << std::format(
+    << ARINC_FORMAT_NAMESPACE::format(
          "{:25} {:L%F %T %Z}\n",
          "Operation Start:",
          std::chrono::zoned_time( std::chrono::current_zone(), std::chrono::floor< std::chrono::seconds >( startV ) ) )
-    << std::format(
+    << ARINC_FORMAT_NAMESPACE::format(
          "{:25} {:L%F %T %Z}\n",
          "Operation End:",
          std::chrono::zoned_time( std::chrono::current_zone(), std::chrono::floor< std::chrono::seconds >( endV ) ) );
@@ -140,40 +140,40 @@ void DownloadInformation::save( const std::filesystem::path &downloadInformation
   {
     downloadInformationStream
       << "File Transfer:\n"
-      << std::format( "  {:23} {}\n", "Filename:", file )
-      << std::format(
+      << ARINC_FORMAT_NAMESPACE::format( "  {:23} {}\n", "Filename:", file )
+      << ARINC_FORMAT_NAMESPACE::format(
            "  {:23} {}\n",
            "File path:",
            status.filePath.lexically_proximate( downloadInformationPath.parent_path() ).string() )
-      << std::format(
+      << ARINC_FORMAT_NAMESPACE::format(
            "  {:23} {:L%F %T %Z}\n",
            "Transfer Start:",
            std::chrono::zoned_time(
              std::chrono::current_zone(),
              std::chrono::floor< std::chrono::seconds >( status.start ) ) )
-      << std::format(
+      << ARINC_FORMAT_NAMESPACE::format(
            "  {:23} {:L%F %T %Z}\n",
            "Transfer End:",
            std::chrono::zoned_time(
              std::chrono::current_zone(),
              std::chrono::floor< std::chrono::seconds >( status.end ) ) )
-      << std::format( "  {:23} {}\n", "Transfer Status:", status.fileStatus )
-      << std::format( "  {:23} {}\n", "Transfer Size:", status.fileSize );
+      << ARINC_FORMAT_NAMESPACE::format( "  {:23} {}\n", "Transfer Status:", status.fileStatus )
+      << ARINC_FORMAT_NAMESPACE::format( "  {:23} {}\n", "Transfer Size:", status.fileSize );
 
     if ( !status.partNumber.empty() )
     {
-      downloadInformationStream << std::format( "  {:23} {}\n", "Part Number:", status.partNumber );
+      downloadInformationStream << ARINC_FORMAT_NAMESPACE::format( "  {:23} {}\n", "Part Number:", status.partNumber );
     }
 
     if ( status.checkValue != Arinc649::CheckValue::NoCheckValue )
     {
-      downloadInformationStream << std::format( "  {:23} {}\n", "Check Value:", status.checkValue );
+      downloadInformationStream << ARINC_FORMAT_NAMESPACE::format( "  {:23} {}\n", "Check Value:", status.checkValue );
 
       if ( checkIntegrity )
       {
         auto calculatedCheckValue{ Arinc649::CheckValueGenerator::checkValue( status.checkValue.type(), status.filePath ) };
 
-        downloadInformationStream << std::format(
+        downloadInformationStream << ARINC_FORMAT_NAMESPACE::format(
           "  {:23} {} *{}*\n",
           "Calculated Check Value:",
           calculatedCheckValue,
@@ -183,8 +183,8 @@ void DownloadInformation::save( const std::filesystem::path &downloadInformation
   }
 
   downloadInformationStream
-    << std::format( "{:25} {}\n", "Overall Status:", std::get< 0 >( overallStatusV ) )
-    << std::format( "{:25} {} Bytes\n", "Overall Size:", std::get< 1 >( overallStatusV ) );
+    << ARINC_FORMAT_NAMESPACE::format( "{:25} {}\n", "Overall Status:", std::get< 0 >( overallStatusV ) )
+    << ARINC_FORMAT_NAMESPACE::format( "{:25} {} Bytes\n", "Overall Size:", std::get< 1 >( overallStatusV ) );
 
   downloadInformationStream.flush();
   downloadInformationStream.close();

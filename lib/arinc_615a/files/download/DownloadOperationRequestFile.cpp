@@ -11,6 +11,7 @@
  **/
 
 #include "DownloadOperationRequestFile.hpp"
+#include <cstddef>
 
 #include <arinc_615a/files/String.hpp>
 
@@ -84,7 +85,7 @@ void DownloadOperationRequestFile::userDefinedData( Helper::RawData userDefinedD
 
 Helper::RawData DownloadOperationRequestFile::encode() const
 {
-  Helper::RawData rawData( HeaderSize + 2UZ );
+  Helper::RawData rawData( HeaderSize + std::size_t{2} );
 
   // skip header - it is filled finally
   auto nextData{ Helper::RawDataSpan{ rawData }.subspan( HeaderSize ) };
@@ -117,7 +118,7 @@ Helper::RawData DownloadOperationRequestFile::encode() const
   }
 
   // user defined data (length field)
-  rawData.resize( rawData.size() + 1UZ );
+  rawData.resize( rawData.size() + std::size_t{1} );
 
   // encode length of user defined data
   Helper::RawData_setInt( Helper::RawDataSpan{ rawData }.last( 1 ), Helper::safeCast< uint8_t >( userDefinedDataV.size() ) );

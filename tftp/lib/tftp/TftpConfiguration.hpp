@@ -17,7 +17,9 @@
 
 #include <boost/property_tree/ptree_fwd.hpp>
 
+#ifndef ARINC_615A_NO_PROGRAM_OPTIONS
 #include <boost/program_options/options_description.hpp>
+#endif
 
 #include <chrono>
 #include <cstdint>
@@ -90,7 +92,9 @@ class TFTP_EXPORT TftpConfiguration
      *
      * @return TFTP Configuration Options Description.
      **/
+#ifndef ARINC_615A_NO_PROGRAM_OPTIONS
     [[nodiscard]] boost::program_options::options_description options();
+#endif
 
     //! TFTP timeout - standard when no timeout option is negotiated in seconds.
     std::chrono::seconds tftpTimeout{ DefaultTftpReceiveTimeout };

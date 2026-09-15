@@ -14,6 +14,7 @@
 #define TFTP_PACKETS_ERRORPACKET_HPP
 
 #include <tftp/packets/Packets.hpp>
+#include <cstddef>
 #include <tftp/packets/Packet.hpp>
 
 #include <string>
@@ -36,7 +37,7 @@ class TFTP_EXPORT ErrorPacket final : public Packet
 {
   public:
     //! Minimum Header Size (Opcode, Error Code, Empty String)
-    static constexpr auto MinPacketSize{ HeaderSize + 2UZ + 1UZ };
+    static constexpr auto MinPacketSize{ HeaderSize + std::size_t{2} + std::size_t{1} };
 
     //! Creates default initialised Error Packet
     ErrorPacket();

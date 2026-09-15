@@ -16,7 +16,7 @@
 #include <arinc_665/Arinc665.hpp>
 
 #include <cstdint>
-#include <format>
+#include <helper/Format.hpp>
 #include <iosfwd>
 
 namespace Arinc665 {
@@ -171,15 +171,15 @@ ARINC_665_EXPORT std::ostream& operator<<( std::ostream &stream, const MediumNum
 
 }
 
-namespace std {
+namespace ARINC_FORMAT_NAMESPACE {
 
 /**
- * @brief Specialisation of @p std::formatter for @ref Arinc665::MediumNumber.
+ * @brief Specialisation of @p ARINC_FORMAT_NAMESPACE::formatter for @ref Arinc665::MediumNumber.
  *
  * @sa @ref Arinc665::MediumNumber
  **/
 template<>
-struct formatter< Arinc665::MediumNumber > : std::formatter< std::string >
+struct formatter< Arinc665::MediumNumber > : ARINC_FORMAT_NAMESPACE::formatter< std::string >
 {
  /**
   * @brief Arinc665::MediumNumber format routine.
@@ -196,7 +196,7 @@ struct formatter< Arinc665::MediumNumber > : std::formatter< std::string >
  template< class FmtContext >
  FmtContext::iterator format( const Arinc665::MediumNumber &mediumNumber, FmtContext &ctx ) const
  {
-  return std::formatter< string >::format( mediumNumber.toString(), ctx );
+  return ARINC_FORMAT_NAMESPACE::formatter< std::string >::format( mediumNumber.toString(), ctx );
  }
 };
 

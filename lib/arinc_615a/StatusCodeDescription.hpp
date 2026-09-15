@@ -17,7 +17,7 @@
 
 #include <helper/Description.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 #include <iosfwd>
 
 namespace Arinc615a {
@@ -79,16 +79,16 @@ ARINC_615A_EXPORT std::ostream& operator<<( std::ostream &stream, OperationAccep
 
 }
 
-namespace std {
+namespace ARINC_FORMAT_NAMESPACE {
 
 /**
- * @brief Specialisation of @p std::formatter for @ref Arinc615a::StatusCode.
+ * @brief Specialisation of @p ARINC_FORMAT_NAMESPACE::formatter for @ref Arinc615a::StatusCode.
  *
  * @sa @ref Arinc615a::StatusCodeDescription
  * @sa @ref Arinc615a::StatusCode
  **/
 template <>
-struct formatter< Arinc615a::StatusCode > : std::formatter< std::string_view >
+struct formatter< Arinc615a::StatusCode > : ARINC_FORMAT_NAMESPACE::formatter< std::string_view >
 {
   /**
    * @brief Arinc615a::StatusCode format routine.
@@ -105,8 +105,8 @@ struct formatter< Arinc615a::StatusCode > : std::formatter< std::string_view >
   template< class FmtContext >
   FmtContext::iterator format( const Arinc615a::StatusCode code, FmtContext &ctx ) const
   {
-    return std::formatter< string_view >::format(
-      std::format(
+    return ARINC_FORMAT_NAMESPACE::formatter< std::string_view >::format(
+      ARINC_FORMAT_NAMESPACE::format(
         "{} ({:04X})",
         Arinc615a::StatusCodeDescription::instance().name( code ),
         static_cast< uint16_t >( code ) ),
@@ -115,13 +115,13 @@ struct formatter< Arinc615a::StatusCode > : std::formatter< std::string_view >
 };
 
 /**
- * @brief Specialisation of @p std::formatter for @ref Arinc615a::OperationAcceptanceStatusCode
+ * @brief Specialisation of @p ARINC_FORMAT_NAMESPACE::formatter for @ref Arinc615a::OperationAcceptanceStatusCode
  *
  * @sa @ref Arinc615a::StatusCodeDescription
  * @sa @ref Arinc615a::OperationAcceptanceStatusCode
  **/
 template <>
-struct formatter< Arinc615a::OperationAcceptanceStatusCode > : std::formatter< std::string_view >
+struct formatter< Arinc615a::OperationAcceptanceStatusCode > : ARINC_FORMAT_NAMESPACE::formatter< std::string_view >
 {
   /**
    * @brief Arinc615a::OperationAcceptanceStatusCode format routine.
@@ -138,8 +138,8 @@ struct formatter< Arinc615a::OperationAcceptanceStatusCode > : std::formatter< s
   template< class FmtContext >
   FmtContext::iterator format( const Arinc615a::OperationAcceptanceStatusCode code, FmtContext &ctx ) const
   {
-    return std::formatter< string_view >::format(
-      std::format(
+    return ARINC_FORMAT_NAMESPACE::formatter< std::string_view >::format(
+      ARINC_FORMAT_NAMESPACE::format(
         "{} ({:04X})",
         Arinc615a::StatusCodeDescription::instance().name( static_cast< Arinc615a::StatusCode >( code ) ),
         static_cast< uint16_t >( code ) ),

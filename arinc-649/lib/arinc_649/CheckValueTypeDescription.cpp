@@ -14,7 +14,12 @@
 
 #include <boost/exception/exception.hpp>
 
+#ifndef ARINC_615A_NO_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
+#else
+#include <stdexcept>
+#include <istream>
+#endif
 
 namespace Arinc649 {
 
@@ -50,7 +55,11 @@ std::istream& operator>>( std::istream& stream, CheckValueType &type )
 
   if ( !optionalType )
   {
+#ifndef ARINC_615A_NO_PROGRAM_OPTIONS
     BOOST_THROW_EXCEPTION( boost::program_options::invalid_option_value( checkValueTypeStr ) );
+#else
+    throw std::invalid_argument("Invalid check value type: " + checkValueTypeStr);
+#endif
   }
 
   type = *optionalType;

@@ -14,6 +14,16 @@ project(
 
 option( ARINC_615A_VXWORKS "Build ARINC 615A THA for VxWorks DKM" OFF )
 
+# The default deliverable is the target library. Desktop tools are opt-in.
+option( ARINC615A_TARGET_ONLY "Build the offline target stack only" ON )
+if(CMAKE_SYSTEM_NAME STREQUAL "VxWorks")
+  set(ARINC_615A_VXWORKS ON)
+endif()
+if(ARINC615A_TARGET_ONLY OR ARINC_615A_VXWORKS)
+  include(cmake/TargetBuild.cmake)
+  return()
+endif()
+
 # Optional Git integration: fallback if Git is not present
 find_package( Git QUIET )
 
@@ -47,7 +57,7 @@ set( CMAKE_CXX_SCAN_FOR_MODULES OFF )
 set( CMAKE_CXX_EXTENSIONS OFF )
 
 # Include compatibility directory for platforms lacking <format> or spdlog
-include_directories( BEFORE ${CMAKE_SOURCE_DIR}/compat )
+# Desktop builds use their native format and spdlog installations.
 
 if( ARINC_615A_VXWORKS )
   add_compile_definitions( ARINC_615A_NO_PROGRAM_OPTIONS )

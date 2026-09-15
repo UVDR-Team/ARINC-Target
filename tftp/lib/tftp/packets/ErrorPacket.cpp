@@ -19,7 +19,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 #include <utility>
 
 namespace Tftp::Packets {
@@ -51,7 +51,7 @@ ErrorPacket& ErrorPacket::operator=( const Helper::ConstRawDataSpan rawPacket )
 
 ErrorPacket::operator std::string() const
 {
-  return std::format(
+  return ARINC_FORMAT_NAMESPACE::format(
     "ERR: EC: {} ({}) - DESC: \"{}\"",
     ErrorCodeDescription::instance().name( errorCode() ),
     static_cast< uint16_t >( errorCode() ),

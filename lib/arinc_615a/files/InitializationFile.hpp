@@ -14,6 +14,7 @@
 #define ARINC_615A_FILES_INITIALIZATIONFILE_HPP
 
 #include <arinc_615a/files/Files.hpp>
+#include <cstddef>
 #include <arinc_615a/files/ProtocolFile.hpp>
 
 #include <arinc_615a/information/InitializationResponse.hpp>
@@ -47,7 +48,7 @@ class ARINC_615A_EXPORT InitializationFile final : public ProtocolFile
      * - Operation status (16 bit), and
      * - Minimal Status Description String (8 bit)
      **/
-    static constexpr auto MinFileSize{ HeaderSize + 3UZ };
+    static constexpr auto MinFileSize{ HeaderSize + std::size_t{3} };
 
     //! Default construction of Initialisation File
     InitializationFile() = default;

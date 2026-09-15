@@ -31,6 +31,7 @@
 #include <arinc_615a/tftp/Arinc615aOptions.hpp>
 
 #include <arinc_615a/Arinc615aException.hpp>
+#include <arinc_649/CheckValueGenerator.hpp>
 
 #include <tftp/packets/TftpOptions.hpp>
 
@@ -55,12 +56,23 @@
 
 #include <atomic>
 #include <memory>
+#ifdef ARINC615A_BACKGROUND_THREAD
 #include <thread>
+#endif
+#include <mutex>
+#include <condition_variable>
 #include <sstream>
 #include <fstream>
 #include <iostream>
 
 namespace {
+
+template<class Function>
+int cResult(Function function) noexcept
+{
+  try { return function(); }
+  catch (...) { return ARINC615A_ERROR; }
+}
 
 //! Active configuration
 Arinc615aTha::TargetDataLoaderConfiguration g_configuration;
@@ -72,7 +84,13 @@ std::unique_ptr< boost::asio::io_context > g_ioContext;
 std::atomic< bool > g_running{ false };
 
 //! Background worker thread (when runInBackground = true)
+#ifdef ARINC615A_BACKGROUND_THREAD
 std::unique_ptr< std::thread > g_workerThread;
+#endif
+std::mutex g_lifecycleMutex;
+std::condition_variable g_lifecycleChanged;
+bool g_runnerActive{ false };
+bool g_stopping{ false };
 
 //! FIND Server
 Arinc615a::Find::Servers::ServerPtr g_findServer;
@@ -85,6 +103,63 @@ std::shared_ptr< Arinc615aTha::TargetOperation > g_targetOperation;
 
 //! Error Operation
 Arinc615a::Target::ErrorOperationPtr g_errorOperation;
+std::vector<Arinc615a::Target::ErrorOperationPtr> g_errorOperations;
+
+Arinc615a::Target::ErrorOperationPtr createErrorOperation(
+  Arinc615a::Target::ErrorOperationConfiguration configuration)
+{
+  auto identity = std::make_shared<std::weak_ptr<Arinc615a::Target::ErrorOperation>>();
+  configuration.completionHandler = [identity] {
+    // Defer removal until the completion callback has returned to ASIO.
+    boost::asio::post(*g_ioContext, [identity] {
+      const auto completed = identity->lock();
+      std::erase(g_errorOperations, completed);
+      if (g_errorOperation == completed) g_errorOperation.reset();
+    });
+  };
+  auto operation = g_protocol->errorOperation(std::move(configuration));
+  *identity = operation;
+  g_errorOperations.push_back(operation);
+  return operation;
+}
+
+// Called with the lifecycle lock held, only after io_context::run() has exited.
+void releaseResources()
+{
+#ifdef ARINC615A_BACKGROUND_THREAD
+  if (g_workerThread && g_workerThread->joinable()) g_workerThread->join();
+  g_workerThread.reset();
+#endif
+  g_targetOperation.reset();
+  g_errorOperation.reset();
+  g_errorOperations.clear();
+  g_protocol.reset();
+  g_findServer.reset();
+  g_ioContext.reset();
+}
+
+int runLoop()
+{
+  int result = ARINC615A_OK;
+  try { g_ioContext->run(); }
+  catch (const std::exception &e)
+  {
+    SPDLOG_ERROR("THA event loop failed: {}", e.what());
+    result = ARINC615A_ERROR;
+  }
+  catch (...)
+  {
+    SPDLOG_ERROR("THA event loop failed");
+    result = ARINC615A_ERROR;
+  }
+  {
+    std::lock_guard lock(g_lifecycleMutex);
+    g_running.store(false);
+    g_runnerActive = false;
+  }
+  g_lifecycleChanged.notify_all();
+  return result;
+}
 
 // Forward declarations of internal protocol handlers
 void findRequest(
@@ -137,7 +212,6 @@ void operatorDefinedDownloadOperationRequest(
   const Arinc615a::TargetId &targetId );
 
 void operationFinished();
-void errorOperationCompleted();
 
 void findRequest(
   const Arinc615a::Find::TargetsInformation &targetsInformation,
@@ -173,9 +247,8 @@ void operationRequest(
   {
     SPDLOG_ERROR( "Invalid Target ID" );
 
-    g_errorOperation = g_protocol->errorOperation(
+    g_errorOperation = createErrorOperation(
       Arinc615a::Target::ErrorOperationConfiguration{
-        .completionHandler = &errorOperationCompleted,
         .operation = operation,
         .targetId = targetId,
         .status = Arinc615a::OperationAcceptanceStatusCode::OperationDenied,
@@ -190,9 +263,8 @@ void operationRequest(
   {
     SPDLOG_ERROR( "Another operation already active" );
 
-    g_errorOperation = g_protocol->errorOperation(
+    g_errorOperation = createErrorOperation(
       Arinc615a::Target::ErrorOperationConfiguration{
-        .completionHandler = &errorOperationCompleted,
         .operation = operation,
         .targetId = targetId,
         .status = Arinc615a::OperationAcceptanceStatusCode::OperationDenied,
@@ -251,9 +323,8 @@ void operationRequest(
     default:
       SPDLOG_ERROR( "Invalid Operation Request" );
 
-      g_errorOperation = g_protocol->errorOperation(
+      g_errorOperation = createErrorOperation(
         Arinc615a::Target::ErrorOperationConfiguration{
-          .completionHandler = &errorOperationCompleted,
           .operation = operation,
           .targetId = targetId,
           .status = Arinc615a::OperationAcceptanceStatusCode::OperationNotSupported,
@@ -277,9 +348,8 @@ void informationOperationRequest(
   {
     SPDLOG_ERROR( "Information Operation not Enabled" );
 
-    g_errorOperation = g_protocol->errorOperation(
+    g_errorOperation = createErrorOperation(
       Arinc615a::Target::ErrorOperationConfiguration{
-        .completionHandler = &errorOperationCompleted,
         .operation = Arinc615a::OperationType::Information,
         .targetId = targetId,
         .status = Arinc615a::OperationAcceptanceStatusCode::OperationNotSupported,
@@ -313,9 +383,8 @@ void uploadOperationRequest(
   {
     SPDLOG_ERROR( "Upload Operation not Enabled" );
 
-    g_errorOperation = g_protocol->errorOperation(
+    g_errorOperation = createErrorOperation(
       Arinc615a::Target::ErrorOperationConfiguration{
-        .completionHandler = &errorOperationCompleted,
         .operation = Arinc615a::OperationType::Upload,
         .targetId = targetId,
         .status = Arinc615a::OperationAcceptanceStatusCode::OperationNotSupported,
@@ -325,13 +394,12 @@ void uploadOperationRequest(
     return;
   }
 
-  if ( std::filesystem::is_directory( opConfig.directory ) )
+  if ( !std::filesystem::is_directory( opConfig.directory ) )
   {
     SPDLOG_ERROR( "Upload Directory does not exist" );
 
-    g_errorOperation = g_protocol->errorOperation(
+    g_errorOperation = createErrorOperation(
       Arinc615a::Target::ErrorOperationConfiguration{
-        .completionHandler = &errorOperationCompleted,
         .operation = Arinc615a::OperationType::Upload,
         .targetId = targetId,
         .status = Arinc615a::OperationAcceptanceStatusCode::OperationDenied,
@@ -365,9 +433,8 @@ void mediaDefinedDownloadOperationRequest(
   {
     SPDLOG_ERROR( "Operation not enabled" );
 
-    g_errorOperation = g_protocol->errorOperation(
+    g_errorOperation = createErrorOperation(
       Arinc615a::Target::ErrorOperationConfiguration{
-        .completionHandler = &errorOperationCompleted,
         .operation = Arinc615a::OperationType::MediaDefinedDownload,
         .targetId = targetId,
         .status = Arinc615a::OperationAcceptanceStatusCode::OperationNotSupported,
@@ -383,9 +450,8 @@ void mediaDefinedDownloadOperationRequest(
     {
       SPDLOG_ERROR( "Download Directory does not exist: '{}'", directory.string() );
 
-      g_errorOperation = g_protocol->errorOperation(
+      g_errorOperation = createErrorOperation(
         Arinc615a::Target::ErrorOperationConfiguration{
-          .completionHandler = &errorOperationCompleted,
           .operation = Arinc615a::OperationType::MediaDefinedDownload,
           .targetId = targetId,
           .status = Arinc615a::OperationAcceptanceStatusCode::OperationDenied,
@@ -420,9 +486,8 @@ void operatorDefinedDownloadOperationRequest(
   {
     SPDLOG_ERROR( "Operation not Enabled" );
 
-    g_errorOperation = g_protocol->errorOperation(
+    g_errorOperation = createErrorOperation(
       Arinc615a::Target::ErrorOperationConfiguration{
-        .completionHandler = &errorOperationCompleted,
         .operation = Arinc615a::OperationType::OperatorDefinedDownload,
         .targetId = targetId,
         .status = Arinc615a::OperationAcceptanceStatusCode::OperationNotSupported,
@@ -438,9 +503,8 @@ void operatorDefinedDownloadOperationRequest(
     {
       SPDLOG_ERROR( "Download Directory does not exist: '{}'", directory.string() );
 
-      g_errorOperation = g_protocol->errorOperation(
+      g_errorOperation = createErrorOperation(
         Arinc615a::Target::ErrorOperationConfiguration{
-          .completionHandler = &errorOperationCompleted,
           .operation = Arinc615a::OperationType::OperatorDefinedDownload,
           .targetId = targetId,
           .status = Arinc615a::OperationAcceptanceStatusCode::OperationDenied,
@@ -465,13 +529,10 @@ void operatorDefinedDownloadOperationRequest(
 void operationFinished()
 {
   SPDLOG_INFO( "Operation finished" );
-  g_targetOperation.reset();
-}
-
-void errorOperationCompleted()
-{
-  SPDLOG_INFO( "Error Operation finished" );
-  g_errorOperation.reset();
+  const auto completed = g_targetOperation;
+  boost::asio::post(*g_ioContext, [completed] {
+    if (g_targetOperation == completed) g_targetOperation.reset();
+  });
 }
 
 } // namespace
@@ -480,9 +541,24 @@ namespace Arinc615aTha {
 
 int init( const boost::property_tree::ptree &properties )
 {
+  std::lock_guard lock(g_lifecycleMutex);
+  if (g_runnerActive || g_stopping) return ARINC615A_ALREADY_RUN;
   try
   {
-    g_configuration.fromProperties( properties );
+    TargetDataLoaderConfiguration candidate;
+    candidate.fromProperties( properties );
+    for (const auto &[id, target] : candidate.targets)
+    {
+      if (!Arinc615a::TargetId{id}) throw std::invalid_argument("Invalid target ID: " + id);
+      const auto check = [](Arinc649::CheckValueType type) {
+        if (!Arinc649::CheckValueGenerator::create(type))
+          throw std::invalid_argument("Configured check value is unavailable in this Boost version");
+      };
+      if (target.informationOperation.enabled) check(target.informationOperation.listCheckValue);
+      if (target.mediaDefinedDownloadOperation.enabled) check(target.mediaDefinedDownloadOperation.checksumOption);
+      if (target.operatorDefinedDownloadOperation.enabled) check(target.operatorDefinedDownloadOperation.checksumOption);
+    }
+    g_configuration = std::move(candidate);
     return ARINC615A_OK;
   }
   catch ( const std::exception &e )
@@ -536,125 +612,80 @@ int initFromFile( const std::filesystem::path &jsonFilePath )
 
 int initDefault()
 {
-  g_configuration = TargetDataLoaderConfiguration{};
-  return ARINC615A_OK;
+  return init(boost::property_tree::ptree{});
 }
 
-int start( bool runInBackground )
+int start(bool runInBackground)
 {
-  if ( g_running.load() )
-  {
-    SPDLOG_WARN( "ARINC 615A THA Target is already running." );
-    return ARINC615A_ALREADY_RUN;
-  }
-
+#ifndef ARINC615A_BACKGROUND_THREAD
+  if (runInBackground) return ARINC615A_UNSUPPORTED;
+#endif
+  std::unique_lock lock(g_lifecycleMutex);
+  if (g_runnerActive || g_stopping) return ARINC615A_ALREADY_RUN;
   try
   {
-    g_ioContext = std::make_unique< boost::asio::io_context >();
-
-    g_findServer = Arinc615a::Find::Servers::Server::instance( *g_ioContext );
-    if ( !g_findServer )
-    {
-      SPDLOG_ERROR( "Failed to create FIND Server instance" );
-      return ARINC615A_ERROR;
-    }
-
-    g_findServer
-      ->requestHandler( std::bind_front( &findRequest, std::cref( g_configuration.findInformation ) ) )
-      .localEndpoint( { g_configuration.find.localInterfaceAddress, g_configuration.find.findPort } );
+    releaseResources();
+    g_ioContext = std::make_unique<boost::asio::io_context>();
+    g_findServer = Arinc615a::Find::Servers::Server::instance(*g_ioContext);
+    g_findServer->requestHandler(
+      std::bind_front(&findRequest, std::cref(g_configuration.findInformation)))
+      .localEndpoint({g_configuration.find.localInterfaceAddress, g_configuration.find.findPort});
     g_findServer->start();
-
     g_protocol = Arinc615a::Target::Protocol::instance(
       *g_ioContext,
       Arinc615a::Target::ProtocolConfiguration{
         .newOperationRequestHandler =
-          std::bind_front( &operationRequest, std::ref( *g_ioContext ), std::cref( g_configuration ) ),
+          std::bind_front(&operationRequest, std::ref(*g_ioContext), std::cref(g_configuration)),
         .configuration = g_configuration.dataLoader,
-        .protocolVersion = g_configuration.version } );
-
-    if ( !g_protocol )
-    {
-      SPDLOG_ERROR( "Failed to create Protocol instance" );
-      g_findServer->stop();
-      g_findServer.reset();
-      return ARINC615A_ERROR;
-    }
-
+        .protocolVersion = g_configuration.version});
     g_protocol->start();
-    g_running.store( true );
-
-    if ( runInBackground )
+    g_running.store(true);
+    g_runnerActive = true;
+#ifdef ARINC615A_BACKGROUND_THREAD
+    if (runInBackground)
     {
-      g_workerThread = std::make_unique< std::thread >( []{
-        try
-        {
-          g_ioContext->run();
-        }
-        catch ( const std::exception &e )
-        {
-          SPDLOG_ERROR( "Exception in ioContext runner: {}", e.what() );
-        }
-        catch ( ... )
-        {
-          SPDLOG_ERROR( "Unknown exception in ioContext runner" );
-        }
-        g_running.store( false );
-      } );
+      g_workerThread = std::make_unique<std::thread>([] { runLoop(); });
+      return ARINC615A_OK;
     }
-    else
-    {
-      g_ioContext->run();
-      g_running.store( false );
-    }
-
-    return ARINC615A_OK;
+#endif
   }
-  catch ( const std::exception &e )
+  catch (const std::exception &e)
   {
-    SPDLOG_ERROR( "Exception starting ARINC 615A THA Target: {}", e.what() );
-    stop();
+    SPDLOG_ERROR("Cannot start THA: {}", e.what());
+    g_running.store(false);
+    g_runnerActive = false;
+    releaseResources();
     return ARINC615A_ERROR;
   }
+  catch (...)
+  {
+    g_running.store(false);
+    g_runnerActive = false;
+    releaseResources();
+    return ARINC615A_ERROR;
+  }
+  lock.unlock();
+  return runLoop();
 }
 
 void stop()
 {
-  if ( !g_running.load() && !g_ioContext )
+  std::unique_lock lock(g_lifecycleMutex);
+  if (g_stopping)
   {
+    g_lifecycleChanged.wait(lock, [] { return !g_stopping; });
     return;
   }
-
-  try
-  {
-    if ( g_findServer )
-    {
-      g_findServer->stop();
-      g_findServer.reset();
-    }
-    if ( g_protocol )
-    {
-      g_protocol->stop();
-      g_protocol.reset();
-    }
-    if ( g_ioContext )
-    {
-      g_ioContext->stop();
-    }
-    if ( g_workerThread && g_workerThread->joinable() )
-    {
-      g_workerThread->join();
-      g_workerThread.reset();
-    }
-    g_targetOperation.reset();
-    g_errorOperation.reset();
-    g_ioContext.reset();
-    g_running.store( false );
-    SPDLOG_INFO( "ARINC 615A THA Target stopped." );
-  }
-  catch ( const std::exception &e )
-  {
-    SPDLOG_ERROR( "Exception stopping ARINC 615A THA Target: {}", e.what() );
-  }
+  g_stopping = true;
+  // stop() is the only operation issued concurrently with run(). Socket,
+  // protocol and operation destruction happens after every callback has exited.
+  if (g_ioContext) g_ioContext->stop();
+  g_lifecycleChanged.wait(lock, [] { return !g_runnerActive; });
+  releaseResources();
+  g_running.store(false);
+  g_stopping = false;
+  lock.unlock();
+  g_lifecycleChanged.notify_all();
 }
 
 bool isRunning()
@@ -662,8 +693,9 @@ bool isRunning()
   return g_running.load();
 }
 
-TargetDataLoaderConfiguration& configuration()
+TargetDataLoaderConfiguration configuration()
 {
+  std::lock_guard lock(g_lifecycleMutex);
   return g_configuration;
 }
 
@@ -674,7 +706,7 @@ extern "C" {
 
 int arinc615a_tha_init_default( void )
 {
-  return Arinc615aTha::initDefault();
+  return cResult([] { return Arinc615aTha::initDefault(); });
 }
 
 int arinc615a_tha_init_json( const char * json_string )
@@ -683,7 +715,7 @@ int arinc615a_tha_init_json( const char * json_string )
   {
     return ARINC615A_ERROR;
   }
-  return Arinc615aTha::initFromJson( json_string );
+  return cResult([&] { return Arinc615aTha::initFromJson( json_string ); });
 }
 
 int arinc615a_tha_init_file( const char * json_file_path )
@@ -692,17 +724,18 @@ int arinc615a_tha_init_file( const char * json_file_path )
   {
     return ARINC615A_ERROR;
   }
-  return Arinc615aTha::initFromFile( json_file_path );
+  return cResult([&] { return Arinc615aTha::initFromFile( json_file_path ); });
 }
 
 int arinc615a_tha_start( int run_in_background )
 {
-  return Arinc615aTha::start( run_in_background != 0 );
+  return cResult([&] { return Arinc615aTha::start( run_in_background != 0 ); });
 }
 
 void arinc615a_tha_stop( void )
 {
-  Arinc615aTha::stop();
+  try { Arinc615aTha::stop(); }
+  catch (...) { SPDLOG_ERROR("THA stop failed; do not unload the module"); }
 }
 
 int arinc615a_tha_is_running( void )

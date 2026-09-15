@@ -20,7 +20,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 
 namespace Arinc615a {
 
@@ -170,34 +170,34 @@ std::string status(
       return {};
 
     case StatusCode::OperationNotAccepted:
-      return std::format( "{} Operation Denied. {}", operation, description );
+      return ARINC_FORMAT_NAMESPACE::format( "{} Operation Denied. {}", operation, description );
 
     case StatusCode::OperationNotSupported:
-      return std::format( "{} Operation not supported by the target. {}", operation, description );
+      return ARINC_FORMAT_NAMESPACE::format( "{} Operation not supported by the target. {}", operation, description );
 
     case StatusCode::OperationInProgress:
       return {};
 
     case StatusCode::OperationCompleted:
-      return std::format( "{} Operation Completed.", operation );
+      return ARINC_FORMAT_NAMESPACE::format( "{} Operation Completed.", operation );
 
     case StatusCode::OperationInProgressAdditionalInfo:
       return std::string{ description };
 
     case StatusCode::OperationAbortedByTargetHw:
-      return std::format( "{} Operation aborted by the Target Hardware. {}", operation, description );
+      return ARINC_FORMAT_NAMESPACE::format( "{} Operation aborted by the Target Hardware. {}", operation, description );
 
     case StatusCode::OperationAbortedByDlp:
-      return std::format( "{} Operation aborted by the Data Loader. {}", operation, description );
+      return ARINC_FORMAT_NAMESPACE::format( "{} Operation aborted by the Data Loader. {}", operation, description );
 
     case StatusCode::OperationAbortedByOperator:
-      return std::format( "{} Operation cancelled by the operator.", operation );
+      return ARINC_FORMAT_NAMESPACE::format( "{} Operation cancelled by the operator.", operation );
 
     case StatusCode::LoadPartNumberOrDownloadFileFailed:
-      return std::format( "{} failed. {}", loadPartNumberOrFilename, description );
+      return ARINC_FORMAT_NAMESPACE::format( "{} failed. {}", loadPartNumberOrFilename, description );
 
     case StatusCode::OperationDeferred:
-      return std::format( "{} Operation deferred. {}", operation, description );
+      return ARINC_FORMAT_NAMESPACE::format( "{} Operation deferred. {}", operation, description );
 
     default:
       return "**INVALID**";

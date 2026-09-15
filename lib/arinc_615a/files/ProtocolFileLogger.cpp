@@ -17,7 +17,7 @@
 #include <spdlog/spdlog.h>
 
 #include <chrono>
-#include <format>
+#include <helper/Format.hpp>
 #include <fstream>
 
 namespace Arinc615a::Files {
@@ -68,7 +68,7 @@ void ProtocolFileLogger::logProtocolFile(
 {
   auto protocolFileLoggingFilename{
     loggingDirectoryV
-    / std::format(
+    / ARINC_FORMAT_NAMESPACE::format(
       "{:%FT%H-%M-%S%z}_{}_{}_{}",
       std::chrono::system_clock::now(),
       OperationTypeDescription::instance().name( operationV ),

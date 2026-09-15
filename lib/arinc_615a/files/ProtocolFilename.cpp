@@ -12,7 +12,7 @@
 
 #include "ProtocolFilename.hpp"
 
-#include <format>
+#include <helper/Format.hpp>
 
 namespace Arinc615a::Files {
 
@@ -137,7 +137,7 @@ void ProtocolFilename::fileType( const ProtocolFileType fileType )
 
 ProtocolFilename::operator std::string() const
 {
-  return std::format( "{}.{}", targetIdV, extension( fileTypeV ) );
+  return ARINC_FORMAT_NAMESPACE::format( "{}.{}", targetIdV, extension( fileTypeV ) );
 }
 
 ProtocolFilename::operator bool() const noexcept

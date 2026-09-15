@@ -72,7 +72,7 @@ std::string normaliseFilename( const std::string_view filename )
     filename,
     std::back_inserter( normalisedFilename ),
     []( const char character ) {
-      return illegalCharacters.contains( character );
+      return illegalCharacters.find( character ) != std::string_view::npos;
     },
     '_' );
 

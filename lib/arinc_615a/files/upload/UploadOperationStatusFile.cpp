@@ -11,6 +11,8 @@
  **/
 
 #include "UploadOperationStatusFile.hpp"
+#include <cstddef>
+#include <helper/Underlying.hpp>
 
 #include <arinc_615a/files/Ratio.hpp>
 #include <arinc_615a/files/String.hpp>
@@ -72,15 +74,15 @@ Helper::RawData UploadOperationStatusFile::encode() const
   auto nextData{ Helper::RawDataSpan{ rawData }.subspan( HeaderSize ) };
 
   // status code
-  Helper::RawData_setInt( nextData, std::to_underlying( statusV.code() ) );
+  Helper::RawData_setInt( nextData, Helper::toUnderlying( statusV.code() ) );
 
   // status description
   const auto rawDescription{ String_encode( statusV.description() ) };
   rawData.insert( rawData.end(), rawDescription.begin(), rawDescription.end() );
 
   // reserve and resize buffer for status counter, exception timer, and estimated time
-  rawData.resize( rawData.size() + ( 3UZ * sizeof( uint16_t ) ) );
-  nextData = Helper::RawDataSpan{ rawData }.last( 3UZ * sizeof( uint16_t ) );
+  rawData.resize( rawData.size() + ( std::size_t{3} * sizeof( uint16_t ) ) );
+  nextData = Helper::RawDataSpan{ rawData }.last( std::size_t{3} * sizeof( uint16_t ) );
 
   // counter
   nextData = Helper::RawData_setInt( nextData, statusV.counter() );
@@ -130,7 +132,7 @@ Helper::RawData UploadOperationStatusFile::encode() const
     nextData = Helper::RawDataSpan{ rawData }.last( sizeof( uint16_t ) );
 
     // load status code
-    nextData = Helper::RawData_setInt( nextData, std::to_underlying( headerFile.code() ) );
+    nextData = Helper::RawData_setInt( nextData, Helper::toUnderlying( headerFile.code() ) );
     assert( nextData.empty() );
 
     // Load status description
@@ -147,7 +149,7 @@ Helper::RawData UploadOperationStatusFile::encode() const
 void UploadOperationStatusFile::decode( Helper::ConstRawDataSpan rawData )
 {
   // check minimum data size
-  if ( rawData.size() < ( HeaderSize + 9UZ ) )
+  if ( rawData.size() < ( HeaderSize + std::size_t{9} ) )
   {
     BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Protocol file to small" } );
   }

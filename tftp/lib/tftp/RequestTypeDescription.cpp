@@ -12,7 +12,11 @@
 
 #include "RequestTypeDescription.hpp"
 
+#ifndef ARINC_615A_NO_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
+#else
+#include <stdexcept>
+#endif
 
 #include <istream>
 
@@ -37,7 +41,11 @@ std::istream& operator>>( std::istream &stream, RequestType &requestType )
 
   if ( !optionalRequestType )
   {
+#ifndef ARINC_615A_NO_PROGRAM_OPTIONS
     BOOST_THROW_EXCEPTION( boost::program_options::invalid_option_value{ requestTypeStr } );
+#else
+    throw std::invalid_argument("Invalid TFTP request type: " + requestTypeStr);
+#endif
   }
 
   requestType = *optionalRequestType;

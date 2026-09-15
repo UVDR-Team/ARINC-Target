@@ -19,7 +19,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 #include <utility>
 
 namespace Tftp::Packets {
@@ -60,7 +60,7 @@ void OptionsAcknowledgementPacket::options( Options options )
 
 OptionsAcknowledgementPacket::operator std::string() const
 {
-  return std::format( "OACK: OPT: \"{}\"", Options_toString( optionsV ) );
+  return ARINC_FORMAT_NAMESPACE::format( "OACK: OPT: \"{}\"", Options_toString( optionsV ) );
 }
 
 Helper::RawData OptionsAcknowledgementPacket::encode() const

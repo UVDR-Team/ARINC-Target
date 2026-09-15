@@ -17,7 +17,7 @@
 
 #include <helper/Description.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 #include <iosfwd>
 
 namespace Arinc649 {
@@ -70,10 +70,10 @@ ARINC_649_EXPORT std::istream& operator>>( std::istream &stream, CheckValueType 
 }
 
 /**
- * @brief Specialisation of @p std::formatter for @ref Arinc649::CheckValueType.
+ * @brief Specialisation of @p ARINC_FORMAT_NAMESPACE::formatter for @ref Arinc649::CheckValueType.
  **/
 template<>
-struct std::formatter< Arinc649::CheckValueType > : std::formatter< std::string_view >
+struct ARINC_FORMAT_NAMESPACE::formatter< Arinc649::CheckValueType > : ARINC_FORMAT_NAMESPACE::formatter< std::string_view >
 {
   /**
    * @brief Arinc649::CheckValueType format routine.
@@ -90,7 +90,7 @@ struct std::formatter< Arinc649::CheckValueType > : std::formatter< std::string_
   template< class FmtContext >
   FmtContext::iterator format( const Arinc649::CheckValueType type, FmtContext &ctx ) const
   {
-    return std::formatter< string_view >::format( Arinc649::CheckValueTypeDescription::instance().name( type ), ctx );
+    return ARINC_FORMAT_NAMESPACE::formatter< std::string_view >::format( Arinc649::CheckValueTypeDescription::instance().name( type ), ctx );
   }
 };
 

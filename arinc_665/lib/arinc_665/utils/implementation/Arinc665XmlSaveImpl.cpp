@@ -28,7 +28,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 
 namespace Arinc665::Utils {
 
@@ -180,14 +180,14 @@ void Arinc665XmlSaveImpl::load( const Media::ConstFilePtr &file, xmlpp::Element 
 
   loadElement->set_attribute( "PartNumber", std::string( load->partNumber() ) );
 
-  loadElement->set_attribute( "PartFlags", std::format( "0x{:04X}", load->partFlags() ) );
+  loadElement->set_attribute( "PartFlags", ARINC_FORMAT_NAMESPACE::format( "0x{:04X}", load->partFlags() ) );
 
   // Optional Load Type (Description + Type Value)
   if ( const auto &loadType{ load->loadType() }; loadType )
   {
     const auto &[ description, id ]{ *loadType };
     loadElement->set_attribute( "Description", description );
-    loadElement->set_attribute( "Type", std::format( "0x{:04X}", id ) );
+    loadElement->set_attribute( "Type", ARINC_FORMAT_NAMESPACE::format( "0x{:04X}", id ) );
   }
 
   // Load Check Value

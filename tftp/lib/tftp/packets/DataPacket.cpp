@@ -18,7 +18,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 #include <utility>
 
 namespace Tftp::Packets {
@@ -80,7 +80,7 @@ size_t DataPacket::dataSize() const
 
 DataPacket::operator std::string() const
 {
-  return std::format( "DATA: Block No: {} DATA: {} bytes", static_cast< uint16_t >( blockNumber() ), dataSize() );
+  return ARINC_FORMAT_NAMESPACE::format( "DATA: Block No: {} DATA: {} bytes", static_cast< uint16_t >( blockNumber() ), dataSize() );
 }
 
 Helper::RawData DataPacket::encode() const

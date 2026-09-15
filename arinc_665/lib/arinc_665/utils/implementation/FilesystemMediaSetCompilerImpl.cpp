@@ -29,7 +29,7 @@
 
 #include <cassert>
 #include <fstream>
-#include <format>
+#include <helper/Format.hpp>
 
 namespace Arinc665::Utils {
 
@@ -55,7 +55,7 @@ FilesystemMediaSetCompiler& FilesystemMediaSetCompilerImpl::mediaSet( Media::Con
   mediaPathsV.clear();
   for ( MediumNumber mediumNumber{}; mediumNumber <= mediaSet->lastMediumNumber(); ++mediumNumber )
   {
-    mediaPathsV.try_emplace( mediumNumber, std::format( "MEDIUM_{:03d}", static_cast< uint8_t >( mediumNumber ) ) );
+    mediaPathsV.try_emplace( mediumNumber, ARINC_FORMAT_NAMESPACE::format( "MEDIUM_{:03d}", static_cast< uint8_t >( mediumNumber ) ) );
   }
 
   // set media set name
@@ -146,7 +146,7 @@ std::filesystem::path FilesystemMediaSetCompilerImpl::mediumPath( const Arinc665
   if ( mediaPathsV.end() == mediumPath )
   {
     BOOST_THROW_EXCEPTION( Arinc665::Arinc665Exception()
-      << Helper::AdditionalInfo{ std::format( "Medium {} not found", mediumNumber ) } );
+      << Helper::AdditionalInfo{ ARINC_FORMAT_NAMESPACE::format( "Medium {} not found", mediumNumber ) } );
   }
 
   return mediaSetBaseDirectoryV / mediumPath->second;

@@ -272,7 +272,7 @@ constexpr RawDataSpan RawData_setString( RawDataSpan raw, std::string_view strin
  * @sa @ref RawData_asString(ConstRawDataSpan,std::size_t)
  * @sa @ref RawData_toRaw(IntT)
  **/
- [[nodiscard]] constexpr ConstRawDataSpan RawData_asRaw( std::string_view string );
+[[nodiscard]] inline ConstRawDataSpan RawData_asRaw( std::string_view string );
 
 /**
  * @brief Converts raw byte data into a string view.

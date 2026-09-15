@@ -58,7 +58,7 @@ void ErrorOperationImpl::start(
     std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< Helper::RawData >( initialisationFile ) ) };
   assert( file );
 
-  protocolFileLoggerV.transmitProtocolFile( std::format( "{}.INIT", configurationV.targetId ), file->data() );
+  protocolFileLoggerV.transmitProtocolFile( ARINC_FORMAT_NAMESPACE::format( "{}.INIT", configurationV.targetId ), file->data() );
 
   initialisationFileOperationV
     ->tftpTimeout( dlConfigurationV.tftpConfiguration.tftpTimeout )

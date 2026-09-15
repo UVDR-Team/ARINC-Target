@@ -16,7 +16,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 
 namespace Arinc665 {
 
@@ -94,7 +94,7 @@ std::string PartNumber::checkCode() const
     checkCode ^= static_cast< uint8_t >( character );
   }
 
-  return std::format( "{:02X}", static_cast< unsigned int >( checkCode ) );
+  return ARINC_FORMAT_NAMESPACE::format( "{:02X}", static_cast< unsigned int >( checkCode ) );
 }
 
 std::string PartNumber::toString() const

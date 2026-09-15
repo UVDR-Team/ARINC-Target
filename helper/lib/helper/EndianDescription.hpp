@@ -39,6 +39,18 @@ namespace Helper {
 class HELPER_EXPORT EndianDescription final : public Description< EndianDescription, std::endian >
 {
   public:
+    using Base = Description<EndianDescription, std::endian>;
+    using Base::enumeration;
+    using Base::value;
+    // native aliases big or little; it cannot occupy a second unique enum key.
+    [[nodiscard]] std::optional<std::endian> enumeration(std::string_view name) const
+    {
+      return name == "native" ? std::optional{std::endian::native} : Base::enumeration(name);
+    }
+    [[nodiscard]] std::optional<Base::Value> value(std::string_view name) const
+    {
+      return name == "native" ? Base::value(std::endian::native) : Base::value(name);
+    }
     /**
      * @brief Converts a `boost::endian::order` value to the corresponding `std::endian` representation.
      *

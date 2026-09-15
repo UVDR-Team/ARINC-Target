@@ -11,6 +11,7 @@
  **/
 
 #include "ProtocolFile.hpp"
+#include <helper/Underlying.hpp>
 
 #include <arinc_615a/Arinc615aException.hpp>
 
@@ -46,7 +47,7 @@ void ProtocolFile::insertHeader( Helper::RawDataSpan rawData ) const
   const auto nextData{ Helper::RawData_setInt( rawData, static_cast< uint32_t >( rawData.size() ) ) };
 
   // protocol version
-  Helper::RawData_setInt( nextData, std::to_underlying( protocolVersionV ) );
+  Helper::RawData_setInt( nextData, Helper::toUnderlying( protocolVersionV ) );
 }
 
 Helper::ConstRawDataSpan ProtocolFile::decodeHeader( const Helper::ConstRawDataSpan rawData )

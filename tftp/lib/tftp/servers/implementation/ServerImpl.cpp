@@ -210,7 +210,7 @@ void ServerImpl::errorOperation(
   }
   catch ( const boost::system::system_error &err )
   {
-    SPDLOG_ERROR( err.what() );
+    SPDLOG_ERROR( "{}", err.what() );
   }
 }
 
@@ -243,7 +243,7 @@ void ServerImpl::errorOperation(
   }
   catch ( const boost::system::system_error &err )
   {
-    SPDLOG_ERROR( err.what() );
+    SPDLOG_ERROR( "{}", err.what() );
   }
 }
 

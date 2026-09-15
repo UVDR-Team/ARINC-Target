@@ -23,7 +23,7 @@
 #include <arinc_649/CheckValue.hpp>
 #include <arinc_649/CheckValueTypeDescription.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 
 namespace Arinc665::Utils {
 
@@ -263,7 +263,7 @@ void MediaSetPrinter_print(
     outS
       << initialIndent
       << "Load Type: '" << type->first << "'"
-      << std::format( "0x{:04X}", type->second ) << "\n";
+      << ARINC_FORMAT_NAMESPACE::format( "0x{:04X}", type->second ) << "\n";
   }
 
   outS
@@ -413,11 +413,11 @@ void MediaSetPrinter_print(
 {
   for ( const auto &[ file, checkValuesSet ] : checkValues )
   {
-    outS << std::format( "{}{}\n", initialIndent, file->path().string() );
+    outS << ARINC_FORMAT_NAMESPACE::format( "{}{}\n", initialIndent, file->path().string() );
 
     for ( const auto &checkValue : checkValuesSet )
     {
-      outS << std::format( "{}{}{}\n", initialIndent, indent, checkValue );
+      outS << ARINC_FORMAT_NAMESPACE::format( "{}{}{}\n", initialIndent, indent, checkValue );
     }
   }
 }

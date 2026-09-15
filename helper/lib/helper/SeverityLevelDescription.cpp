@@ -22,7 +22,7 @@
 
 #include <boost/make_shared.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 
 namespace Helper {
 
@@ -45,7 +45,7 @@ std::string SeverityLevelDescription::allLevels( std::string_view prefix ) const
 
   for ( const auto &description : descriptions() )
   {
-    allLevels += std::format( "\n  - {}", description.name );
+    allLevels += ARINC_FORMAT_NAMESPACE::format( "\n  - {}", description.name );
   }
 
   return allLevels;

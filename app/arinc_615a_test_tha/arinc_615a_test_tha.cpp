@@ -332,7 +332,7 @@ try
   }
   catch ( const boost::program_options::error &e )
   {
-    std::cerr << std::format(
+    std::cerr << ARINC_FORMAT_NAMESPACE::format(
       "Error parsing command line: {}\n"
       "Enter '{} --help' for command line description.\n",
       e.what(),
@@ -341,12 +341,12 @@ try
   }
   catch ( const boost::exception &e )
   {
-    std::cerr << std::format( "Error: {}\n", boost::diagnostic_information( e ) );
+    std::cerr << ARINC_FORMAT_NAMESPACE::format( "Error: {}\n", boost::diagnostic_information( e ) );
     return EXIT_FAILURE;
   }
   catch ( const std::exception &e )
   {
-    std::cerr << std::format( "Error: {}\n", boost::diagnostic_information( e ) );
+    std::cerr << ARINC_FORMAT_NAMESPACE::format( "Error: {}\n", boost::diagnostic_information( e ) );
     return EXIT_FAILURE;
   }
   catch ( ... )
@@ -583,7 +583,7 @@ static void uploadOperationRequest(
     return;
   }
 
-  if ( std::filesystem::is_directory( opConfig.directory ) )
+  if ( !std::filesystem::is_directory( opConfig.directory ) )
   {
    SPDLOG_ERROR( "Upload Directory does not exist" );
 

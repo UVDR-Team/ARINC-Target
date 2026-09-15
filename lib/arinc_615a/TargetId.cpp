@@ -85,7 +85,7 @@ void TargetId::position( std::string position )
 
 std::string TargetId::toString() const
 {
-  return std::format( "{}_{}", thwIdV, positionV );
+  return ARINC_FORMAT_NAMESPACE::format( "{}_{}", thwIdV, positionV );
 }
 
 TargetId::operator std::string() const

@@ -11,6 +11,7 @@
  **/
 
 #include <utility>
+#include <helper/Underlying.hpp>
 
 namespace Helper {
 
@@ -18,7 +19,7 @@ template< Enumeration EnumT, Value ValueT >
 DescriptionEntry< EnumT, ValueT >::DescriptionEntry( std::string name, const EnumType enumeration ) :
   name{ std::move( name ) },
   enumeration{ enumeration },
-  value{ static_cast< ValueT >( std::to_underlying( enumeration ) ) }
+  value{ static_cast< ValueT >( Helper::toUnderlying( enumeration ) ) }
 {
 }
 

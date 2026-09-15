@@ -8,3 +8,5 @@ symbology-style.db
 build/
 build-*/
 .cache/
+*.DS_Store
+dist/

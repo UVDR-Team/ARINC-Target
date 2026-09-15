@@ -26,7 +26,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 
 namespace Arinc615a::Find::Servers {
 
@@ -160,7 +160,7 @@ void ServerImpl::informationRequestPacket(
 {
   SPDLOG_INFO( "FIND Request from {}:{}", remote.address().to_string(), remote.port() );
 
-  if ( ( request.numberOfParameters() != 1 ) && ( !request.parameter( 0 ).empty() ) )
+  if ( ( request.numberOfParameters() != 1 ) || ( !request.parameter( 0 ).empty() ) )
   {
     SPDLOG_INFO( "Invalid FIND Request" );
     return;

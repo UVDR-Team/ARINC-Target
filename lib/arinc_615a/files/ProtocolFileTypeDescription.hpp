@@ -18,7 +18,7 @@
 #include <helper/Description.hpp>
 
 #include <iosfwd>
-#include <format>
+#include <helper/Format.hpp>
 
 /**
  * @name ARINC 615A Protocol %File Type Description
@@ -57,16 +57,16 @@ ARINC_615A_EXPORT std::ostream& operator<<( std::ostream &stream, ProtocolFileTy
 
 }
 
-namespace std {
+namespace ARINC_FORMAT_NAMESPACE {
 
 /**
- * @brief Specialisation of @p std::formatter for @ref Arinc615a::Files::ProtocolFileType
+ * @brief Specialisation of @p ARINC_FORMAT_NAMESPACE::formatter for @ref Arinc615a::Files::ProtocolFileType
  *
  * @sa @ref Arinc615a::Files::ProtocolFileType
  * @sa @ref Arinc615a::Files::ProtocolFileTypeDescription
  **/
 template<>
-struct formatter< Arinc615a::Files::ProtocolFileType > : std::formatter< std::string_view >
+struct formatter< Arinc615a::Files::ProtocolFileType > : ARINC_FORMAT_NAMESPACE::formatter< std::string_view >
 {
   /**
    * @brief Arinc615a::StatusCode format routine.
@@ -83,7 +83,7 @@ struct formatter< Arinc615a::Files::ProtocolFileType > : std::formatter< std::st
     template< class FmtContext >
     FmtContext::iterator format( const Arinc615a::Files::ProtocolFileType fileType, FmtContext &ctx ) const
     {
-      return std::formatter< string_view >::format(
+      return ARINC_FORMAT_NAMESPACE::formatter< std::string_view >::format(
         Arinc615a::Files::ProtocolFileTypeDescription::instance().name( fileType ),
         ctx );
     }

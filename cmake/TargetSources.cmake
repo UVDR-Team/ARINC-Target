@@ -1,0 +1,155 @@
+# SPDX-License-Identifier: MPL-2.0
+# Audited target translation units. No recursive globbing or desktop subprojects.
+set(helper_SOURCES
+  ${PROJECT_SOURCE_DIR}/helper/lib/helper/Dump.cpp
+  ${PROJECT_SOURCE_DIR}/helper/lib/helper/EndianDescription.cpp
+  ${PROJECT_SOURCE_DIR}/helper/lib/helper/Filenames.cpp
+  ${PROJECT_SOURCE_DIR}/helper/lib/helper/Helper.cpp
+  ${PROJECT_SOURCE_DIR}/helper/lib/helper/SeverityLevelDescription.cpp
+)
+
+set(arinc_649_SOURCES
+  ${PROJECT_SOURCE_DIR}/arinc-649/lib/arinc_649/Arinc649.cpp
+  ${PROJECT_SOURCE_DIR}/arinc-649/lib/arinc_649/CheckValue.cpp
+  ${PROJECT_SOURCE_DIR}/arinc-649/lib/arinc_649/CheckValueGenerator.cpp
+  ${PROJECT_SOURCE_DIR}/arinc-649/lib/arinc_649/CheckValueTypeDescription.cpp
+  ${PROJECT_SOURCE_DIR}/arinc-649/lib/arinc_649/Filename.cpp
+  ${PROJECT_SOURCE_DIR}/arinc-649/lib/arinc_649/implementation/NopCheckValueGenerator.cpp
+)
+
+set(arinc_665_SOURCES
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/Arinc665.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/FileTypeDescription.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/MediumNumber.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/PartNumber.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/SupportedArinc665VersionDescription.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/files/Arinc665File.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/files/BatchFile.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/files/BatchInfo.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/files/BatchListFile.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/files/BatchLoadInfo.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/files/BatchTargetInfo.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/files/CheckValueUtils.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/files/FileInfo.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/files/FileListFile.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/files/ListFile.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/files/LoadFileInfo.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/files/LoadHeaderFile.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/files/LoadInfo.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/files/LoadListFile.cpp
+  ${PROJECT_SOURCE_DIR}/arinc_665/lib/arinc_665/files/StringUtils.cpp
+)
+
+set(tftp_SOURCES
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/RequestTypeDescription.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/Tftp.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/TftpConfiguration.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/TftpOptionsConfiguration.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/TransferStatusDescription.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/clients/Client.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/clients/implementation/ClientImpl.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/clients/implementation/OperationImpl.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/clients/implementation/ReadOperationImpl.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/clients/implementation/WriteOperationImpl.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/files/MemoryFile.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/files/NullSinkFile.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/files/StreamFile.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/packets/AcknowledgementPacket.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/packets/BlockNumber.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/packets/DataPacket.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/packets/ErrorCodeDescription.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/packets/ErrorPacket.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/packets/Options.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/packets/OptionsAcknowledgementPacket.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/packets/Packet.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/packets/PacketHandler.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/packets/PacketStatistic.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/packets/PacketTypeDescription.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/packets/ReadRequestPacket.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/packets/ReadWriteRequestPacket.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/packets/TftpOptions.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/packets/WriteRequestPacket.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/servers/Server.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/servers/Servers.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/servers/implementation/OperationImpl.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/servers/implementation/ReadOperationImpl.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/servers/implementation/ServerImpl.cpp
+  ${PROJECT_SOURCE_DIR}/tftp/lib/tftp/servers/implementation/WriteOperationImpl.cpp
+)
+
+set(arinc_615a_SOURCES
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/Arinc615a.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/Arinc615aConfiguration.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/Arinc615aVersionDescription.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/OperationTypeDescription.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/StatusCode.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/StatusCodeDescription.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/TargetId.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/InitializationFile.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/ProtocolFile.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/ProtocolFileLogger.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/ProtocolFileStatistic.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/ProtocolFileTypeDescription.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/ProtocolFilename.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/Ratio.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/String.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/download/DownloadOperationAnswerFile.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/download/DownloadOperationListFile.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/download/DownloadOperationRequestFile.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/download/DownloadOperationStatusFile.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/information/InformationOperationStatusFile.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/information/LoadConfigurationListFile.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/upload/UploadOperationRequestFile.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/files/upload/UploadOperationStatusFile.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/find/FindConfiguration.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/find/TargetInformation.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/find/packets/OpcodeDescription.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/find/packets/Packet.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/find/packets/PacketHandler.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/find/packets/PacketStatistic.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/find/packets/Packets.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/find/servers/Server.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/find/servers/implementation/ServerImpl.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/information/DownloadFileStatus.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/information/DownloadStatus.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/information/InitializationResponse.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/information/PartNumber.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/information/Ratio.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/information/Status.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/information/TargetHardware.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/information/UploadLoadStatus.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/information/UploadStatus.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/target/Protocol.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/target/implementation/ErrorOperationImpl.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/target/implementation/InformationOperationImpl.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/target/implementation/MediaDefinedDownloadOperationImpl.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/target/implementation/OperationImpl.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/target/implementation/OperatorDefinedDownloadOperationImpl.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/target/implementation/ProtocolImpl.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/target/implementation/UploadOperationImpl.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/tftp/Arinc615aOptions.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/tftp/ErrorMessage.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/tftp/clients/Client.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/tftp/clients/implementation/ClientImpl.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/tftp/clients/implementation/OperationImpl.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/tftp/clients/implementation/ReadOperationImpl.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/tftp/clients/implementation/WriteOperationImpl.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/tftp/servers/Server.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/tftp/servers/implementation/ReadOperationImpl.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/tftp/servers/implementation/ServerImpl.cpp
+  ${PROJECT_SOURCE_DIR}/lib/arinc_615a/tftp/servers/implementation/WriteOperationImpl.cpp
+)
+
+set(arinc_615a_test_tha_lib_SOURCES
+  ${PROJECT_SOURCE_DIR}/app/arinc_615a_test_tha/Arinc615aThaLib.cpp
+  ${PROJECT_SOURCE_DIR}/app/arinc_615a_test_tha/DownloadOperationConfiguration.cpp
+  ${PROJECT_SOURCE_DIR}/app/arinc_615a_test_tha/InformationOperationConfiguration.cpp
+  ${PROJECT_SOURCE_DIR}/app/arinc_615a_test_tha/OperationConfiguration.cpp
+  ${PROJECT_SOURCE_DIR}/app/arinc_615a_test_tha/TargetDataLoaderConfiguration.cpp
+  ${PROJECT_SOURCE_DIR}/app/arinc_615a_test_tha/TargetInformationOperation.cpp
+  ${PROJECT_SOURCE_DIR}/app/arinc_615a_test_tha/TargetMediaDefinedDownloadOperation.cpp
+  ${PROJECT_SOURCE_DIR}/app/arinc_615a_test_tha/TargetOperatorDefinedDownloadOperation.cpp
+  ${PROJECT_SOURCE_DIR}/app/arinc_615a_test_tha/TargetUploadOperation.cpp
+  ${PROJECT_SOURCE_DIR}/app/arinc_615a_test_tha/UploadOperationConfiguration.cpp
+)
+

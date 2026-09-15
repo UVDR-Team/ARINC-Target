@@ -12,6 +12,7 @@
  **/
 
 #include "TargetUploadOperation.hpp"
+#include <helper/Underlying.hpp>
 
 #include <arinc_615a/information/UploadStatus.hpp>
 
@@ -158,7 +159,7 @@ void TargetUploadOperation::status( const Arinc615a::Information::UploadStatus &
     "\tEstimated Time:  {}\n",
     status.counter(),
     Arinc615a::StatusCodeDescription::instance().name( status.code() ),
-    std::to_underlying( status.code() ),
+    Helper::toUnderlying( status.code() ),
     status.description(),
     status.exceptionTimer(),
     status.estimatedTime() );

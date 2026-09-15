@@ -11,6 +11,7 @@
  **/
 
 #include "Arinc665File.hpp"
+#include <helper/Underlying.hpp>
 
 #include <arinc_665/Arinc665Exception.hpp>
 
@@ -82,16 +83,16 @@ std::optional< FileClassType > Arinc665File::fileType( Helper::ConstRawDataSpan 
 {
   switch ( formatVersion( rawFile ) )
   {
-    case std::to_underlying( LoadFileFormatVersion::Version2 ):
-    case std::to_underlying( LoadFileFormatVersion::Version345 ):
+    case Helper::toUnderlying( LoadFileFormatVersion::Version2 ):
+    case Helper::toUnderlying( LoadFileFormatVersion::Version345 ):
       return FileClassType::LoadFile;
 
-    case std::to_underlying( BatchFileFormatVersion::Version2 ):
-    case std::to_underlying( BatchFileFormatVersion::Version345 ):
+    case Helper::toUnderlying( BatchFileFormatVersion::Version2 ):
+    case Helper::toUnderlying( BatchFileFormatVersion::Version345 ):
       return FileClassType::BatchFile;
 
-    case std::to_underlying( MediaFileFormatVersion::Version2 ):
-    case std::to_underlying( MediaFileFormatVersion::Version345 ):
+    case Helper::toUnderlying( MediaFileFormatVersion::Version2 ):
+    case Helper::toUnderlying( MediaFileFormatVersion::Version345 ):
       return FileClassType::MediaFile;
 
     default:
@@ -223,10 +224,10 @@ uint16_t Arinc665File::formatVersionField(
       switch ( arinc665Version )
       {
         case SupportedArinc665Version::Supplement2:
-          return std::to_underlying( BatchFileFormatVersion::Version2 );
+          return Helper::toUnderlying( BatchFileFormatVersion::Version2 );
 
         case SupportedArinc665Version::Supplement345:
-          return std::to_underlying( BatchFileFormatVersion::Version345 );
+          return Helper::toUnderlying( BatchFileFormatVersion::Version345 );
 
         default:
           break;
@@ -237,10 +238,10 @@ uint16_t Arinc665File::formatVersionField(
       switch ( arinc665Version )
       {
         case SupportedArinc665Version::Supplement2:
-          return std::to_underlying( LoadFileFormatVersion::Version2 );
+          return Helper::toUnderlying( LoadFileFormatVersion::Version2 );
 
         case SupportedArinc665Version::Supplement345:
-          return std::to_underlying( LoadFileFormatVersion::Version345 );
+          return Helper::toUnderlying( LoadFileFormatVersion::Version345 );
 
         default:
           break;
@@ -253,10 +254,10 @@ uint16_t Arinc665File::formatVersionField(
       switch ( arinc665Version )
       {
         case SupportedArinc665Version::Supplement2:
-          return std::to_underlying( MediaFileFormatVersion::Version2 );
+          return Helper::toUnderlying( MediaFileFormatVersion::Version2 );
 
         case SupportedArinc665Version::Supplement345:
-          return std::to_underlying( MediaFileFormatVersion::Version345 );
+          return Helper::toUnderlying( MediaFileFormatVersion::Version345 );
 
         default:
           break;

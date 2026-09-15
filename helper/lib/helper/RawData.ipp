@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <cassert>
 #include <exception>
+#include <cstring>
 
 namespace Helper {
 
@@ -51,10 +52,11 @@ template< std::integral IntT >
   }
 
   // get raw value
-  const auto rawValue{ reinterpret_cast< const IntT * >( raw.data() ) };
+  IntT rawValue;
+  std::memcpy(&rawValue, raw.data(), sizeof(rawValue));
 
   // convert to native endian
-  const auto value{ boost::endian::conditional_reverse( *rawValue, rawOrder, boost::endian::order::native ) };
+  const auto value{ boost::endian::conditional_reverse( rawValue, rawOrder, boost::endian::order::native ) };
 
   // return remaining data and value
   return { raw.subspan( sizeof( IntT ) ), value };
@@ -85,10 +87,9 @@ constexpr RawDataSpan RawData_setInt( RawDataSpan raw, IntT value, const boost::
     BOOST_THROW_EXCEPTION( std::out_of_range( "RawData_setInt: not enough data" ) ) ;
   }
 
-  const auto rawValue{ reinterpret_cast< IntT * >( raw.data() ) };
-
   // convert to raw endian
-  *rawValue = boost::endian::conditional_reverse( value, boost::endian::order::native, rawOrder );
+  const auto rawValue = boost::endian::conditional_reverse( value, boost::endian::order::native, rawOrder );
+  std::memcpy(raw.data(), &rawValue, sizeof(rawValue));
 
   return raw.subspan( sizeof( IntT ) );
 }
@@ -139,7 +140,7 @@ constexpr RawDataSpan RawData_setString( RawDataSpan raw, std::string_view strin
   return raw.subspan( string.size() );
 }
 
-[[nodiscard]] constexpr ConstRawDataSpan RawData_asRaw( std::string_view string )
+[[nodiscard]] inline ConstRawDataSpan RawData_asRaw( std::string_view string )
 {
   return ConstRawDataSpan{ reinterpret_cast< std::byte const * >( string.data() ), string.size() };
 }

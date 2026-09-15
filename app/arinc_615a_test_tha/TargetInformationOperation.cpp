@@ -12,6 +12,7 @@
  **/
 
 #include "TargetInformationOperation.hpp"
+#include <helper/Underlying.hpp>
 
 #include "TargetDataLoaderConfiguration.hpp"
 
@@ -130,7 +131,7 @@ void TargetInformationOperation::status( const Arinc615a::Information::Informati
     "\tEstimated Time:  {}\n",
     status.counter(),
     Arinc615a::StatusCodeDescription::instance().name( status.code() ),
-    std::to_underlying( status.code() ),
+    Helper::toUnderlying( status.code() ),
     status.description(),
     status.exceptionTimer(),
     status.estimatedTime() );

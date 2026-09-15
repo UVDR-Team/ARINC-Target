@@ -86,9 +86,9 @@ bool isRunning();
 /**
  * @brief Get the currently active configuration.
  *
- * @return Reference to configuration.
+ * @return A snapshot of the configuration. Reconfigure through init() while stopped.
  **/
-TargetDataLoaderConfiguration& configuration();
+TargetDataLoaderConfiguration configuration();
 
 } // namespace Arinc615aTha
 

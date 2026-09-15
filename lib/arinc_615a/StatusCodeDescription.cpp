@@ -66,12 +66,12 @@ StatusCodeDescription::StatusCodeDescription():
 
 std::ostream& operator<<( std::ostream &stream, StatusCode status )
 {
-  return stream << std::format( "{}", status );
+  return stream << ARINC_FORMAT_NAMESPACE::format( "{}", status );
 }
 
 std::ostream& operator<<( std::ostream &stream, const OperationAcceptanceStatusCode status )
 {
-  return stream << std::format( "{}", status );
+  return stream << ARINC_FORMAT_NAMESPACE::format( "{}", status );
 }
 
 }

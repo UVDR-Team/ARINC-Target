@@ -21,6 +21,7 @@
 #define HELPER_HELPER_HPP
 
 #include <helper/helper_export.h>
+#include <helper/Format.hpp>
 
 #include <spdlog/spdlog.h>
 

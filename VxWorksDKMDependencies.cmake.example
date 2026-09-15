@@ -1,39 +1,13 @@
-# Copy this file outside the source tree, replace the four locations and pass
-# it to CMake with -DARINC615A_DEPENDENCY_FILE=/absolute/path/to/that-file.
-#
-# These libraries implement protocol behaviour used by ARINC 615A.  They are
-# required, not optional runtime dependencies: removing TFTP would remove the
-# file-transfer protocol itself.  All paths must refer to artifacts compiled
-# with the same VxWorks 26.03 toolchain, CPU, ABI, C++23 language mode, and
-# C++ standard library as the DKM that links arinc_615a_tha_target.
-
-set( ARINC615A_VXWORKS_INCLUDE_DIR "/replace/with/vxworks/dependency/includes" )
-
-# If the VxWorks SDK integration does not already define Boost::boost, expose
-# its kernel-provided Boost headers as an imported interface target here.
-# add_library( Boost::boost INTERFACE IMPORTED GLOBAL )
-# set_target_properties( Boost::boost PROPERTIES
-#   INTERFACE_INCLUDE_DIRECTORIES "/replace/with/vxworks/boost/includes" )
-
-add_library( helper STATIC IMPORTED GLOBAL )
-set_target_properties( helper PROPERTIES
-  IMPORTED_LOCATION "/replace/with/libhelper.a"
-  INTERFACE_INCLUDE_DIRECTORIES "${ARINC615A_VXWORKS_INCLUDE_DIR}" )
-
-add_library( tftp STATIC IMPORTED GLOBAL )
-set_target_properties( tftp PROPERTIES
-  IMPORTED_LOCATION "/replace/with/libtftp.a"
-  INTERFACE_INCLUDE_DIRECTORIES "${ARINC615A_VXWORKS_INCLUDE_DIR}" )
-target_link_libraries( tftp INTERFACE helper )
-
-add_library( arinc_645 STATIC IMPORTED GLOBAL )
-set_target_properties( arinc_645 PROPERTIES
-  IMPORTED_LOCATION "/replace/with/libarinc_645.a"
-  INTERFACE_INCLUDE_DIRECTORIES "${ARINC615A_VXWORKS_INCLUDE_DIR}" )
-target_link_libraries( arinc_645 INTERFACE helper )
-
-add_library( arinc_665 STATIC IMPORTED GLOBAL )
-set_target_properties( arinc_665 PROPERTIES
-  IMPORTED_LOCATION "/replace/with/libarinc_665.a"
-  INTERFACE_INCLUDE_DIRECTORIES "${ARINC615A_VXWORKS_INCLUDE_DIR}" )
-target_link_libraries( arinc_665 INTERFACE arinc_645 helper )
+# Optional initial cache for the offline target-only build.
+# Copy this file, replace both paths, and run:
+# cmake -S . -B build-vxworks -C /absolute/path/to/your-cache.cmake
+# Use the DKM toolchain supplied by your board SDK.
+# No prebuilt helper/TFTP/ARINC archives or compiled Boost libraries are needed.
+set(CMAKE_TOOLCHAIN_FILE "/replace/with/sdk/dkm.toolchain.cmake" CACHE FILEPATH "SDK DKM toolchain")
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY CACHE STRING "Cross compiler probe")
+set(ARINC615A_BOOST_INCLUDE_DIR "/replace/with/sdk/include" CACHE PATH "Directory containing boost/version.hpp")
+set(ARINC615A_TARGET_ONLY ON CACHE BOOL "Target-only source graph")
+set(ARINC_615A_VXWORKS ON CACHE BOOL "DKM defaults")
+set(ARINC615A_BACKGROUND_THREAD OFF CACHE BOOL "Run inside an application-owned task")
+set(ARINC615A_BUILD_TESTS OFF CACHE BOOL "Native tests are not DKM sources")
+set(CMAKE_BUILD_TYPE Release CACHE STRING "Build configuration")

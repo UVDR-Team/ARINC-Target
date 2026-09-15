@@ -11,6 +11,7 @@
  **/
 
 #include "InformationOperationStatusFile.hpp"
+#include <helper/Underlying.hpp>
 
 #include <arinc_615a/files/String.hpp>
 
@@ -71,7 +72,7 @@ Helper::RawData InformationOperationStatusFile::encode() const
   nextData = Helper::RawData_setInt( nextData, statusV.counter() );
 
   // status code
-  nextData = Helper::RawData_setInt( nextData, std::to_underlying( statusV.code() ) );
+  nextData = Helper::RawData_setInt( nextData, Helper::toUnderlying( statusV.code() ) );
 
   // exception timer
   nextData = Helper::RawData_setInt( nextData, statusV.exceptionTimer() );

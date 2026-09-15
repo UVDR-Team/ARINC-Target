@@ -17,7 +17,7 @@
 
 #include <helper/RawData.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 #include <iosfwd>
 #include <map>
 #include <optional>
@@ -197,10 +197,10 @@ ARINC_649_EXPORT std::ostream& operator<<( std::ostream &stream, const CheckValu
 }
 
 /**
- * @brief Specialisation of @p std::formatter for @ref Arinc649::CheckValue
+ * @brief Specialisation of @p ARINC_FORMAT_NAMESPACE::formatter for @ref Arinc649::CheckValue
  **/
 template<>
-struct std::formatter< Arinc649::CheckValue > : std::formatter< std::string_view >
+struct ARINC_FORMAT_NAMESPACE::formatter< Arinc649::CheckValue > : ARINC_FORMAT_NAMESPACE::formatter< std::string_view >
 {
   /**
    * @brief Arinc649::CheckValue format routine.
@@ -217,7 +217,7 @@ struct std::formatter< Arinc649::CheckValue > : std::formatter< std::string_view
   template< class FmtContext >
   FmtContext::iterator format( const Arinc649::CheckValue &checkValue, FmtContext &ctx ) const
   {
-    return std::formatter< string_view >::format( checkValue.format(), ctx );
+    return ARINC_FORMAT_NAMESPACE::formatter< std::string_view >::format( checkValue.format(), ctx );
   }
 };
 

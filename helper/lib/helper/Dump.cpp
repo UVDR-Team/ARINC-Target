@@ -14,7 +14,7 @@
 
 #include <cctype>
 #include <cstdint>
-#include <format>
+#include <helper/Format.hpp>
 
 namespace Helper {
 
@@ -31,7 +31,7 @@ std::string Dump( void const * const address, const std::size_t length, const st
 
   for ( unsigned int index = 0; index < length; ++index )
   {
-    hexView += std::format( "{:02X} ", static_cast< unsigned int >( CharAddress[ index ] ) );
+    hexView += ARINC_FORMAT_NAMESPACE::format( "{:02X} ", static_cast< unsigned int >( CharAddress[ index ] ) );
 
     if ( 0 != std::isprint( CharAddress[ index ] ) )
     {
@@ -52,7 +52,7 @@ std::string Dump( void const * const address, const std::size_t length, const st
     // If Last Character of Line or of Memory reached
     if ( ( lineWidth - 1 == index % lineWidth ) || ( index + 1 == length ) )
     {
-      result += std::format(
+      result += ARINC_FORMAT_NAMESPACE::format(
         "{:08X}  {} |{}|\n",
         ( lineWidth * ( index / lineWidth ) ),
         hexView,

@@ -15,7 +15,7 @@
 
 #include <arinc_615a/Arinc615a.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 #include <iosfwd>
 #include <string>
 #include <string_view>
@@ -359,15 +359,15 @@ inline auto operator <=>( const std::string_view lhs, const TargetId &rhs )
 
 }
 
-namespace std {
+namespace ARINC_FORMAT_NAMESPACE {
 
 /**
- * @brief Specialisation of @p std::formatter for @ref Arinc615a::TargetId.
+ * @brief Specialisation of @p ARINC_FORMAT_NAMESPACE::formatter for @ref Arinc615a::TargetId.
  *
  * @sa @ref Arinc615a::TargetId
  **/
 template <>
-struct formatter< Arinc615a::TargetId > : std::formatter< std::string_view >
+struct formatter< Arinc615a::TargetId > : ARINC_FORMAT_NAMESPACE::formatter< std::string_view >
 {
   /**
    * @brief Arinc615a::TargetId format routine.
@@ -384,7 +384,7 @@ struct formatter< Arinc615a::TargetId > : std::formatter< std::string_view >
   template< class FmtContext >
   FmtContext::iterator format( const Arinc615a::TargetId &targetId, FmtContext &ctx ) const
   {
-    return std::formatter< string_view >::format( targetId.toString(), ctx );
+    return ARINC_FORMAT_NAMESPACE::formatter< std::string_view >::format( targetId.toString(), ctx );
   }
 };
 

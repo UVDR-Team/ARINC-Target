@@ -11,6 +11,7 @@
  **/
 
 #include "QueryImpl.hpp"
+#include <helper/Underlying.hpp>
 
 #include <arinc_615a/find/TargetInformation.hpp>
 
@@ -25,7 +26,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 
 namespace Arinc615a::Find::Clients {
 
@@ -232,22 +233,22 @@ void QueryImpl::informationRequestPacket(
 
 void QueryImpl::informationAnswerPacket( const boost::asio::ip::udp::endpoint &remote, const Packets::Packet &answer )
 {
-  if ( answer.numberOfParameters() != std::to_underlying( Packets::ParameterList::Last ) )
+  if ( answer.numberOfParameters() != Helper::toUnderlying( Packets::ParameterList::Last ) )
   {
     SPDLOG_WARN(
       "invalid number of parameters actual: {}, expected {}",
       answer.numberOfParameters(),
-      std::to_underlying( Packets::ParameterList::Last ) );
+      Helper::toUnderlying( Packets::ParameterList::Last ) );
 
     return;
   }
 
   TargetInformation targetInformation{
-    answer.parameter( std::to_underlying( Packets::ParameterList::ThwId ) ),
-    answer.parameter( std::to_underlying( Packets::ParameterList::ThwTypeName ) ),
-    answer.parameter( std::to_underlying( Packets::ParameterList::ThwPosition ) ),
-    answer.parameter( std::to_underlying( Packets::ParameterList::LiteralName ) ),
-    answer.parameter( std::to_underlying( Packets::ParameterList::ManufacturerCode ) ) };
+    answer.parameter( Helper::toUnderlying( Packets::ParameterList::ThwId ) ),
+    answer.parameter( Helper::toUnderlying( Packets::ParameterList::ThwTypeName ) ),
+    answer.parameter( Helper::toUnderlying( Packets::ParameterList::ThwPosition ) ),
+    answer.parameter( Helper::toUnderlying( Packets::ParameterList::LiteralName ) ),
+    answer.parameter( Helper::toUnderlying( Packets::ParameterList::ManufacturerCode ) ) };
 
   if ( responseHandlerV )
   {

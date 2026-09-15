@@ -19,7 +19,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 #include <utility>
 
 namespace Tftp::Packets {
@@ -55,7 +55,7 @@ void AcknowledgementPacket::blockNumber( const BlockNumber blockNumber )
 
 AcknowledgementPacket::operator std::string() const
 {
-  return std::format( "ACK: BLOCK NO: {}", static_cast< uint16_t>( blockNumberV ) );
+  return ARINC_FORMAT_NAMESPACE::format( "ACK: BLOCK NO: {}", static_cast< uint16_t>( blockNumberV ) );
 }
 
 Helper::RawData AcknowledgementPacket::encode() const

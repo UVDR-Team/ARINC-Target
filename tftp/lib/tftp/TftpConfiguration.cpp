@@ -93,6 +93,7 @@ boost::property_tree::ptree TftpConfiguration::toProperties( const bool full ) c
   return properties;
 }
 
+#ifndef ARINC_615A_NO_PROGRAM_OPTIONS
 boost::program_options::options_description TftpConfiguration::options()
 {
   boost::program_options::options_description options{ "TFTP Options" };
@@ -126,5 +127,6 @@ boost::program_options::options_description TftpConfiguration::options()
 
   return options;
 }
+#endif
 
 }

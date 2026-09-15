@@ -11,6 +11,7 @@
  **/
 
 #include "Packet.hpp"
+#include <helper/Underlying.hpp>
 
 #include <tftp/packets/PacketException.hpp>
 
@@ -123,7 +124,7 @@ void Packet::insertHeader( Helper::RawDataSpan rawPacket ) const
   assert( rawPacket.size() >= HeaderSize );
 
   // encode opcode
-  Helper::RawData_setInt( rawPacket, std::to_underlying( packetTypeV ) );
+  Helper::RawData_setInt( rawPacket, Helper::toUnderlying( packetTypeV ) );
 }
 
 void Packet::decodeHeader( Helper::ConstRawDataSpan rawPacket )
@@ -138,7 +139,7 @@ void Packet::decodeHeader( Helper::ConstRawDataSpan rawPacket )
   // Check Opcode
   auto [ _, opcode ]{ Helper::RawData_getInt< uint16_t >( rawPacket ) };
 
-  if ( opcode != std::to_underlying( packetTypeV ) )
+  if ( opcode != Helper::toUnderlying( packetTypeV ) )
   {
     BOOST_THROW_EXCEPTION( InvalidPacketException()
       << Helper::AdditionalInfo{ "Invalid opcode" } );

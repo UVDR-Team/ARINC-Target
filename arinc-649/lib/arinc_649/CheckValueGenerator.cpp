@@ -61,7 +61,7 @@ CheckValue CheckValueGenerator::checkValue( const CheckValueType checkValueType,
   {
     BOOST_THROW_EXCEPTION( Arinc649Exception()
       << Helper::AdditionalInfo{
-        std::format(
+        ARINC_FORMAT_NAMESPACE::format(
           "No check value generator for check value '{}'",
           CheckValueTypeDescription::instance().name( checkValueType ) ) } );
   }

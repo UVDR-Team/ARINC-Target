@@ -12,6 +12,7 @@
  **/
 
 #include "TargetOperatorDefinedDownloadOperation.hpp"
+#include <helper/Underlying.hpp>
 
 #include "TargetDataLoaderConfiguration.hpp"
 
@@ -41,7 +42,7 @@
 
 #include <boost/exception/diagnostic_information.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 #include <fstream>
 
 namespace Arinc615aTha {
@@ -175,7 +176,7 @@ void TargetOperatorDefinedDownloadOperation::status( const Arinc615a::Informatio
     "\tEstimated Time:  {}\n",
     status.counter(),
     Arinc615a::StatusCodeDescription::instance().name( status.code() ),
-    std::to_underlying( status.code() ),
+    Helper::toUnderlying( status.code() ),
     status.description(),
     status.exceptionTimer(),
     status.estimatedTime() );
@@ -219,7 +220,7 @@ void TargetOperatorDefinedDownloadOperation::sendLoadList()
   {
     files.emplace_back( Arinc615a::Information::DownloadFileInformation{
       .filename = filename,
-      .description = std::format( "Size: {}", std::filesystem::file_size( filePath ) ) } );
+      .description = ARINC_FORMAT_NAMESPACE::format( "Size: {}", std::filesystem::file_size( filePath ) ) } );
   }
 
   if ( files.empty() )

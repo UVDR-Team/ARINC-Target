@@ -11,6 +11,7 @@
  **/
 
 #include "LoadConfigurationListFile.hpp"
+#include <cstddef>
 
 #include <arinc_615a/files/String.hpp>
 
@@ -66,7 +67,7 @@ void LoadConfigurationListFile::targetsHardware( Information::TargetsHardware ta
 
 Helper::RawData LoadConfigurationListFile::encode() const
 {
-  Helper::RawData rawData( HeaderSize + 2UZ );
+  Helper::RawData rawData( HeaderSize + std::size_t{2} );
 
   // skip header - it is filled finally
   auto nextData{ Helper::RawDataSpan{ rawData }.subspan( HeaderSize ) };
@@ -141,7 +142,7 @@ Helper::RawData LoadConfigurationListFile::encode() const
 void LoadConfigurationListFile::decode( const Helper::ConstRawDataSpan rawData )
 {
   // check minimum data size
-  if ( rawData.size() < HeaderSize + 13UZ )
+  if ( rawData.size() < HeaderSize + std::size_t{13} )
   {
     BOOST_THROW_EXCEPTION( Arinc615aException{} << Helper::AdditionalInfo{ "Protocol file to small" } );
   }

@@ -14,6 +14,7 @@
 #define ARINC_665_FILES_LOADLISTFILE_HPP
 
 #include <arinc_665/files/Files.hpp>
+#include <cstddef>
 #include <arinc_665/files/ListFile.hpp>
 #include <arinc_665/files/LoadInfo.hpp>
 
@@ -57,31 +58,31 @@ class ARINC_665_EXPORT LoadListFile final : public ListFile
 {
   public:
     //! Offset of the Spare field (since ARINC 665-2).
-    static constexpr auto SpareFieldOffsetV2{ 6Z };
+    static constexpr auto SpareFieldOffsetV2{ std::ptrdiff_t{6} };
 
     //! Offset of the Media Set Part Number Pointer Field (since ARINC 665-1)
-    static constexpr auto MediaSetPartNumberPointerFieldOffsetV1{ 6Z };
+    static constexpr auto MediaSetPartNumberPointerFieldOffsetV1{ std::ptrdiff_t{6} };
 
     //! Offset of the Media Set Part Number Pointer Field (since ARINC 665-2)
-    static constexpr auto MediaSetPartNumberPointerFieldOffsetV2{ 8Z };
+    static constexpr auto MediaSetPartNumberPointerFieldOffsetV2{ std::ptrdiff_t{8} };
 
     //! Offset of the Loads Pointer Field (since ARINC 665-1)
-    static constexpr auto LoadFilesPointerFieldOffsetV1{ 10Z };
+    static constexpr auto LoadFilesPointerFieldOffsetV1{ std::ptrdiff_t{10} };
 
     //! Offset of the Loads Pointer Field (since ARINC 665-2)
-    static constexpr auto LoadFilesPointerFieldOffsetV2{ 12Z };
+    static constexpr auto LoadFilesPointerFieldOffsetV2{ std::ptrdiff_t{12} };
 
     //! Offset of the User Defined Data Pointer Field (since ARINC 665-1)
-    static constexpr auto UserDefinedDataPointerFieldOffsetV1{ 14Z };
+    static constexpr auto UserDefinedDataPointerFieldOffsetV1{ std::ptrdiff_t{14} };
 
     //! Offset of the User Defined Data Pointer Field (since ARINC 665-2)
-    static constexpr auto UserDefinedDataPointerFieldOffsetV2{ 16Z };
+    static constexpr auto UserDefinedDataPointerFieldOffsetV2{ std::ptrdiff_t{16} };
 
     //! First Start of Pointer Data for ARINC 665 Load List Files (since ARINC 665-1).
-    static constexpr auto FileHeaderSizeV1{ 18Z };
+    static constexpr auto FileHeaderSizeV1{ std::ptrdiff_t{18} };
 
     //! First Start of Pointer Data for ARINC 665 Load List Files (since ARINC 665-2).
-    static constexpr auto FileHeaderSizeV2{ 20Z };
+    static constexpr auto FileHeaderSizeV2{ std::ptrdiff_t{20} };
 
     /**
      * @brief Creates an empty load list file.

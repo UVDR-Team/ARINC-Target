@@ -32,7 +32,7 @@ std::string FileCreationPolicyDescription::allValues( std::string_view prefix ) 
   std::string allValues{ prefix };
   for ( const auto &description : descriptions().get< ByEnum >() )
   {
-    allValues += std::format( "\n\t- {}", description.name );
+    allValues += ARINC_FORMAT_NAMESPACE::format( "\n\t- {}", description.name );
   }
   return allValues;
 }

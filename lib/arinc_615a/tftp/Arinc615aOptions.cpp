@@ -15,7 +15,7 @@
 #include <arinc_649/Arinc649Exception.hpp>
 
 #include <ostream>
-#include <format>
+#include <helper/Format.hpp>
 
 namespace Arinc615a::Tftp {
 
@@ -129,17 +129,17 @@ std::string Arinc615aOptions_toString( const Arinc615aOptions &options )
 
   if ( options.port )
   {
-    retStr += std::format( "[{}:{}]", Arinc615aOptions_name( KnownOptions::Port ), std::to_string( *options.port ) );
+    retStr += ARINC_FORMAT_NAMESPACE::format( "[{}:{}]", Arinc615aOptions_name( KnownOptions::Port ), std::to_string( *options.port ) );
   }
 
   if ( !options.partNumber.empty() )
   {
-    retStr += std::format( "[{}:{}]", Arinc615aOptions_name( KnownOptions::PartNumber ), options.partNumber );
+    retStr += ARINC_FORMAT_NAMESPACE::format( "[{}:{}]", Arinc615aOptions_name( KnownOptions::PartNumber ), options.partNumber );
   }
 
   if ( options.checksum.type() != Arinc649::CheckValueType::NotUsed )
   {
-    retStr += std::format( "[{}:{}]", Arinc615aOptions_name( options.checksum.type() ), options.checksum.toString() );
+    retStr += ARINC_FORMAT_NAMESPACE::format( "[{}:{}]", Arinc615aOptions_name( options.checksum.type() ), options.checksum.toString() );
   }
 
   return retStr;

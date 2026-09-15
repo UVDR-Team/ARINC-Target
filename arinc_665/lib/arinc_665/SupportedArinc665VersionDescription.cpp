@@ -13,7 +13,11 @@
 #include "SupportedArinc665VersionDescription.hpp"
 
 #include <boost/exception/exception.hpp>
+#ifndef ARINC_615A_NO_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
+#else
+#include <stdexcept>
+#endif
 
 #include <istream>
 #include <ostream>
@@ -34,7 +38,7 @@ std::string SupportedArinc665VersionDescription::allValues( std::string_view pre
   "- '" + std::string{ name( SupportedArinc665Version::Supplement2 ) } +   "': ARINC 665-2\n" +
   "- '" + std::string{ name( SupportedArinc665Version::Supplement345 ) } +  "': ARINC 665-3/4/5" };
 
-  return std::format( "{}\n{}", prefix, versionValues );
+  return ARINC_FORMAT_NAMESPACE::format( "{}\n{}", prefix, versionValues );
 }
 
 std::ostream& operator<<( std::ostream &stream, const SupportedArinc665Version version )
@@ -54,7 +58,11 @@ std::istream& operator>>( std::istream &stream, SupportedArinc665Version &versio
 
   if ( !optionalVersion )
   {
+#ifndef ARINC_615A_NO_PROGRAM_OPTIONS
     BOOST_THROW_EXCEPTION( boost::program_options::invalid_option_value( versionStr ) );
+#else
+    throw std::invalid_argument("Invalid ARINC 665 version: " + versionStr);
+#endif
   }
 
   version = *optionalVersion;

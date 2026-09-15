@@ -11,6 +11,7 @@
  **/
 
 #include "Packet.hpp"
+#include <helper/Underlying.hpp>
 
 #include <arinc_615a/find/packets/PacketException.hpp>
 
@@ -21,7 +22,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <helper/Format.hpp>
 
 namespace Arinc615a::Find::Packets {
 
@@ -70,7 +71,7 @@ Packet::Packet( Helper::ConstRawDataSpan rawPacket )
   if ( rawPacket.size() <= sizeof( uint16_t ) )
   {
     BOOST_THROW_EXCEPTION( InvalidFindPacket{}
-      << Helper::AdditionalInfo{ std::format( "Packet to small: {}", rawPacket.size() ) } );
+      << Helper::AdditionalInfo{ ARINC_FORMAT_NAMESPACE::format( "Packet to small: {}", rawPacket.size() ) } );
   }
 
   auto remainingData{ rawPacket };
@@ -167,7 +168,7 @@ Helper::RawData Packet::encode() const
   Helper::RawData rawPacket( 2U );
 
   // add opcode opcode
-  Helper::RawData_setInt( rawPacket, std::to_underlying( opcodeV ) );
+  Helper::RawData_setInt( rawPacket, Helper::toUnderlying( opcodeV ) );
 
   // add parameters
   for ( const auto &parameter : parametersV )

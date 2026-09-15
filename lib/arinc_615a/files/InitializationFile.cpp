@@ -11,6 +11,7 @@
  **/
 
 #include "InitializationFile.hpp"
+#include <helper/Underlying.hpp>
 
 #include <arinc_615a/files/String.hpp>
 
@@ -67,7 +68,7 @@ Helper::RawData InitializationFile::encode() const
   auto nextData{ Helper::RawDataSpan{ rawData }.subspan( HeaderSize ) };
 
   // status code
-  nextData = Helper::RawData_setInt( nextData, std::to_underlying( responseV.code() ) );
+  nextData = Helper::RawData_setInt( nextData, Helper::toUnderlying( responseV.code() ) );
   assert( nextData.empty() );
 
   // status message

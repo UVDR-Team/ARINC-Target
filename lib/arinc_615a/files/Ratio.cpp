@@ -52,7 +52,7 @@ std::tuple< Helper::ConstRawDataSpan, Information::Ratio > Ratio_decode( const H
 {
   assert( ratio.value() <= 100U );
 
-  const auto ratioString{ std::format( "{:3}", ratio.value() ) };
+  const auto ratioString{ ARINC_FORMAT_NAMESPACE::format( "{:3}", ratio.value() ) };
   assert( ratioString.size() == 3U );
 
   Helper::RawData rawRatio( 3 );

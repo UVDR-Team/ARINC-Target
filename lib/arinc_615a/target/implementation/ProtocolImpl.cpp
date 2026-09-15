@@ -266,7 +266,7 @@ void ProtocolImpl::handleInitialisationFile(
 
     default:
       // invalid value should not occur
-      std::unreachable();
+      return;
       break;
   }
 

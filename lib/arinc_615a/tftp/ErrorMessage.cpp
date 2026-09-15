@@ -19,7 +19,7 @@
 #include <boost/exception/all.hpp>
 
 #include <charconv>
-#include <format>
+#include <helper/Format.hpp>
 #include <string>
 
 namespace Arinc615a::Tftp {
@@ -64,7 +64,7 @@ ErrorMessageType ErrorMessage_type( const ::Tftp::Packets::ErrorInformation &err
 
 std::string ErrorMessage_abort( const StatusCode statusCode )
 {
-  return std::format( "ABORT:{:04X}", static_cast< uint16_t >( statusCode ) );
+  return ARINC_FORMAT_NAMESPACE::format( "ABORT:{:04X}", static_cast< uint16_t >( statusCode ) );
 }
 
 StatusCode ErrorMessage_abort( const std::string_view errorMessage ) noexcept
@@ -115,7 +115,7 @@ std::string ErrorMessage_wait( const std::chrono::seconds waitTime )
       << Helper::AdditionalInfo( "Value out of range" ) );
   }
 
-  return std::format( "WAIT:{}", waitTime.count() );
+  return ARINC_FORMAT_NAMESPACE::format( "WAIT:{}", waitTime.count() );
 }
 
 std::optional< std::chrono::seconds > ErrorMessage_wait( const std::string_view errorMessage ) noexcept

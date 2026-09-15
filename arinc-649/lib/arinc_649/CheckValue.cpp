@@ -11,6 +11,7 @@
  **/
 
 #include "CheckValue.hpp"
+#include <cstddef>
 
 #include <arinc_649/CheckValueTypeDescription.hpp>
 
@@ -19,7 +20,7 @@
 #include <boost/exception/all.hpp>
 
 #include <charconv>
-#include <format>
+#include <helper/Format.hpp>
 #include <iostream>
 
 namespace Arinc649 {
@@ -82,7 +83,7 @@ CheckValue::CheckValue( const CheckValueType type, std::string_view string ) :
     return;
   }
 
-  for ( auto pos{ 0UZ }; pos != string.size(); pos +=2U )
+  for ( auto pos{ std::size_t{0} }; pos != string.size(); pos +=2U )
   {
     uint8_t value{};
     std::from_chars( string.data() + pos, string.data() + pos + 2, value, 16 );
@@ -98,7 +99,7 @@ std::string CheckValue::toString() const
   // check value string
   for ( const auto &checkValueByte : valueV )
   {
-    checkValueRawString += std::format( "{:02X}", std::to_integer< uint8_t >( checkValueByte ) );
+    checkValueRawString += ARINC_FORMAT_NAMESPACE::format( "{:02X}", std::to_integer< uint8_t >( checkValueByte ) );
   }
 
   return checkValueRawString;
@@ -106,7 +107,7 @@ std::string CheckValue::toString() const
 
 std::string CheckValue::format() const
 {
-  return std::format( "{}:{}", CheckValueTypeDescription::instance().name( typeV ), toString() );
+  return ARINC_FORMAT_NAMESPACE::format( "{}:{}", CheckValueTypeDescription::instance().name( typeV ), toString() );
 }
 
 CheckValueType CheckValue::type() const
