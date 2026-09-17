@@ -4,7 +4,7 @@ This branch contains an audited, offline, target-only build of the ARINC 615A Ta
 
 The target build compiles only the protocol code needed on the board. Desktop applications and their dependency graph are still retained in the full repository for history, but they are not configured or compiled by the default build.
 
-> Start at [Office quick start](#office-quick-start) when using the office PC. For deeper integration details, see [VxWorksDKM.md](VxWorksDKM.md). The completed source/dependency review is recorded in [DEPENDENCY_AUDIT.md](DEPENDENCY_AUDIT.md).
+> With no Internet access on the office PC, follow [OFFLINE_VXWORKS_WORKBENCH.md](OFFLINE_VXWORKS_WORKBENCH.md) from source transfer through board validation. For deeper integration details, see [VxWorksDKM.md](VxWorksDKM.md). The completed source/dependency review is recorded in [DEPENDENCY_AUDIT.md](DEPENDENCY_AUDIT.md).
 
 ## What this branch fixes
 

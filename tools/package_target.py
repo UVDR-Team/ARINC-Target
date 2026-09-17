@@ -40,7 +40,8 @@ def collect():
                     if not (header.endswith("_export.h") or header.endswith("/Version.hpp")):
                         raise RuntimeError(f"Unresolved project include {header} in {path}")
     for name in ("cmake/TargetSources.cmake", "cmake/TargetBuild.cmake", "cmake/AuditTarget.cmake",
-                 "tools/build_vxworks.sh", "README.md", "VxWorksDKM.md", "VxWorksDKMDependencies.cmake.example",
+                 "tools/build_vxworks.sh", "README.md", "OFFLINE_VXWORKS_WORKBENCH.md", "VxWorksDKM.md",
+                 "VxWorksDKMDependencies.cmake.example",
                  "DEPENDENCY_AUDIT.md", "LICENSE",
                  "app/arinc_615a_test_tha/arinc_615a_test_tha.json.template", "examples/vxworks_entry.c"):
         selected.add(ROOT / name)
