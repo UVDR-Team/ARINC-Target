@@ -24,7 +24,11 @@ function(arinc_configure_support source_root)
   target_include_directories(arinc_build_config INTERFACE
     "$<BUILD_INTERFACE:${source_root}/lib>"
     "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>" "$<INSTALL_INTERFACE:include>")
-  target_include_directories(arinc_build_config SYSTEM INTERFACE "${ARINC_BOOST_INCLUDE_DIR}")
+  # Never bake an SDK- or workstation-specific Boost path into the installed
+  # CMake export. Consumers of the installed archives provide their matching
+  # VxWorks SDK Boost include path explicitly.
+  target_include_directories(arinc_build_config SYSTEM INTERFACE
+    "$<BUILD_INTERFACE:${ARINC_BOOST_INCLUDE_DIR}>")
   if(WIN32)
     target_link_libraries(arinc_build_config INTERFACE ws2_32)
   elseif(NOT CMAKE_SYSTEM_NAME STREQUAL "VxWorks")
@@ -64,6 +68,9 @@ function(arinc_add_665 source_dir)
   endif()
   # Preserve binary file support; XML/Qt/media-manager facilities are desktop code.
   file(GLOB core CONFIGURE_DEPENDS "${source_dir}/lib/arinc_665/*.cpp" "${source_dir}/lib/arinc_665/files/*.cpp")
+  # These upstream files contain only an empty namespace and produce empty
+  # archive members (and ranlib warnings on some toolchains).
+  list(FILTER core EXCLUDE REGEX "/(BatchLoadInfo|BatchTargetInfo)\\.cpp$")
   add_library(arinc_665 STATIC ${core}
     "${ARINC_SUPPORT_ROOT}/lib/arinc_checksum/CheckValue.cpp"
     "${ARINC_SUPPORT_ROOT}/lib/arinc_checksum/CheckValueGenerator.cpp"

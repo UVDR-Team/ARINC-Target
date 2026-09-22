@@ -10,8 +10,8 @@
  * @brief Declaration/ Definition of Class ArincSupport::Exception.
  **/
 
-#ifndef HELPER_EXCEPTION_HPP
-#define HELPER_EXCEPTION_HPP
+#ifndef ARINC_SUPPORT_EXCEPTION_HPP
+#define ARINC_SUPPORT_EXCEPTION_HPP
 
 #include <arinc_support/Support.hpp>
 

@@ -2,8 +2,9 @@
 
 This tree builds the ARINC 615A Target Hardware Application (THA) as static
 libraries for a C-based VxWorks DKM. It needs no Git access, package manager,
-Qt, spdlog, external Helper library, separate ARINC 645 library, or host GUI.
-TFTP and the required checksum implementation are local source code.
+Qt, spdlog, external Helper library, ARINC 649 package, separate ARINC 645
+library, or host GUI. TFTP and the required checksum implementation are local
+source code.
 
 ## 1. Keep the source layout
 
@@ -81,11 +82,19 @@ cmake -S "/absolute/path/ARINC/arinc_615a-main" \
       -DARINC_BUILD_TESTS=OFF
 
 cmake --build "/absolute/path/build-vxworks" --target arinc_615a_tha_target
+cmake --build "/absolute/path/build-vxworks" --target arinc_target_audit
 ```
 
 The build must not download anything. A failed Boost version check means the
 VxWorks SDK Boost is older than 1.88; use matching offline Boost 1.88+ headers
-for the same VxWorks environment.
+for the same VxWorks environment. The audit must finish with `PASS`; keep its
+`DEPENDENCY_AUDIT.txt` report with the DKM build evidence. It checks the actual
+target compilation entries, header dependencies, and four generated archives
+for excluded desktop/external dependencies.
+
+If the installed CMake targets are consumed by another project, add the same
+VxWorks SDK Boost directory to that project's include path. The install is
+relocatable and intentionally does not embed the build machine's SDK path.
 
 ## 6. Add the libraries to the DKM
 
@@ -99,9 +108,10 @@ libarinc_665.a
 libtftp.a
 ```
 
-`arinc_checksum` is compiled into `libarinc_665.a`; do not add ARINC 645.
-There is no Helper or spdlog archive to add. Also link the normal VxWorks C++
-and networking libraries selected by the DKM project.
+`arinc_checksum` is compiled into `libarinc_665.a`; do not add a separate
+ARINC 645 or ARINC 649 library. There is no Helper or spdlog archive to add.
+Also link the normal VxWorks C++ and networking libraries selected by the DKM
+project.
 
 Add this include directory to the DKM project:
 
@@ -168,5 +178,6 @@ writable/readable as appropriate before starting the loader.
 
 The DKM profile excludes host command-line parsing, Boost.Program_options,
 GUI/Qt code, documentation targets, Git metadata, network downloads, external
-Helper, spdlog, and a separate ARINC 645 target. Boost remains a kernel/SDK
-header dependency because upstream checksum code requires Boost.Hash2.
+Helper, spdlog, ARINC 649, and a separate ARINC 645 target. Boost remains a
+kernel/SDK header dependency because upstream checksum code requires
+Boost.Hash2.

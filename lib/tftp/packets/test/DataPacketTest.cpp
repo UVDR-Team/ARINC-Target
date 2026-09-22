@@ -91,7 +91,6 @@ BOOST_AUTO_TEST_CASE( constructor1 )
 
   ArincSupport::RawData raw( data );
 
-  BOOST_TEST_MESSAGE( ArincSupport::Dump( &(*raw.begin()), raw.size() ) );
   BOOST_TEST_MESSAGE( static_cast< std::string>( data ) );
 
   DataPacket data2( raw );

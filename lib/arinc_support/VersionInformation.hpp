@@ -10,8 +10,8 @@
  * @brief Declaration of Struct ArincSupport::VersionInformation.
  **/
 
-#ifndef HELPER_VERSIONINFORMATION_HPP
-#define HELPER_VERSIONINFORMATION_HPP
+#ifndef ARINC_SUPPORT_VERSIONINFORMATION_HPP
+#define ARINC_SUPPORT_VERSIONINFORMATION_HPP
 
 #include <arinc_support/Support.hpp>
 

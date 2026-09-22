@@ -14,8 +14,8 @@
  * efficient string manipulations.
  **/
 
-#ifndef HELPER_RAWDATA_HPP
-#define HELPER_RAWDATA_HPP
+#ifndef ARINC_SUPPORT_RAWDATA_HPP
+#define ARINC_SUPPORT_RAWDATA_HPP
 
 #include <arinc_support/Support.hpp>
 

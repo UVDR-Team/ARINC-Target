@@ -7,3 +7,4 @@ user-history.db
 symbology-style.db
 /.vs/
 /out/
+.DS_Store

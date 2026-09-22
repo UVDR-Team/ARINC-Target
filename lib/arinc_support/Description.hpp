@@ -10,8 +10,8 @@
  * @brief Declaration of Template Class Description.
  **/
 
-#ifndef HELPER_DESCRIPTION_HPP
-#define HELPER_DESCRIPTION_HPP
+#ifndef ARINC_SUPPORT_DESCRIPTION_HPP
+#define ARINC_SUPPORT_DESCRIPTION_HPP
 
 #include <arinc_support/Support.hpp>
 #include <arinc_support/DescriptionEntry.hpp>

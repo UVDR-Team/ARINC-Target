@@ -65,8 +65,6 @@ BOOST_AUTO_TEST_CASE( constructor1 )
   ReadRequestPacket rrq{ "testfile.bin", TransferMode::OCTET, options };
 
   ArincSupport::RawData raw{ rrq };
-  BOOST_TEST_MESSAGE( "RRQ:\n" << ArincSupport::Dump( std::data( raw ), raw.size() ) );
-
   ReadRequestPacket rrq2{ raw };
 
   BOOST_CHECK( rrq.packetType() == rrq2.packetType() );

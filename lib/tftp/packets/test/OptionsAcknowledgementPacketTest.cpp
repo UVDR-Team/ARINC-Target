@@ -56,8 +56,6 @@ BOOST_AUTO_TEST_CASE( constructor )
   OptionsAcknowledgementPacket oack{ options };
 
   ArincSupport::RawData raw{ oack };
-  BOOST_TEST_MESSAGE( "OACK:\n" << ArincSupport::Dump( std::data( raw ), raw.size() ) );
-
   OptionsAcknowledgementPacket oack2( raw );
 
   BOOST_CHECK( oack.packetType() == oack2.packetType() );

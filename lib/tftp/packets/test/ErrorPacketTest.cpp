@@ -76,8 +76,6 @@ BOOST_AUTO_TEST_CASE( constructor1 )
 
   ArincSupport::RawData raw{ error };
 
-  BOOST_TEST_MESSAGE( ArincSupport::Dump( std::data( raw ), raw.size() ) );
-
   BOOST_CHECK( error.packetType() == PacketType::Error );
   BOOST_CHECK( error.errorCode() == ErrorCode::NotDefined );
   BOOST_CHECK( error.errorMessage() == "ERROR MESSAGE" );
@@ -92,8 +90,6 @@ BOOST_AUTO_TEST_CASE( constructor2)
   const ErrorPacket error{ ErrorCode::NotDefined, "ERROR MESSAGE"s };
 
   ArincSupport::RawData raw{ error };
-
-  BOOST_TEST_MESSAGE( ArincSupport::Dump( std::data( raw ), raw.size() ) );
 
   BOOST_CHECK( error.packetType() == PacketType::Error );
   BOOST_CHECK( error.errorCode() == ErrorCode::NotDefined );

@@ -10,8 +10,8 @@
  * @brief Helper for parsing boost::asio structs with boost::program_options
  **/
 
-#ifndef HELPER_BOOSTASIOPROGRAMOPTIONS_HPP
-#define HELPER_BOOSTASIOPROGRAMOPTIONS_HPP
+#ifndef ARINC_SUPPORT_BOOST_ASIO_PROGRAM_OPTIONS_HPP
+#define ARINC_SUPPORT_BOOST_ASIO_PROGRAM_OPTIONS_HPP
 
 #include <arinc_support/Support.hpp>
 

@@ -52,8 +52,6 @@ BOOST_AUTO_TEST_CASE( constructor1 )
 
   const ArincSupport::RawData raw{ ack };
 
-  BOOST_TEST_MESSAGE( ArincSupport::Dump( std::data( raw ), raw.size() ) );
-
   BOOST_CHECK( ack.packetType() == PacketType::Acknowledgement );
   BOOST_CHECK( ack.blockNumber() == BlockNumber{ 10U } );
 
@@ -67,8 +65,6 @@ BOOST_AUTO_TEST_CASE( constructor1 )
 BOOST_AUTO_TEST_CASE( constructor2 )
 {
   const AcknowledgementPacket ack{ std::as_bytes( std::span{ rawAckPacket } ) };
-  BOOST_TEST_MESSAGE( "ACK: " << ArincSupport::Dump( std::data( rawAckPacket ), std::size( rawAckPacket ) ) );
-
   BOOST_CHECK( ack.packetType() == PacketType::Acknowledgement );
   BOOST_CHECK( ack.blockNumber() == BlockNumber( 0x1001U ) );
 

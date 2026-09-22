@@ -12,8 +12,8 @@
  * @sa safeCast()
  **/
 
-#ifndef HELPER_SAFECAST_HPP
-#define HELPER_SAFECAST_HPP
+#ifndef ARINC_SUPPORT_SAFECAST_HPP
+#define ARINC_SUPPORT_SAFECAST_HPP
 
 #include <arinc_support/Support.hpp>
 
