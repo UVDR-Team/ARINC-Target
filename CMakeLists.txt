@@ -9,7 +9,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(ARINC615A_THA_BUILD_TEST_APPLICATION "Build the original desktop CLI" OFF)
 option(ARINC_BUILD_TESTS "Build host regression tests; never included in the DKM" OFF)
 option(ARINC_ENABLE_COMMAND_LINE "Retain Boost.Program_options APIs for desktop callers" ${ARINC615A_THA_BUILD_TEST_APPLICATION})
-set(ARINC665_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../arinc_665-main" CACHE PATH "Local ARINC 665 sources")
+set(ARINC665_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/arinc_665" CACHE PATH "Bundled ARINC 665 sources")
 if(CMAKE_SYSTEM_NAME STREQUAL "VxWorks" AND (ARINC615A_THA_BUILD_TEST_APPLICATION OR ARINC_ENABLE_COMMAND_LINE OR ARINC_BUILD_TESTS))
   message(FATAL_ERROR "The VxWorks DKM uses runFromFile/run(configuration); desktop CLI and host tests must be OFF.")
 endif()
@@ -26,6 +26,7 @@ set(tha_dir "${CMAKE_CURRENT_SOURCE_DIR}/app/arinc_615a_unit_test/arinc_615a_tes
 add_library(arinc_615a_tha_target STATIC
   "${tha_dir}/arinc_615a_test_tha.cpp"
   "${tha_dir}/ThaC.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/workbench/EntryPoints.cpp"
   "${tha_dir}/DownloadOperationConfiguration.cpp"
   "${tha_dir}/InformationOperationConfiguration.cpp"
   "${tha_dir}/OperationConfiguration.cpp"
@@ -98,3 +99,4 @@ if(ARINC_BUILD_TESTS)
   enable_testing()
   include(cmake/RegressionTests.cmake)
 endif()
+include(cmake/WorkbenchPackage.cmake)

@@ -13,3 +13,10 @@ target_include_directories(arinc_regression_tests PRIVATE "${CMAKE_SOURCE_DIR}/t
 target_link_libraries(arinc_regression_tests PRIVATE arinc_615a_tha_target)
 add_test(NAME arinc_regression COMMAND arinc_regression_tests --report_level=short)
 set_tests_properties(arinc_regression PROPERTIES TIMEOUT 90)
+add_executable(arinc_host_runner tests/HostRunner.cpp)
+target_link_libraries(arinc_host_runner PRIVATE arinc_615a_tha_target)
+add_test(NAME arinc_self_test COMMAND arinc_host_runner --self-test)
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
+add_test(NAME arinc_network_transfers COMMAND "${Python3_EXECUTABLE}"
+  "${CMAKE_SOURCE_DIR}/tests/network_smoke.py" --runner "$<TARGET_FILE:arinc_host_runner>")
+set_tests_properties(arinc_network_transfers PROPERTIES TIMEOUT 120)

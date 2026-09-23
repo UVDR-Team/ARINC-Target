@@ -56,7 +56,7 @@ struct UploadOperationConfiguration
   //! If operation is enabled.
   bool enabled{ false };
   //! Target Directory for Uploaded Files
-  std::filesystem::path directory{ std::filesystem::current_path() };
+  std::filesystem::path directory{ "." };
   //! Part Number Option enabled (only ARINC 615A-3+)
   bool partNumberOption{ false };
   //! Checksum Option enabled (only ARINC 615A-3+)

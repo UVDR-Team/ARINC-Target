@@ -1,0 +1,198 @@
+// SPDX-License-Identifier: MPL-2.0
+/**
+ * @file
+ * @copyright
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * @author Thomas Vogt, thomas@thomas-vogt.de
+ *
+ * @brief Declaration of Namespace Arinc665.
+ **/
+
+/**
+ * @dir
+ * @brief Declaration/ Definition of Namespace Arinc665.
+ **/
+
+#ifndef ARINC_665_ARINC665_HPP
+#define ARINC_665_ARINC665_HPP
+
+#include <arinc_665/arinc_665_export.h>
+
+#include <arinc_support/Support.hpp>
+#include <arinc_support/Logging.hpp>
+
+#include <arinc_support/Logging.hpp>
+
+#include <cstdint>
+#include <optional>
+#include <string_view>
+#include <vector>
+
+/**
+ * @brief ARINC 665 Specification.
+ *
+ * This library implements the ARINC 665 specification.
+ * This library currently supports following supplements of ARINC 665:
+ * - Supplement 2
+ * - Supplement 3/4/5
+ *
+ * Supplement 1 is not supported.
+ *
+ * @par Referenced Documents
+ * - ARINC Report 665-1: Loadable Software Standards; 2001-01-12
+ * - ARINC Report 665-2: Loadable Software Standards; 2002-08-30
+ * - ARINC Report 665-3: Loadable Software Standards; 2005-08-12
+ * - ARINC Report 665-4: Loadable Software Standards; 2016-07-14
+ * - ARINC Report 665-5: Loadable Software Standards; 2019-08-13
+ **/
+namespace Arinc665 {
+
+//! Enumeration of all Defined ARINC 665 Versions.
+enum class Arinc665Version
+{
+  //! ARINC 665 Supplement 1
+  Supplement1,
+  //! ARINC 665 Supplement 2
+  Supplement2,
+  //! ARINC 665 Supplement 3
+  Supplement3,
+  //! ARINC 665 Supplement 4
+  Supplement4,
+  //! ARINC 665 Supplement 5
+  Supplement5
+};
+
+//! Enumeration used for Feature Selection of this Library.
+enum class SupportedArinc665Version
+{
+  //! ARINC 665-2 Compatible
+  Supplement2,
+  //! ARINC 665-3/4/5 Compatible
+  Supplement345,
+};
+
+//! Enumeration of file types.
+enum class FileClassType
+{
+  //! ARINC 665 Load file
+  LoadFile,
+  //! ARINC 665 Batch file
+  BatchFile,
+  //! ARINC 665 %Media files (List files)
+  MediaFile
+};
+
+/**
+ * @brief Enumeration of load file versions.
+ *
+ * Used for load upload header files
+ **/
+enum class LoadFileFormatVersion : uint16_t
+{
+  //! ARINC 665-1 load file
+  Version1 = 0x8002U,
+  //! ARINC 665-2 load file
+  Version2 = 0x8003U,
+  //! ARINC 665-3/4/5 load file
+  Version345 = 0x8004U
+};
+
+/**
+ * @brief Enumeration of batch file versions.
+ *
+ * Used for batch files
+ **/
+enum class BatchFileFormatVersion : uint16_t
+{
+  //! ARINC 665-1 batch file
+  Version1 = 0x8002U,
+  //! ARINC 665-2 batch file
+  Version2 = 0x9003U,
+  //! ARINC 665-3/4/5 batch file
+  Version345 = 0x9004U
+};
+
+/**
+ * @brief Enumeration of media file versions.
+ *
+ * Used for:
+ * - list of batch file,
+ * - list of loads file, and
+ * - list of files file.
+ **/
+enum class MediaFileFormatVersion : uint16_t
+{
+  //! ARINC 665-1 %Media File
+  Version1 = 0x8002U,
+  //! ARINC 665-2 %Media File
+  Version2 = 0xA003U,
+  //! ARINC 665-3/4/5 %Media File
+  Version345 = 0xA004U
+};
+
+//! All ARINC 665 file types combined
+enum class Arinc665FileFormatVersion : uint16_t
+{
+  LoadFileVersion2   = static_cast< uint16_t>( LoadFileFormatVersion::Version2 ),
+  LoadFileVersion345 = static_cast< uint16_t>( LoadFileFormatVersion::Version345 ),
+
+  BatchFileVersion2   = static_cast< uint16_t>( BatchFileFormatVersion::Version2 ),
+  BatchFileVersion345 = static_cast< uint16_t>( BatchFileFormatVersion::Version345 ),
+
+  MediaFileVersion2   = static_cast< uint16_t>( MediaFileFormatVersion::Version2 ),
+  MediaFileVersion345 = static_cast< uint16_t>( MediaFileFormatVersion::Version345 )
+};
+
+//! @brief ARINC 665 File Types
+enum class FileType
+{
+  BatchFile,        //!< ARINC 665 Batch File
+  LoadUploadHeader, //!< ARINC 665 Load Upload Header File
+  LoadList,         //!< ARINC 665 Load List File
+  BatchList,        //!< ARINC 665 Batch List File
+  FileList          //!< ARINC 665 File List File
+};
+
+//! Filename of the List of %Files.
+constexpr std::string_view ListOfFilesName{ "FILES.LUM" };
+
+//! Filename of the List of Loads.
+constexpr std::string_view ListOfLoadsName{ "LOADS.LUM" };
+
+//! Filename of the List of Batches.
+constexpr std::string_view ListOfBatchesName{ "BATCHES.LUM" };
+
+//! Extension of a Load Upload Header.
+constexpr std::string_view LoadUploadHeaderExtension{ ".LUH" };
+
+//! Extension of a Batch File.
+constexpr std::string_view BatchFileExtension{ ".LUB" };
+
+class MediumNumber;
+class PartNumber;
+
+//! Optional Medium Number
+using OptionalMediumNumber = std::optional< MediumNumber >;
+
+/**
+ * @brief Provide ARINC 665 Version Information.
+ *
+ * @return ARINC 665 Version Information.
+ **/
+[[nodiscard]] ARINC_665_EXPORT ArincSupport::VersionsInformation::value_type arinc665Version();
+
+/**
+ * @brief Set the logging level for the ARINC 665 Library.
+ *
+ * Adjusts the verbosity of log messages generated by the ARINC 665 Library.
+ *
+ * @param level Logging level to be set.
+ *   The level defines the granularity of log messages.
+ **/
+ARINC_665_EXPORT void setLogLevel( ArincSupport::Logging::level::level_enum level );
+
+}
+
+#endif

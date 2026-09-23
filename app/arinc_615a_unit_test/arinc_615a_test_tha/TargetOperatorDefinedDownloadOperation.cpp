@@ -11,6 +11,8 @@
  * @brief Definition of Class TargetOperatorDefinedDownloadOperation.
  **/
 
+#include <arinc_support/Support.hpp>
+
 #include "TargetOperatorDefinedDownloadOperation.hpp"
 
 #include "TargetDataLoaderConfiguration.hpp"
@@ -175,7 +177,7 @@ void TargetOperatorDefinedDownloadOperation::status( const Arinc615a::Informatio
     "\tEstimated Time:  {}\n",
     status.counter(),
     Arinc615a::StatusCodeDescription::instance().name( status.code() ),
-    std::to_underlying( status.code() ),
+    ArincSupport::toUnderlying( status.code() ),
     status.description(),
     status.exceptionTimer(),
     status.estimatedTime() );

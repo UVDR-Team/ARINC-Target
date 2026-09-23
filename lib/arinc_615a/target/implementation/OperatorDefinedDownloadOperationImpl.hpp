@@ -212,6 +212,7 @@ class OperatorDefinedDownloadOperationImpl final : public OperatorDefinedDownloa
     std::mutex statusOperationMutex;
     //! Status TFTP Client Operation.
     Tftp::Clients::WriteOperationPtr statusOperation;
+    bool statusTransmissionPending{false};
 
     //! Downloading List TFTP Client Operation.
     Tftp::Clients::WriteOperationPtr downloadingListOperation;

@@ -10,6 +10,8 @@
  * @brief Definition of Class Arinc615a::Files::InformationOperationStatusFile.
  **/
 
+#include <arinc_support/Support.hpp>
+
 #include "InformationOperationStatusFile.hpp"
 
 #include <arinc_615a/files/String.hpp>
@@ -71,7 +73,7 @@ ArincSupport::RawData InformationOperationStatusFile::encode() const
   nextData = ArincSupport::RawData_setInt( nextData, statusV.counter() );
 
   // status code
-  nextData = ArincSupport::RawData_setInt( nextData, std::to_underlying( statusV.code() ) );
+  nextData = ArincSupport::RawData_setInt( nextData, ArincSupport::toUnderlying( statusV.code() ) );
 
   // exception timer
   nextData = ArincSupport::RawData_setInt( nextData, statusV.exceptionTimer() );

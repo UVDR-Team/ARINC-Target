@@ -316,11 +316,11 @@ void OperationImpl::finalise( FinalStatus finalStatus, std::string_view descript
 {
   ARINC_LOG_INFO( "ARINC 615A Target Operation finished" );
 
-  // inform handler
-  handlerV.finished( finalStatus, description );
-
   // Stop DLP Timer
   statusTransmissionTimerV.cancel();
+
+  // The callback can release the owner. Do not access members afterwards.
+  handlerV.finished( finalStatus, description );
 }
 
 const boost::asio::ip::address& OperationImpl::hostAddress() const

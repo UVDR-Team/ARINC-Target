@@ -10,6 +10,8 @@
  * @brief Definition of Module Arinc645 CheckValue.
  **/
 
+#include <cstddef>
+
 #include "CheckValue.hpp"
 
 #include <arinc_checksum/CheckValueTypeDescription.hpp>
@@ -77,7 +79,7 @@ CheckValue::CheckValue( const CheckValueType type, std::string_view string ) :
     return;
   }
 
-  for ( auto pos{ 0UZ }; pos != string.size(); pos +=2U )
+  for ( auto pos{ std::size_t{0} }; pos != string.size(); pos +=2U )
   {
     uint8_t value{};
     std::from_chars( string.data() + pos, string.data() + pos + 2, value, 16 );

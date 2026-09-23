@@ -668,7 +668,7 @@ int Arinc615aTha::runFromFile(const char *configurationFile)
     if (std::filesystem::is_regular_file(configurationFile))
       boost::property_tree::read_json(configurationFile, properties);
     else
-      ARINC_LOG_WARN("No configuration file '{}' Found. Using default configuration - No operations are active.", configurationFile);
+      throw std::invalid_argument{std::string{"Configuration file does not exist: "} + configurationFile};
     return detail::runConfigured(TargetDataLoaderConfiguration{properties}, false);
   }
   catch (...) { return reportException(); }

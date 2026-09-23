@@ -10,6 +10,8 @@
  * @brief Definition of Class Tftp::Packets::Packet.
  **/
 
+#include <arinc_support/Support.hpp>
+
 #include "Packet.hpp"
 
 #include <tftp/packets/PacketException.hpp>
@@ -123,7 +125,7 @@ void Packet::insertHeader( ArincSupport::RawDataSpan rawPacket ) const
   assert( rawPacket.size() >= HeaderSize );
 
   // encode opcode
-  ArincSupport::RawData_setInt( rawPacket, std::to_underlying( packetTypeV ) );
+  ArincSupport::RawData_setInt( rawPacket, ArincSupport::toUnderlying( packetTypeV ) );
 }
 
 void Packet::decodeHeader( ArincSupport::ConstRawDataSpan rawPacket )
@@ -138,7 +140,7 @@ void Packet::decodeHeader( ArincSupport::ConstRawDataSpan rawPacket )
   // Check Opcode
   auto [ _, opcode ]{ ArincSupport::RawData_getInt< uint16_t >( rawPacket ) };
 
-  if ( opcode != std::to_underlying( packetTypeV ) )
+  if ( opcode != ArincSupport::toUnderlying( packetTypeV ) )
   {
     BOOST_THROW_EXCEPTION( InvalidPacketException()
       << ArincSupport::AdditionalInfo{ "Invalid opcode" } );

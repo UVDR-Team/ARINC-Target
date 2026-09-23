@@ -10,6 +10,8 @@
  * @brief Definition of Class Arinc615a::Find::Packets::Packet.
  **/
 
+#include <arinc_support/Support.hpp>
+
 #include "Packet.hpp"
 
 #include <arinc_615a/find/packets/PacketException.hpp>
@@ -166,7 +168,7 @@ ArincSupport::RawData Packet::encode() const
   ArincSupport::RawData rawPacket( 2U );
 
   // add opcode opcode
-  ArincSupport::RawData_setInt( rawPacket, std::to_underlying( opcodeV ) );
+  ArincSupport::RawData_setInt( rawPacket, ArincSupport::toUnderlying( opcodeV ) );
 
   // add parameters
   for ( const auto &parameter : parametersV )

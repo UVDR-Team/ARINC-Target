@@ -10,6 +10,8 @@
  * @brief Definition of Class Arinc615a::Files::LoadConfigurationListFile
  **/
 
+#include <cstddef>
+
 #include "LoadConfigurationListFile.hpp"
 
 #include <arinc_615a/files/String.hpp>
@@ -66,7 +68,7 @@ void LoadConfigurationListFile::targetsHardware( Information::TargetsHardware ta
 
 ArincSupport::RawData LoadConfigurationListFile::encode() const
 {
-  ArincSupport::RawData rawData( HeaderSize + 2UZ );
+  ArincSupport::RawData rawData( HeaderSize + std::size_t{2} );
 
   // skip header - it is filled finally
   auto nextData{ ArincSupport::RawDataSpan{ rawData }.subspan( HeaderSize ) };
@@ -141,7 +143,7 @@ ArincSupport::RawData LoadConfigurationListFile::encode() const
 void LoadConfigurationListFile::decode( const ArincSupport::ConstRawDataSpan rawData )
 {
   // check minimum data size
-  if ( rawData.size() < HeaderSize + 13UZ )
+  if ( rawData.size() < HeaderSize + std::size_t{13} )
   {
     BOOST_THROW_EXCEPTION( Arinc615aException{} << ArincSupport::AdditionalInfo{ "Protocol file to small" } );
   }

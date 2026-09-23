@@ -13,6 +13,8 @@
 #ifndef ARINC_615A_FILES_UPLOADOPERATIONREQUESTFILE_HPP
 #define ARINC_615A_FILES_UPLOADOPERATIONREQUESTFILE_HPP
 
+#include <cstddef>
+
 #include <arinc_615a/files/Files.hpp>
 #include <arinc_615a/files/ProtocolFile.hpp>
 
@@ -55,7 +57,7 @@ class ARINC_615A_EXPORT UploadOperationRequestFile final : public ProtocolFile
      * - ARINC 615A Protocol File Header size, and
      * - Number of Header Files field,
      **/
-    static constexpr std::size_t MinimumSize{ HeaderSize + 2UZ };
+    static constexpr std::size_t MinimumSize{ HeaderSize + std::size_t{2} };
 
     //! Default Construction of Upload Operation Request File.
     UploadOperationRequestFile() = default;

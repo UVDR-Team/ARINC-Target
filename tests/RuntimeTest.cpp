@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 #include "Arinc615aTha.hpp"
+#include "Arinc615aThaC.h"
 #include "TargetDataLoaderConfiguration.hpp"
 #include <arinc_615a/find/packets/Packet.hpp>
 #include <arinc_615a/files/InitializationFile.hpp>
@@ -96,6 +97,7 @@ BOOST_AUTO_TEST_CASE(c_wrapper_rejects_invalid_arguments)
 {
   BOOST_CHECK(arinc_c_interface_smoke());
   BOOST_CHECK(!Arinc615aTha::requestStop());
+  BOOST_CHECK_NE(arinc615a_tha_run_file("/nonexistent/arinc-missing-config.json"), 0);
 }
 
 BOOST_AUTO_TEST_CASE(server_restart_find_and_all_four_operation_rejections)

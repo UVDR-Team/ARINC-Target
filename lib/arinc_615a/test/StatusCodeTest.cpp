@@ -10,6 +10,8 @@
  * @brief Definition of unit tests for module Arinc615a StatusCode.
  **/
 
+#include <arinc_support/Support.hpp>
+
 #include <arinc_615a/Arinc615aException.hpp>
 #include <arinc_615a/StatusCode.hpp>
 
@@ -24,40 +26,40 @@ BOOST_AUTO_TEST_SUITE( StatusCodeTest )
 BOOST_AUTO_TEST_CASE( statusCodeTest )
 {
   BOOST_CHECK(
-    statusCode( std::to_underlying( StatusCode::OperationAccepted ) )
+    statusCode( ArincSupport::toUnderlying( StatusCode::OperationAccepted ) )
       == StatusCode::OperationAccepted );
   BOOST_CHECK(
-    statusCode( std::to_underlying( StatusCode::OperationNotAccepted ) )
+    statusCode( ArincSupport::toUnderlying( StatusCode::OperationNotAccepted ) )
       == StatusCode::OperationNotAccepted );
   BOOST_CHECK(
-    statusCode( std::to_underlying( StatusCode::OperationNotSupported ) )
+    statusCode( ArincSupport::toUnderlying( StatusCode::OperationNotSupported ) )
       == StatusCode::OperationNotSupported );
   BOOST_CHECK(
-    statusCode( std::to_underlying( StatusCode::OperationInProgress ) )
+    statusCode( ArincSupport::toUnderlying( StatusCode::OperationInProgress ) )
       == StatusCode::OperationInProgress );
   BOOST_CHECK(
-    statusCode( std::to_underlying( StatusCode::OperationCompleted ) )
+    statusCode( ArincSupport::toUnderlying( StatusCode::OperationCompleted ) )
       == StatusCode::OperationCompleted );
   BOOST_CHECK(
-    statusCode( std::to_underlying( StatusCode::OperationInProgressAdditionalInfo ) )
+    statusCode( ArincSupport::toUnderlying( StatusCode::OperationInProgressAdditionalInfo ) )
       == StatusCode::OperationInProgressAdditionalInfo );
   BOOST_CHECK(
-    statusCode( std::to_underlying( StatusCode::OperationAbortedByTargetHw ) )
+    statusCode( ArincSupport::toUnderlying( StatusCode::OperationAbortedByTargetHw ) )
       == StatusCode::OperationAbortedByTargetHw );
   BOOST_CHECK(
-    statusCode( std::to_underlying( StatusCode::OperationAbortedByDlp ) )
+    statusCode( ArincSupport::toUnderlying( StatusCode::OperationAbortedByDlp ) )
       == StatusCode::OperationAbortedByDlp );
   BOOST_CHECK(
-    statusCode( std::to_underlying( StatusCode::OperationAbortedByOperator ) )
+    statusCode( ArincSupport::toUnderlying( StatusCode::OperationAbortedByOperator ) )
       == StatusCode::OperationAbortedByOperator );
   BOOST_CHECK(
-    statusCode( std::to_underlying( StatusCode::LoadPartNumberOrDownloadFileFailed ) )
+    statusCode( ArincSupport::toUnderlying( StatusCode::LoadPartNumberOrDownloadFileFailed ) )
       == StatusCode::LoadPartNumberOrDownloadFileFailed );
 
   BOOST_CHECK_THROW( boost::ignore_unused( statusCode(
-    std::to_underlying( StatusCode::OperationDeferred ) ) ), Arinc615aException );
+    ArincSupport::toUnderlying( StatusCode::OperationDeferred ) ) ), Arinc615aException );
   BOOST_CHECK_THROW( boost::ignore_unused( statusCode(
-    std::to_underlying( StatusCode::Invalid ) ) ), Arinc615aException );
+    ArincSupport::toUnderlying( StatusCode::Invalid ) ) ), Arinc615aException );
 
   BOOST_CHECK_THROW( boost::ignore_unused( statusCode( 0x1234 ) ), Arinc615aException );
 }
@@ -66,17 +68,17 @@ BOOST_AUTO_TEST_CASE( statusCodeTest )
 BOOST_AUTO_TEST_CASE( operationAcceptanceStatusCodeTest )
 {
   BOOST_CHECK(
-    operationAcceptanceStatusCode( std::to_underlying( OperationAcceptanceStatusCode::OperationAccepted ) )
+    operationAcceptanceStatusCode( ArincSupport::toUnderlying( OperationAcceptanceStatusCode::OperationAccepted ) )
       == OperationAcceptanceStatusCode::OperationAccepted );
   BOOST_CHECK(
-    operationAcceptanceStatusCode( std::to_underlying( OperationAcceptanceStatusCode::OperationDenied ) )
+    operationAcceptanceStatusCode( ArincSupport::toUnderlying( OperationAcceptanceStatusCode::OperationDenied ) )
       == OperationAcceptanceStatusCode::OperationDenied );
   BOOST_CHECK(
-    operationAcceptanceStatusCode( std::to_underlying( OperationAcceptanceStatusCode::OperationNotSupported ) )
+    operationAcceptanceStatusCode( ArincSupport::toUnderlying( OperationAcceptanceStatusCode::OperationNotSupported ) )
       == OperationAcceptanceStatusCode::OperationNotSupported );
 
   BOOST_CHECK_THROW( boost::ignore_unused( operationAcceptanceStatusCode(
-    std::to_underlying( OperationAcceptanceStatusCode::OperationDeferred ) ) ), Arinc615aException );
+    ArincSupport::toUnderlying( OperationAcceptanceStatusCode::OperationDeferred ) ) ), Arinc615aException );
 
   BOOST_CHECK_THROW( boost::ignore_unused( operationAcceptanceStatusCode( 0x1234 ) ), Arinc615aException );
 }

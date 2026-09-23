@@ -8,6 +8,7 @@ endforeach()
 if(NOT DEFINED STATIC_LIBRARY_PREFIX)
   set(STATIC_LIBRARY_PREFIX "")
 endif()
+file(WRITE "${BUILD_DIR}/DEPENDENCY_AUDIT.txt" "ARINC 615A TARGET DEPENDENCY AUDIT: NOT YET PASSED\n")
 
 set(compile_database "${BUILD_DIR}/compile_commands.json")
 if(NOT EXISTS "${compile_database}")
@@ -78,13 +79,6 @@ foreach(archive_name IN LISTS archive_names)
     OUTPUT_VARIABLE nm_output
     ERROR_VARIABLE nm_error)
   if(NOT nm_result EQUAL 0)
-    execute_process(
-      COMMAND "${NM_TOOL}" -u "${archive}"
-      RESULT_VARIABLE nm_result
-      OUTPUT_VARIABLE nm_output
-      ERROR_VARIABLE nm_error)
-  endif()
-  if(NOT nm_result EQUAL 0)
     message(FATAL_ERROR "Unable to inspect ${archive} with ${NM_TOOL}: ${nm_error}")
   endif()
   string(APPEND undefined_symbols "\n===== ${archive_name} =====\n${nm_output}")
@@ -108,6 +102,9 @@ if(GENERATOR MATCHES "Ninja" AND DEFINED MAKE_PROGRAM AND EXISTS "${MAKE_PROGRAM
     message(FATAL_ERROR "Ninja dependency inspection failed: ${deps_error}")
   endif()
   file(WRITE "${BUILD_DIR}/target-header-dependencies.txt" "${dependency_output}")
+  if(dependency_output MATCHES "deps not found" OR NOT dependency_output MATCHES "#deps [1-9]")
+    message(FATAL_ERROR "Ninja header dependencies are missing; rebuild before auditing.")
+  endif()
   string(TOLOWER "${dependency_output}" dependency_output_lower)
   if(dependency_output_lower MATCHES
       "(/helper/|/arinc[-_]649/|/arinc_615a(_dla)?_qt/|/qt_icon_resources/|/boost/program_options/|/commands/|/libxml)")

@@ -310,6 +310,13 @@ void OperatorDefinedDownloadOperationImpl::status(
 void OperatorDefinedDownloadOperationImpl::statusFile()
 {
   std::unique_lock lock{ statusMutex };
+  // Never replace an active transfer: destroying it invokes its completion
+  // callback and can reset the replacement or finalise this operation.
+  if (statusOperation) {
+    statusTransmissionPending = true;
+    return;
+  }
+  statusTransmissionPending = false;
 
   // if status has not been sent previously, send accepted status, set Accepted Status
   if ( Arinc615a::StatusCode::Invalid == statusV.code() )
@@ -383,6 +390,17 @@ void OperatorDefinedDownloadOperationImpl::statusFileCompleted(
 
   // call handler to inform
   handler.status( sentStatus );
+
+  if (sentStatus.code() == StatusCode::OperationAccepted ||
+      sentStatus.code() == StatusCode::OperationInProgress ||
+      sentStatus.code() == StatusCode::OperationInProgressAdditionalInfo) {
+    std::unique_lock lock{statusMutex};
+    if (statusTransmissionPending || statusV.code() != sentStatus.code()) {
+      lock.unlock();
+      triggerStatusTransmission();
+      return;
+    }
+  }
 
   switch ( sentStatus.code() )
   {

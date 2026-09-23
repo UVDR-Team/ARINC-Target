@@ -10,6 +10,8 @@
  * @brief Definition of Template Class ArincSupport::DescriptionEntry.
  **/
 
+#include <arinc_support/Support.hpp>
+
 #include <utility>
 
 namespace ArincSupport {
@@ -18,7 +20,7 @@ template< Enumeration EnumT, Value ValueT >
 DescriptionEntry< EnumT, ValueT >::DescriptionEntry( std::string name, const EnumType enumeration ) :
   name{ std::move( name ) },
   enumeration{ enumeration },
-  value{ static_cast< ValueT >( std::to_underlying( enumeration ) ) }
+  value{ static_cast< ValueT >( ArincSupport::toUnderlying( enumeration ) ) }
 {
 }
 

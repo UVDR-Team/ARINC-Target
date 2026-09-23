@@ -10,6 +10,8 @@
  * @brief Definition of Class Arinc615a::Files::InitializationFile.
  **/
 
+#include <arinc_support/Support.hpp>
+
 #include "InitializationFile.hpp"
 
 #include <arinc_615a/files/String.hpp>
@@ -67,7 +69,7 @@ ArincSupport::RawData InitializationFile::encode() const
   auto nextData{ ArincSupport::RawDataSpan{ rawData }.subspan( HeaderSize ) };
 
   // status code
-  nextData = ArincSupport::RawData_setInt( nextData, std::to_underlying( responseV.code() ) );
+  nextData = ArincSupport::RawData_setInt( nextData, ArincSupport::toUnderlying( responseV.code() ) );
   assert( nextData.empty() );
 
   // status message

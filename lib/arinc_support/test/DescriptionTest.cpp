@@ -10,6 +10,8 @@
  * @brief Definition of Unit Tests for Template Class ArincSupport::Description.
  **/
 
+#include <arinc_support/Support.hpp>
+
 #include <arinc_support/Description.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -51,12 +53,12 @@ BOOST_AUTO_TEST_CASE( descriptionByEnum )
   const auto &descr1{ TestDescription::instance().description( TestEnumeration::Enum1 ) };
   BOOST_CHECK( descr1.enumeration == TestEnumeration::Enum1 );
   BOOST_CHECK( descr1.name == "Enum1" );
-  BOOST_CHECK( descr1.value == std::to_underlying( TestEnumeration::Enum1 ) );
+  BOOST_CHECK( descr1.value == ArincSupport::toUnderlying( TestEnumeration::Enum1 ) );
 
   const auto &descr2{ TestDescription::instance().description( TestEnumeration::Enum3 ) };
   BOOST_CHECK( descr2.enumeration == TestEnumeration::Enum3 );
   BOOST_CHECK( descr2.name == "Enum3" );
-  BOOST_CHECK( descr2.value == std::to_underlying( TestEnumeration::Enum3 ) );
+  BOOST_CHECK( descr2.value == ArincSupport::toUnderlying( TestEnumeration::Enum3 ) );
 
   BOOST_CHECK_THROW(
     // NOLINTNEXTLINE( clang-analyzer-optin.core.EnumCastOutOfRange ): Test
@@ -67,15 +69,15 @@ BOOST_AUTO_TEST_CASE( descriptionByEnum )
 //! Unit Test for description by value
 BOOST_AUTO_TEST_CASE( desciptionByValue )
 {
-  const auto &descr1{ TestDescription::instance().description( std::to_underlying( TestEnumeration::Enum1 ) ) };
+  const auto &descr1{ TestDescription::instance().description( ArincSupport::toUnderlying( TestEnumeration::Enum1 ) ) };
   BOOST_CHECK( descr1.enumeration == TestEnumeration::Enum1 );
   BOOST_CHECK( descr1.name == "Enum1" );
-  BOOST_CHECK( descr1.value == std::to_underlying( TestEnumeration::Enum1 ) );
+  BOOST_CHECK( descr1.value == ArincSupport::toUnderlying( TestEnumeration::Enum1 ) );
 
-  const auto &descr2{ TestDescription::instance().description( std::to_underlying( TestEnumeration::Enum3 ) ) };
+  const auto &descr2{ TestDescription::instance().description( ArincSupport::toUnderlying( TestEnumeration::Enum3 ) ) };
   BOOST_CHECK( descr2.enumeration == TestEnumeration::Enum3 );
   BOOST_CHECK( descr2.name == "Enum3" );
-  BOOST_CHECK( descr2.value == std::to_underlying( TestEnumeration::Enum3 ) );
+  BOOST_CHECK( descr2.value == ArincSupport::toUnderlying( TestEnumeration::Enum3 ) );
 
   BOOST_CHECK_THROW(
     boost::ignore_unused( TestDescription::instance().description( 25 ) ),
@@ -88,12 +90,12 @@ BOOST_AUTO_TEST_CASE( desciptionByName )
   const auto &descr1{ TestDescription::instance().description( "Enum1" ) };
   BOOST_CHECK( descr1.enumeration == TestEnumeration::Enum1 );
   BOOST_CHECK( descr1.name == "Enum1" );
-  BOOST_CHECK( descr1.value == std::to_underlying( TestEnumeration::Enum1 ) );
+  BOOST_CHECK( descr1.value == ArincSupport::toUnderlying( TestEnumeration::Enum1 ) );
 
   const auto &descr2{  TestDescription::instance().description( "Enum3" ) };
   BOOST_CHECK( descr2.enumeration == TestEnumeration::Enum3 );
   BOOST_CHECK( descr2.name == "Enum3" );
-  BOOST_CHECK( descr2.value == std::to_underlying( TestEnumeration::Enum3 ) );
+  BOOST_CHECK( descr2.value == ArincSupport::toUnderlying( TestEnumeration::Enum3 ) );
 
   BOOST_CHECK_THROW(
     boost::ignore_unused( TestDescription::instance().description( "XXX" ) ),
@@ -106,12 +108,12 @@ BOOST_AUTO_TEST_CASE( valueByEnum )
   const auto value1{ TestDescription::instance().value( TestEnumeration::Enum1 ) };
   BOOST_CHECK(
     value1.has_value()
-    && ( *value1 == std::to_underlying( TestEnumeration::Enum1 ) ) );
+    && ( *value1 == ArincSupport::toUnderlying( TestEnumeration::Enum1 ) ) );
 
   const auto value2{ TestDescription::instance().value( TestEnumeration::Enum3 ) };
   BOOST_CHECK(
     value2.has_value()
-    && ( *value2 == std::to_underlying( TestEnumeration::Enum3 ) ) );
+    && ( *value2 == ArincSupport::toUnderlying( TestEnumeration::Enum3 ) ) );
 
   // NOLINTNEXTLINE( clang-analyzer-optin.core.EnumCastOutOfRange ): Test
   const auto value3{ TestDescription::instance().value( static_cast< TestEnumeration >( 25 ) ) };
@@ -124,12 +126,12 @@ BOOST_AUTO_TEST_CASE( valueByName )
   const auto value1{ TestDescription::instance().value( "Enum1" ) };
   BOOST_CHECK(
     value1.has_value()
-    && ( *value1 == std::to_underlying( TestEnumeration::Enum1 ) ) );
+    && ( *value1 == ArincSupport::toUnderlying( TestEnumeration::Enum1 ) ) );
 
   const auto value2{ TestDescription::instance().value( "Enum3" ) };
   BOOST_CHECK(
     value2.has_value()
-    && ( *value2 == std::to_underlying( TestEnumeration::Enum3 ) ) );
+    && ( *value2 == ArincSupport::toUnderlying( TestEnumeration::Enum3 ) ) );
 
   const auto value3{ TestDescription::instance().value( "XXX" ) };
   BOOST_CHECK( !value3.has_value() );
@@ -138,12 +140,12 @@ BOOST_AUTO_TEST_CASE( valueByName )
 //! Unit Test for enumeration by value
 BOOST_AUTO_TEST_CASE( enumerationByValue )
 {
-  const auto enum1{ TestDescription::instance().enumeration( std::to_underlying( TestEnumeration::Enum1 ) ) };
+  const auto enum1{ TestDescription::instance().enumeration( ArincSupport::toUnderlying( TestEnumeration::Enum1 ) ) };
   BOOST_CHECK(
     enum1.has_value()
     && ( *enum1 == TestEnumeration::Enum1 ) );
 
-  const auto enum2{ TestDescription::instance().enumeration( std::to_underlying( TestEnumeration::Enum3 ) ) };
+  const auto enum2{ TestDescription::instance().enumeration( ArincSupport::toUnderlying( TestEnumeration::Enum3 ) ) };
   BOOST_CHECK(
     enum2.has_value()
     && ( *enum2 == TestEnumeration::Enum3 ) );
@@ -168,11 +170,11 @@ BOOST_AUTO_TEST_CASE( enumerationByName )
 //! Unit Test for name by value
 BOOST_AUTO_TEST_CASE( nameByValue )
 {
-  const auto name1{ TestDescription::instance().name( std::to_underlying( TestEnumeration::Enum1 ) ) };
+  const auto name1{ TestDescription::instance().name( ArincSupport::toUnderlying( TestEnumeration::Enum1 ) ) };
   BOOST_CHECK( !name1.empty() );
   BOOST_CHECK( name1 == "Enum1" );
 
-  const auto name2{ TestDescription::instance().name( std::to_underlying( TestEnumeration::Enum3 ) ) };
+  const auto name2{ TestDescription::instance().name( ArincSupport::toUnderlying( TestEnumeration::Enum3 ) ) };
   BOOST_CHECK( !name2.empty() );
   BOOST_CHECK( name2 == "Enum3" );
 

@@ -266,7 +266,7 @@ void ProtocolImpl::handleInitialisationFile(
 
     default:
       // invalid value should not occur
-      std::unreachable();
+      throw std::logic_error{"Unexpected protocol file type"};
       break;
   }
 

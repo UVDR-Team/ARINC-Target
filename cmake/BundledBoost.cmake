@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: MPL-2.0
+function(arinc_extract_boost source_root destination)
+  set(archive "${source_root}/third_party/boost_1_88_0_headers.tar.gz")
+  file(SHA256 "${archive}" actual)
+  if(NOT actual STREQUAL "e166e0cdc01b18c9852c59bad215e6e7d1cdb6532543ccec80a3fa43c80387b6")
+    message(FATAL_ERROR "Bundled Boost archive is damaged; copy the complete ARINC folder again.")
+  endif()
+  if(NOT EXISTS "${destination}/boost/version.hpp")
+    message(STATUS "Extracting bundled Boost 1.88 headers (offline)")
+    file(MAKE_DIRECTORY "${destination}")
+    file(ARCHIVE_EXTRACT INPUT "${archive}" DESTINATION "${destination}")
+  endif()
+endfunction()

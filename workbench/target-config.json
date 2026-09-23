@@ -1,0 +1,28 @@
+{
+  "version": "Arinc615a34",
+  "status_transmission_rate": 1,
+  "arinc_615a": {
+    "local_tftp_address": "0.0.0.0",
+    "dlp_retries": 2,
+    "tftp": {"port": 59, "timeout": 3, "retries": 3},
+    "protocol_file_logging": false
+  },
+  "arinc_615a_find": {"local_find_address": "0.0.0.0", "find_port": 1001},
+  "find_information": [{
+    "thwId": "ARINC", "thwTypeName": "THA", "thwPosition": "1",
+    "literalName": "ARINC 615A Target", "manufacturerCode": "UVDR"
+  }],
+  "targets_configuration": [{
+    "target_id": "ARINC_1",
+    "information_operation": {
+      "enabled": true,
+      "targets_hardware": {"target_hardware": {
+        "literal_name": "ARINC 615A Target", "serial_number": "DEMO001",
+        "part_numbers": [{"part_number": "DEMO-PN", "amendment": "", "part_designation": "Demo software"}]
+      }}
+    },
+    "upload_operation": {"enabled": true, "directory": "/ram0/ARINC/upload", "checksum_option": true},
+    "media_defined_download_operation": {"enabled": true, "directories": {"directory": "/ram0/ARINC/download"}},
+    "operator_defined_download_operation": {"enabled": true, "directories": {"directory": "/ram0/ARINC/download"}}
+  }]
+}

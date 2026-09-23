@@ -13,6 +13,8 @@
 #ifndef ARINC_615A_FILES_PROTOCOLFILE_HPP
 #define ARINC_615A_FILES_PROTOCOLFILE_HPP
 
+#include <cstddef>
+
 #include <arinc_615a/files/Files.hpp>
 
 #include <arinc_support/RawData.hpp>
@@ -51,7 +53,7 @@ class ARINC_615A_EXPORT ProtocolFile
 {
   public:
     //! Header size of each protocol file (File Length + %Version).
-    static constexpr auto HeaderSize{ 6UZ };
+    static constexpr auto HeaderSize{ std::size_t{6} };
 
     /**
      * @brief Copy Assignment Operator.

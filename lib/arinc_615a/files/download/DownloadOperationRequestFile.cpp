@@ -10,6 +10,8 @@
  * @brief Definition of Class Arinc615a::Files::DownloadOperationRequestFile.
  **/
 
+#include <cstddef>
+
 #include "DownloadOperationRequestFile.hpp"
 
 #include <arinc_615a/files/String.hpp>
@@ -84,7 +86,7 @@ void DownloadOperationRequestFile::userDefinedData( ArincSupport::RawData userDe
 
 ArincSupport::RawData DownloadOperationRequestFile::encode() const
 {
-  ArincSupport::RawData rawData( HeaderSize + 2UZ );
+  ArincSupport::RawData rawData( HeaderSize + std::size_t{2} );
 
   // skip header - it is filled finally
   auto nextData{ ArincSupport::RawDataSpan{ rawData }.subspan( HeaderSize ) };
@@ -117,7 +119,7 @@ ArincSupport::RawData DownloadOperationRequestFile::encode() const
   }
 
   // user defined data (length field)
-  rawData.resize( rawData.size() + 1UZ );
+  rawData.resize( rawData.size() + std::size_t{1} );
 
   // encode length of user defined data
   ArincSupport::RawData_setInt( ArincSupport::RawDataSpan{ rawData }.last( 1 ), ArincSupport::safeCast< uint8_t >( userDefinedDataV.size() ) );

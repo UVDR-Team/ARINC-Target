@@ -10,6 +10,8 @@
  * @brief Definition of Class Arinc615a::Find::Clients::QueryImpl.
  **/
 
+#include <arinc_support/Support.hpp>
+
 #include "QueryImpl.hpp"
 
 #include <arinc_615a/find/TargetInformation.hpp>
@@ -232,22 +234,22 @@ void QueryImpl::informationRequestPacket(
 
 void QueryImpl::informationAnswerPacket( const boost::asio::ip::udp::endpoint &remote, const Packets::Packet &answer )
 {
-  if ( answer.numberOfParameters() != std::to_underlying( Packets::ParameterList::Last ) )
+  if ( answer.numberOfParameters() != ArincSupport::toUnderlying( Packets::ParameterList::Last ) )
   {
     ARINC_LOG_WARN(
       "invalid number of parameters actual: {}, expected {}",
       answer.numberOfParameters(),
-      std::to_underlying( Packets::ParameterList::Last ) );
+      ArincSupport::toUnderlying( Packets::ParameterList::Last ) );
 
     return;
   }
 
   TargetInformation targetInformation{
-    answer.parameter( std::to_underlying( Packets::ParameterList::ThwId ) ),
-    answer.parameter( std::to_underlying( Packets::ParameterList::ThwTypeName ) ),
-    answer.parameter( std::to_underlying( Packets::ParameterList::ThwPosition ) ),
-    answer.parameter( std::to_underlying( Packets::ParameterList::LiteralName ) ),
-    answer.parameter( std::to_underlying( Packets::ParameterList::ManufacturerCode ) ) };
+    answer.parameter( ArincSupport::toUnderlying( Packets::ParameterList::ThwId ) ),
+    answer.parameter( ArincSupport::toUnderlying( Packets::ParameterList::ThwTypeName ) ),
+    answer.parameter( ArincSupport::toUnderlying( Packets::ParameterList::ThwPosition ) ),
+    answer.parameter( ArincSupport::toUnderlying( Packets::ParameterList::LiteralName ) ),
+    answer.parameter( ArincSupport::toUnderlying( Packets::ParameterList::ManufacturerCode ) ) };
 
   if ( responseHandlerV )
   {

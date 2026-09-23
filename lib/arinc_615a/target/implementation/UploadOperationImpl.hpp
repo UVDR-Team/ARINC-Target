@@ -208,6 +208,7 @@ class UploadOperationImpl final : public UploadOperation, public OperationImpl
     std::mutex statusOperationMutex;
     //! Status TFTP Client Operation.
     Tftp::Clients::WriteOperationPtr statusOperation;
+    bool statusTransmissionPending{false};
 
     //! Request File TFTP Server Operation.
     Tftp::Servers::WriteOperationPtr requestFileOperation;

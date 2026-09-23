@@ -34,7 +34,11 @@ std::span< const std::byte > getTestData( const TestData testData )
   static const std::vector Arinc645TestData_t04a( 128, boost::endian::native_to_big< uint16_t >( 0xAA55 ) );
 
   //! 256 Bytes of 0x00 through 0xFF
-  static const std::vector< std::uint8_t > Arinc645TestData_t11a{ std::from_range, std::ranges::iota_view( 0, 256 ) };
+  static const auto Arinc645TestData_t11a = [] {
+    std::vector<std::uint8_t> bytes(256);
+    for (std::size_t i = 0; i < bytes.size(); ++i) bytes[i] = static_cast<std::uint8_t>(i);
+    return bytes;
+  }();
 
   //! String "ACM12345678"
   static constexpr std::string_view Arinc645TestData_t12a{ "ACM12345678" };

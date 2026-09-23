@@ -10,6 +10,8 @@
  * @brief Definition of Class Arinc615a::Files::ProtocolFile.
  **/
 
+#include <arinc_support/Support.hpp>
+
 #include "ProtocolFile.hpp"
 
 #include <arinc_615a/Arinc615aException.hpp>
@@ -46,7 +48,7 @@ void ProtocolFile::insertHeader( ArincSupport::RawDataSpan rawData ) const
   const auto nextData{ ArincSupport::RawData_setInt( rawData, static_cast< uint32_t >( rawData.size() ) ) };
 
   // protocol version
-  ArincSupport::RawData_setInt( nextData, std::to_underlying( protocolVersionV ) );
+  ArincSupport::RawData_setInt( nextData, ArincSupport::toUnderlying( protocolVersionV ) );
 }
 
 ArincSupport::ConstRawDataSpan ProtocolFile::decodeHeader( const ArincSupport::ConstRawDataSpan rawData )

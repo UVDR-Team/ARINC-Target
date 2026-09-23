@@ -131,6 +131,7 @@ class InformationOperationImpl final : public InformationOperation, public Opera
     Tftp::Clients::WriteOperationPtr targetInformationOperation;
     //! Status TFTP Client Operation.
     Tftp::Clients::WriteOperationPtr statusOperation;
+    bool statusTransmissionPending{false};
 };
 
 }

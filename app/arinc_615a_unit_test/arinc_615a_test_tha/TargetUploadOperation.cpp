@@ -11,6 +11,8 @@
  * @brief Definition of Class TargetUploadOperation.
  **/
 
+#include <arinc_support/Support.hpp>
+
 #include "TargetUploadOperation.hpp"
 
 #include <arinc_615a/information/UploadStatus.hpp>
@@ -27,6 +29,10 @@
 #include <arinc_615a/StatusCodeDescription.hpp>
 
 #include <arinc_665/files/LoadHeaderFile.hpp>
+#include <arinc_checksum/Arinc645Crc.hpp>
+#include <arinc_checksum/CheckValueGenerator.hpp>
+#include <array>
+#include <fstream>
 
 #include <tftp/files/MemoryFile.hpp>
 #include <tftp/files/StreamFile.hpp>
@@ -158,7 +164,7 @@ void TargetUploadOperation::status( const Arinc615a::Information::UploadStatus &
     "\tEstimated Time:  {}\n",
     status.counter(),
     Arinc615a::StatusCodeDescription::instance().name( status.code() ),
-    std::to_underlying( status.code() ),
+    ArincSupport::toUnderlying( status.code() ),
     status.description(),
     status.exceptionTimer(),
     status.estimatedTime() );
@@ -266,17 +272,34 @@ void TargetUploadOperation::uploadHeaderFileCompleted(
     return;
   }
 
-  Arinc665::Files::LoadHeaderFile loadHeaderFile{ loadHeader->data() };
+  std::optional<Arinc665::Files::LoadHeaderFile> parsedHeader;
+  try {
+    parsedHeader.emplace(loadHeader->data());
+  } catch (const std::exception &) {
+    operationV->finished(Arinc615a::FinalStatus::AbortedByTargetHardware, "Invalid Load Header");
+    return;
+  }
+  const auto &loadHeaderFile = *parsedHeader;
 
   ARINC_LOG_INFO( "Upload Load Header ", loadHeaderFile.partNumber() );
 
   if ( loadHeaderFile.dataFiles().empty() )
   {
     operationV->finished( Arinc615a::FinalStatus::AbortedByTargetHardware, "Load Header does not contain data files" );
+    return;
   }
 
   filesV = loadHeaderFile.dataFiles();
   filesV.insert( filesV.end(), loadHeaderFile.supportFiles().begin(), loadHeaderFile.supportFiles().end() );
+  for (const auto &entry : filesV) {
+    // Load files are flat names. Never allow a remote load to escape the
+    // configured upload directory through absolute paths or traversal.
+    if (entry.filename.empty() || entry.filename == "." || entry.filename == ".." ||
+        entry.filename.find_first_of("/\\:") != std::string::npos) {
+      operationV->finished(Arinc615a::FinalStatus::AbortedByTargetHardware, "Invalid load filename");
+      return;
+    }
+  }
   currentFileV = filesV.begin();
 
   // update status
@@ -386,10 +409,42 @@ bool TargetUploadOperation::fileOptionsNegotiation(
 
 void TargetUploadOperation::fileCompleted( Tftp::Files::StreamFilePtr file, Arinc615a::Tftp::TransferStatus status )
 {
-  // file will be used in feature to validate checksum
+  // The TFTP checksum option negotiates metadata; it does not validate the
+  // bytes stored on disk. Check length, CRC16 and any supplied load check value
+  // before reporting this file/load as successfully received.
   (void)file;
 
   fileOperationV.reset();
+
+  if (Arinc615a::Tftp::TransferStatus::Successful == status) {
+    bool valid = false;
+    try {
+      std::ifstream input{configurationV.directory / currentFileV->filename, std::ios::binary};
+      ArincChecksum::Arinc645Crc16 crc;
+      const auto hash = ArincChecksum::CheckValueGenerator::create(currentFileV->checkValue.type());
+      if (!hash) throw std::runtime_error{"Unsupported load check value"};
+      std::array<char, 4096> buffer{};
+      uint64_t length = 0;
+      while (input.read(buffer.data(), buffer.size()) || input.gcount() > 0) {
+        const auto count = static_cast<std::size_t>(input.gcount());
+        length += count;
+        crc.process_bytes(buffer.data(), count);
+        hash->process(std::as_bytes(std::span{buffer.data(), count}));
+      }
+      valid = input.eof() && !input.bad() && length == currentFileV->length &&
+        crc.checksum() == currentFileV->crc &&
+        (currentFileV->checkValue == ArincChecksum::CheckValue::NoCheckValue ||
+         hash->checkValue() == currentFileV->checkValue);
+    } catch (const std::exception &) {
+      valid = false;
+    }
+    if (!valid) {
+      operationV->loadFinished(currentLoadV->headerFilename,
+        Arinc615a::FinalStatus::LoadPartNumberOrDownloadFileFailed, "Stored file size/checksum mismatch");
+      operationV->finished(Arinc615a::FinalStatus::AbortedByTargetHardware, "Stored file size/checksum mismatch");
+      return;
+    }
+  }
 
   if ( Arinc615a::Tftp::TransferStatus::Successful != status )
   {

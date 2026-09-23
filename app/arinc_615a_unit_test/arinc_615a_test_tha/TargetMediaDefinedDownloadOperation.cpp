@@ -11,6 +11,8 @@
  * @brief Definition of Class TargetMediaDefinedDownloadOperation.
  **/
 
+#include <arinc_support/Support.hpp>
+
 #include "TargetMediaDefinedDownloadOperation.hpp"
 
 #include "TargetDataLoaderConfiguration.hpp"
@@ -182,7 +184,7 @@ void TargetMediaDefinedDownloadOperation::status( const Arinc615a::Information::
     "\tEstimated Time:  {}\n",
     status.counter(),
     Arinc615a::StatusCodeDescription::instance().name( status.code() ),
-    std::to_underlying( status.code() ),
+    ArincSupport::toUnderlying( status.code() ),
     status.description(),
     status.exceptionTimer(),
     status.estimatedTime() );

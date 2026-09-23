@@ -11,6 +11,8 @@
  * @brief Definition of Class TargetInformationOperation.
  **/
 
+#include <arinc_support/Support.hpp>
+
 #include "TargetInformationOperation.hpp"
 
 #include "TargetDataLoaderConfiguration.hpp"
@@ -130,7 +132,7 @@ void TargetInformationOperation::status( const Arinc615a::Information::Informati
     "\tEstimated Time:  {}\n",
     status.counter(),
     Arinc615a::StatusCodeDescription::instance().name( status.code() ),
-    std::to_underlying( status.code() ),
+    ArincSupport::toUnderlying( status.code() ),
     status.description(),
     status.exceptionTimer(),
     status.estimatedTime() );

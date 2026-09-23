@@ -1,4 +1,48 @@
-# ARINC 615A Tool Suite
+# ARINC 615A offline target
+
+For the office handoff, extract `delivery/ARINC615A_OFFICE_READY.zip` and follow
+its `START_HERE.md`. The same instructions are in [workbench/START_HERE.md](workbench/START_HERE.md).
+Do not build all legacy folders recursively in Workbench.
+
+The active root build is target-only by default. ARINC 665 binary support, TFTP,
+local utility/checksum sources and Boost 1.88 headers are bundled in this repository.
+No sibling repository, Git command, Internet download, Qt, external Helper,
+ARINC 649, or separate ARINC 645 library is required for this target build.
+
+Boost is still required (Asio networking, Hash2 hashing, property-tree JSON,
+CRC, exceptions and header utilities); there is no separately installed Boost
+runtime. See [dependency details](third_party/DEPENDENCIES.md).
+
+**Validation status:** see [VALIDATION.md](VALIDATION.md). Host tests are not
+proof of a VxWorks build. The exact licensed VxWorks 26.03 SDK/VSB/BSP and board
+are required for final build, load and debug acceptance. The code requires C++20
+including the standard formatting and filesystem libraries.
+
+## Offline host verification
+
+With a C++20 compiler, CMake 3.24+, Ninja and Python 3 already installed:
+
+```sh
+cmake -S . -B build -G Ninja -DARINC_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build build
+ctest --test-dir build --output-on-failure
+cmake --build build --target arinc_target_audit
+python3 tools/prepare_office.py --build build \
+  --source-commit "$(git rev-parse HEAD)" \
+  --output delivery/ARINC615A_OFFICE_READY
+```
+
+The final packaging command requires a new destination (it refuses overwrites).
+Boost is extracted locally with a verified SHA256, without downloading anything.
+The generated handoff contains expanded headers and metadata: Python, CMake and
+Git are not required for its native managed Workbench DKM build.
+For an alternative static-library cross-build, see [VxWorksDKM.md](VxWorksDKM.md).
+
+## Historical upstream documentation
+
+The following describes the original desktop suite, **not the active target
+build**. Its GUI/dependency-manager presets remain only as historical material;
+do not use them for the offline target. Target instructions above take precedence.
 
 This projects provides libraries and application implementing the ARINC 615A Data Loading Protocol.
 
