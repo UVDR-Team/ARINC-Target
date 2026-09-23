@@ -35,7 +35,7 @@ CheckValueTypeDescription::CheckValueTypeDescription() :
 
 std::ostream& operator<<( std::ostream &stream, const CheckValueType type )
 {
-  return stream << CheckValueTypeDescription::instance().name( type );
+  return stream << std::string{CheckValueTypeDescription::instance().name(type)};
 }
 
 std::istream& operator>>( std::istream& stream, CheckValueType &type )

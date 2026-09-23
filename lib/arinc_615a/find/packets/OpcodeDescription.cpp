@@ -27,7 +27,7 @@ OpcodeDescription::OpcodeDescription() :
 
 std::ostream& operator<<( std::ostream &stream, const Opcode opcode )
 {
-  return ( stream << OpcodeDescription::instance().name( opcode ) );
+  return stream << std::string{OpcodeDescription::instance().name(opcode)};
 }
 
 }

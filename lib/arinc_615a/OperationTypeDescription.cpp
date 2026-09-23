@@ -29,7 +29,7 @@ OperationTypeDescription::OperationTypeDescription():
 
 std::ostream& operator<<( std::ostream &stream, const OperationType operation )
 {
-  return ( stream << OperationTypeDescription::instance().name( operation ) );
+  return stream << std::string{OperationTypeDescription::instance().name(operation)};
 }
 
 std::istream& operator>>( std::istream& stream, OperationType &operation )

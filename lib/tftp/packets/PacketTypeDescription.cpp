@@ -30,7 +30,7 @@ PacketTypeDescription::PacketTypeDescription():
 
 std::ostream& operator<<( std::ostream &stream, const PacketType packetType )
 {
-  return stream << PacketTypeDescription::instance().name( packetType );
+  return stream << std::string{PacketTypeDescription::instance().name(packetType)};
 }
 
 }

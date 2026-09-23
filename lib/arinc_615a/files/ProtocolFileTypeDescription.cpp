@@ -37,7 +37,7 @@ ProtocolFileTypeDescription::ProtocolFileTypeDescription():
 
 std::ostream& operator<<( std::ostream &stream, const ProtocolFileType protocolFileType )
 {
-  return stream << ProtocolFileTypeDescription::instance().name( protocolFileType );
+  return stream << std::string{ProtocolFileTypeDescription::instance().name(protocolFileType)};
 }
 
 }

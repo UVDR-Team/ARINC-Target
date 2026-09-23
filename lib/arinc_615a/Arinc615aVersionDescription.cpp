@@ -29,7 +29,7 @@ Arinc615aVersionDescription::Arinc615aVersionDescription() :
 
 std::ostream& operator<<( std::ostream &stream, Arinc615aVersion version )
 {
-  return ( stream << Arinc615aVersionDescription::instance().name( version ) );
+  return stream << std::string{Arinc615aVersionDescription::instance().name(version)};
 }
 
 std::istream& operator>>( std::istream& stream, Arinc615aVersion &version )

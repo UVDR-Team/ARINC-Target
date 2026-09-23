@@ -30,7 +30,7 @@ TransferStatusDescription::TransferStatusDescription():
 
 std::ostream &operator<<( std::ostream &stream, const TransferStatus transferStatus )
 {
-  return ( stream << TransferStatusDescription::instance().name( transferStatus ) );
+  return stream << std::string{TransferStatusDescription::instance().name(transferStatus)};
 }
 
 }

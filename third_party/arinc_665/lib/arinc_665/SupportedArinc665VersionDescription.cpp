@@ -39,7 +39,7 @@ std::string SupportedArinc665VersionDescription::allValues( std::string_view pre
 
 std::ostream& operator<<( std::ostream &stream, const SupportedArinc665Version version )
 {
-  return ( stream << SupportedArinc665VersionDescription::instance().name( version ) );
+  return stream << std::string{SupportedArinc665VersionDescription::instance().name(version)};
 }
 
 std::istream& operator>>( std::istream &stream, SupportedArinc665Version &version )
