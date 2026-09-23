@@ -11,6 +11,7 @@
  **/
 
 #include "FileTypeDescription.hpp"
+#include <ostream>
 
 #include <ostream>
 
@@ -29,7 +30,8 @@ FileTypeDescription::FileTypeDescription():
 
 std::ostream& operator<<( std::ostream &stream, const FileType fileType )
 {
-  return stream << std::string{FileTypeDescription::instance().name(fileType)};
+  const auto name = FileTypeDescription::instance().name(fileType);
+  return stream.write(name.data(), static_cast<std::streamsize>(name.size()));
 }
 
 }

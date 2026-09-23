@@ -11,6 +11,7 @@
  **/
 
 #include "Arinc615aVersionDescription.hpp"
+#include <ostream>
 
 #include <boost/exception/exception.hpp>
 
@@ -29,7 +30,8 @@ Arinc615aVersionDescription::Arinc615aVersionDescription() :
 
 std::ostream& operator<<( std::ostream &stream, Arinc615aVersion version )
 {
-  return stream << std::string{Arinc615aVersionDescription::instance().name(version)};
+  const auto name = Arinc615aVersionDescription::instance().name(version);
+  return stream.write(name.data(), static_cast<std::streamsize>(name.size()));
 }
 
 std::istream& operator>>( std::istream& stream, Arinc615aVersion &version )

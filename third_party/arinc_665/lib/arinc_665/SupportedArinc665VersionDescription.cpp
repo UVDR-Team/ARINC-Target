@@ -11,6 +11,7 @@
  **/
 
 #include "SupportedArinc665VersionDescription.hpp"
+#include <ostream>
 
 #include <boost/exception/exception.hpp>
 #include <arinc_support/InputError.hpp>
@@ -39,7 +40,8 @@ std::string SupportedArinc665VersionDescription::allValues( std::string_view pre
 
 std::ostream& operator<<( std::ostream &stream, const SupportedArinc665Version version )
 {
-  return stream << std::string{SupportedArinc665VersionDescription::instance().name(version)};
+  const auto name = SupportedArinc665VersionDescription::instance().name(version);
+  return stream.write(name.data(), static_cast<std::streamsize>(name.size()));
 }
 
 std::istream& operator>>( std::istream &stream, SupportedArinc665Version &version )

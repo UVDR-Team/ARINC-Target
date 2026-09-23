@@ -20,6 +20,8 @@ should be interpreted as a zero-error guarantee for an untested SDK/image.
 
 - Clean root Debug configuration using only the bundled ARINC 665 source and
   SHA-verified bundled Boost 1.88 headers; no network or sibling repository.
+- Clean optimized Release compilation and executable link passed. A new-libc++
+  stream symbol found by this check was removed in favor of portable `ostream::write`.
 - All 229 original and added regression cases passed (1,613 assertions).
 - C entry/self-test passed (FIND and initialization codecs plus SHA256 vector).
 - Independent Python UDP/TFTP integration suite passed:

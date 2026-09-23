@@ -11,6 +11,7 @@
  **/
 
 #include "OpcodeDescription.hpp"
+#include <ostream>
 
 #include <boost/exception/exception.hpp>
 #include <arinc_support/InputError.hpp>
@@ -27,7 +28,8 @@ OpcodeDescription::OpcodeDescription() :
 
 std::ostream& operator<<( std::ostream &stream, const Opcode opcode )
 {
-  return stream << std::string{OpcodeDescription::instance().name(opcode)};
+  const auto name = OpcodeDescription::instance().name(opcode);
+  return stream.write(name.data(), static_cast<std::streamsize>(name.size()));
 }
 
 }

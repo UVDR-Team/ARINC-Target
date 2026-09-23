@@ -11,6 +11,7 @@
  **/
 
 #include "ErrorCodeDescription.hpp"
+#include <ostream>
 
 #include <ostream>
 
@@ -33,7 +34,8 @@ ErrorCodeDescription::ErrorCodeDescription():
 
 std::ostream& operator<<( std::ostream& stream, const ErrorCode errorCode )
 {
-  return stream << std::string{ErrorCodeDescription::instance().name(errorCode)};
+  const auto name = ErrorCodeDescription::instance().name(errorCode);
+  return stream.write(name.data(), static_cast<std::streamsize>(name.size()));
 }
 
 }

@@ -11,6 +11,7 @@
  **/
 
 #include "OperationTypeDescription.hpp"
+#include <ostream>
 
 #include <boost/exception/exception.hpp>
 #include <arinc_support/InputError.hpp>
@@ -29,7 +30,8 @@ OperationTypeDescription::OperationTypeDescription():
 
 std::ostream& operator<<( std::ostream &stream, const OperationType operation )
 {
-  return stream << std::string{OperationTypeDescription::instance().name(operation)};
+  const auto name = OperationTypeDescription::instance().name(operation);
+  return stream.write(name.data(), static_cast<std::streamsize>(name.size()));
 }
 
 std::istream& operator>>( std::istream& stream, OperationType &operation )

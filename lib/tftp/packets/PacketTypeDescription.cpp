@@ -11,6 +11,7 @@
  **/
 
 #include "PacketTypeDescription.hpp"
+#include <ostream>
 
 #include <ostream>
 
@@ -30,7 +31,8 @@ PacketTypeDescription::PacketTypeDescription():
 
 std::ostream& operator<<( std::ostream &stream, const PacketType packetType )
 {
-  return stream << std::string{PacketTypeDescription::instance().name(packetType)};
+  const auto name = PacketTypeDescription::instance().name(packetType);
+  return stream.write(name.data(), static_cast<std::streamsize>(name.size()));
 }
 
 }

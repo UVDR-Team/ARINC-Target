@@ -11,6 +11,7 @@
  **/
 
 #include "CheckValueTypeDescription.hpp"
+#include <ostream>
 
 #include <boost/exception/exception.hpp>
 
@@ -35,7 +36,8 @@ CheckValueTypeDescription::CheckValueTypeDescription() :
 
 std::ostream& operator<<( std::ostream &stream, const CheckValueType type )
 {
-  return stream << std::string{CheckValueTypeDescription::instance().name(type)};
+  const auto name = CheckValueTypeDescription::instance().name(type);
+  return stream.write(name.data(), static_cast<std::streamsize>(name.size()));
 }
 
 std::istream& operator>>( std::istream& stream, CheckValueType &type )

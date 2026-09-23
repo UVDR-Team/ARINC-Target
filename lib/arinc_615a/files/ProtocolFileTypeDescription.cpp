@@ -11,6 +11,7 @@
  **/
 
 #include "ProtocolFileTypeDescription.hpp"
+#include <ostream>
 
 namespace Arinc615a::Files {
 
@@ -37,7 +38,8 @@ ProtocolFileTypeDescription::ProtocolFileTypeDescription():
 
 std::ostream& operator<<( std::ostream &stream, const ProtocolFileType protocolFileType )
 {
-  return stream << std::string{ProtocolFileTypeDescription::instance().name(protocolFileType)};
+  const auto name = ProtocolFileTypeDescription::instance().name(protocolFileType);
+  return stream.write(name.data(), static_cast<std::streamsize>(name.size()));
 }
 
 }

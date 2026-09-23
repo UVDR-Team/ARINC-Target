@@ -11,6 +11,7 @@
  **/
 
 #include "TransferStatusDescription.hpp"
+#include <ostream>
 
 #include <ostream>
 
@@ -30,7 +31,8 @@ TransferStatusDescription::TransferStatusDescription():
 
 std::ostream &operator<<( std::ostream &stream, const TransferStatus transferStatus )
 {
-  return stream << std::string{TransferStatusDescription::instance().name(transferStatus)};
+  const auto name = TransferStatusDescription::instance().name(transferStatus);
+  return stream.write(name.data(), static_cast<std::streamsize>(name.size()));
 }
 
 }
