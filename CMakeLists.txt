@@ -75,6 +75,7 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "VxWorks"
         "${CMAKE_SOURCE_DIR}/tests/vxworks_preflight/preflight.py"
         "--build" "${CMAKE_BINARY_DIR}"
         "--compiler" "${CMAKE_CXX_COMPILER}"
+        "--sysroot" "${CMAKE_OSX_SYSROOT}"
       COMMENT "Syntax-checking the VxWorks branch of the production graph"
       VERBATIM)
   endif()

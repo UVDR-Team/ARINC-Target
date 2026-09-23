@@ -80,6 +80,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--build', required=True, type=Path)
     parser.add_argument('--compiler', required=True)
+    parser.add_argument('--sysroot', default='',
+                        help='Host SDK sysroot, needed when the compiler is '
+                             'invoked by absolute path (Apple toolchains).')
     parser.add_argument('--jobs', type=int, default=8)
     args = parser.parse_args()
 
@@ -103,6 +106,10 @@ def main():
         '-I', str(build / 'include'),
         '-include', 'arinc_support/BuildConfig.hpp',
     ]
+    # A compiler invoked by absolute path does not infer the Apple SDK, so the
+    # host system headers the stubs pull in would be unreachable.
+    if args.sysroot:
+        flags += ['-isysroot', args.sysroot]
 
     failures = []
     from concurrent.futures import ThreadPoolExecutor
