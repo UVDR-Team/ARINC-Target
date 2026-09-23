@@ -60,6 +60,26 @@ add_custom_target(arinc_target_audit
   COMMENT "Auditing the offline ARINC 615A target dependency closure"
   VERBATIM)
 
+# The __VXWORKS__ branch of BuildConfig.hpp and BoostVxWorks.hpp is never
+# compiled by an ordinary host build, so it would otherwise reach the office
+# untested.  This target compiles the whole production graph with the VxWorks
+# macros defined, against stub SDK headers, and asserts that Boost selects the
+# VxWorks platform profile, the select reactor and the patched Asio include
+# chain.  It is a host syntax check, not a substitute for a Workbench build.
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "VxWorks"
+   AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+  find_package(Python3 COMPONENTS Interpreter)
+  if(Python3_FOUND)
+    add_custom_target(arinc_vxworks_preflight
+      COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_SOURCE_DIR}/tests/vxworks_preflight/preflight.py"
+        "--build" "${CMAKE_BINARY_DIR}"
+        "--compiler" "${CMAKE_CXX_COMPILER}"
+      COMMENT "Syntax-checking the VxWorks branch of the production graph"
+      VERBATIM)
+  endif()
+endif()
+
 if(ARINC615A_THA_BUILD_TEST_APPLICATION)
   add_executable(arinc_615a_test_tha "${tha_dir}/main.cpp")
   target_link_libraries(arinc_615a_test_tha PRIVATE arinc_615a_tha_target)

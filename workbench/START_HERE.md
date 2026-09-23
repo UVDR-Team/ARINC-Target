@@ -98,7 +98,30 @@ Download and Operator Defined Download. This is a protocol/file-transfer sample,
 not board-specific firmware activation, flash programming, secure boot, or an
 aviation-certified software-update installation procedure. Validate those separately.
 
-## 6. Office acceptance checklist
+## 6. If the first build fails
+
+A first-build error is expected rather than alarming: the platform glue in
+`src/lib/arinc_support/BuildConfig.hpp` and `BoostVxWorks.hpp` was written
+against the VxWorks 24.03 documentation and syntax-checked off-target, but it
+has never met the real SDK headers. Work through these before changing
+protocol code, which is host-verified and is unlikely to be the cause.
+
+| Symptom | Likely cause and action |
+| --- | --- |
+| `Select a VxWorks Downloadable Kernel Module project, not an RTP project.` | Deliberate guard in `BuildConfig.hpp`. The project is an RTP. Recreate it as a DKM. |
+| `vxWorks.h`, `sockLib.h`, `ioLib.h`, `sysLib.h` or `selectLib.h` not found | The VSB include paths are missing. Add the three `$(VSB_DIR)` entries from `BUILD_OPTIONS.txt`. |
+| `sys/poll.h` not found, from `boost/asio/detail/socket_types.hpp` | The bundled Asio patch is missing or was overwritten. That header must select `<selectLib.h>` for `__VXWORKS__`; restore it from this package. |
+| `<filesystem>` not found, or `std::filesystem` link errors | The VSB lacks C++17 filesystem support. This is a VSB/VIP configuration item for your platform engineer, not a source fix. Upload and download depend on it. |
+| Errors naming `truncate`, `symlink` or `readlink` inside Boost headers | Boost's obsolete VxWorks stubs are active. Confirm `BOOST_PLATFORM_CONFIG` still points at `arinc_support/BoostVxWorks.hpp`. |
+| Undefined `pthread_*`, `sem_*` or `clock_gettime` at link or load | POSIX components are absent from the VSB/VIP. Enable them in the kernel configuration. |
+| Unresolved symbols only at module load, after a clean compile | Normal DKM behaviour. Check C++ constructor processing is enabled and that no archive was discarded as unreferenced. |
+| Compiles and loads, but `arinc615aSelfTest` returns non-zero | Report the return value. This is codec/SHA256 logic, which passes on the host, so it points at a runtime or toolchain difference rather than the port. |
+
+Record the exact first error text. The host build, the dependency audit and
+the VxWorks preflight check all pass, so the office error log is the only new
+information available and is worth preserving verbatim.
+
+## 7. Office acceptance checklist
 
 - Clean Debug build succeeds with the correct 24.03 SDK and no unresolved symbols.
 - Module loads; `arinc615aSelfTest` returns 0; debugger hits the demo breakpoint.
