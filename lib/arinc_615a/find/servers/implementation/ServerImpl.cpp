@@ -26,7 +26,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <arinc_support/Format.hpp>
 
 namespace Arinc615a::Find::Servers {
 
@@ -130,7 +130,7 @@ void ServerImpl::receive()
   socketV.async_receive_from(
     boost::asio::buffer( rawReceivePacketV ),
     receiveRemoteEndpointV,
-    std::bind_front( &ServerImpl::receiveHandler, this ) );
+    ArincSupport::bindFront( &ServerImpl::receiveHandler, this ) );
 }
 
 void ServerImpl::receiveHandler( const boost::system::error_code &error, const std::size_t bytesTransferred )

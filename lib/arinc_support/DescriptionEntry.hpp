@@ -15,7 +15,6 @@
 
 #include <arinc_support/Support.hpp>
 
-#include <concepts>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -32,7 +31,7 @@ namespace ArincSupport {
  *   Enumeration Type
  **/
 template< typename T >
-concept Enumeration = std::is_enum_v< T >;
+constexpr bool Enumeration = std::is_enum< T >::value;
 
 /**
  * @brief Is Value Type Concept.
@@ -43,7 +42,7 @@ concept Enumeration = std::is_enum_v< T >;
  *   Enumeration Type
  **/
 template< typename T >
-concept Value = std::is_enum_v< T > || std::is_integral_v< T >;
+constexpr bool Value = std::is_enum< T >::value || std::is_integral< T >::value;
 
 /**
  * @brief Value Description extends an enumeration by an assigned value.
@@ -53,9 +52,11 @@ concept Value = std::is_enum_v< T > || std::is_integral_v< T >;
  * @tparam ValueT
  *   Type of Value in struct - defaults to enumeration underlying type.
  **/
-template< Enumeration EnumT, Value ValueT = typename std::underlying_type_t< EnumT > >
+template< typename EnumT, typename ValueT = typename std::underlying_type< EnumT >::type >
 class DescriptionEntry
 {
+  static_assert( Enumeration< EnumT >, "DescriptionEntry requires an enumeration" );
+  static_assert( Value< ValueT >, "DescriptionEntry value must be integral or an enumeration" );
   public:
     //! Enumeration Type
     using EnumType = EnumT;

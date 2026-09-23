@@ -85,8 +85,9 @@ void LoadHeaderFile::encodeLoadCheckValue( ArincSupport::RawDataSpan rawFile, co
   }
 
   // write load check value to position
-  std::ranges::copy(
-    CheckValueUtils_encode( checkValue ),
+  const auto encodedCheckValue{ CheckValueUtils_encode( checkValue ) };
+  std::copy(
+    encodedCheckValue.begin(), encodedCheckValue.end(),
     rawFile.begin() + static_cast< ptrdiff_t >( loadCheckValuePtr ) * 2 );
 
   // Update File CRC, which is also calculated over Load Check Value

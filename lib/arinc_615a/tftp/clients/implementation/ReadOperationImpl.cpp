@@ -173,9 +173,9 @@ const ::Tftp::Packets::ErrorInformation& ReadOperationImpl::errorInformation() c
     .dally( dallyV )
     .optionsConfiguration( tftpOptionsConfigurationV )
     .optionNegotiationHandler(
-      std::bind_front( &ReadOperationImpl::handleOptionNegotiation, static_cast< OperationImpl * >( this ) ) )
+      ArincSupport::bindFront( &ReadOperationImpl::handleOptionNegotiation, static_cast< OperationImpl * >( this ) ) )
     .completionHandler(
-      std::bind_front( &ReadOperationImpl::handleCompletion, static_cast< OperationImpl * >( this ) ) )
+      ArincSupport::bindFront( &ReadOperationImpl::handleCompletion, static_cast< OperationImpl * >( this ) ) )
     .dataHandler( dataHandlerV )
     .filename( filenameV )
     .mode( ::Tftp::Packets::TransferMode::OCTET )

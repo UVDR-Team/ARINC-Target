@@ -17,7 +17,7 @@
 
 #include <arinc_support/Description.hpp>
 
-#include <format>
+#include <arinc_support/Format.hpp>
 #include <iosfwd>
 
 namespace ArincChecksum {
@@ -68,30 +68,5 @@ ARINC_645_EXPORT std::ostream& operator<<( std::ostream &stream, CheckValueType 
 ARINC_645_EXPORT std::istream& operator>>( std::istream &stream, CheckValueType &type );
 
 }
-
-/**
- * @brief Specialisation of @p std::formatter for @ref ArincChecksum::CheckValueType.
- **/
-template<>
-struct std::formatter< ArincChecksum::CheckValueType > : std::formatter< std::string_view >
-{
-  /**
-   * @brief ArincChecksum::CheckValueType format routine.
-   *
-   * @tparam FmtContext
-   *   Formatting Context
-   * @param[in] type
-   *   ARINC 645 Check Value Type
-   * @param[in,out] ctx
-   *   Formatting Context
-   *
-   * @return Iterator to the end of output.
-   **/
-  template< class FmtContext >
-  FmtContext::iterator format( const ArincChecksum::CheckValueType type, FmtContext &ctx ) const
-  {
-    return std::formatter< string_view >::format( ArincChecksum::CheckValueTypeDescription::instance().name( type ), ctx );
-  }
-};
 
 #endif

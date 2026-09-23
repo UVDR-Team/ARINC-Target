@@ -89,7 +89,7 @@ find_package(Threads REQUIRED)
 add_library(arinc_office_target STATIC
 ''' + source_list + '''
 )
-target_compile_features(arinc_office_target PUBLIC cxx_std_20)
+target_compile_features(arinc_office_target PUBLIC cxx_std_17)
 target_include_directories(arinc_office_target PUBLIC src/lib src/workbench
   src/app/arinc_615a_unit_test/arinc_615a_test_tha)
 target_include_directories(arinc_office_target SYSTEM PUBLIC include)

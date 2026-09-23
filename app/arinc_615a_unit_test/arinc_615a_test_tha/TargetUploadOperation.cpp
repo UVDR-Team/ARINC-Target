@@ -191,7 +191,7 @@ void TargetUploadOperation::loadList( const Arinc615a::Information::UploadLoads 
 
   operationV->inProgress( true, -1, {}, Arinc615a::Information::Ratio{ 0 } );
 
-  boost::asio::post( ioContext(), std::bind_front( &TargetUploadOperation::receiveLoadHeader, this ) );
+  boost::asio::post( ioContext(), ArincSupport::bindFront( &TargetUploadOperation::receiveLoadHeader, this ) );
 }
 
 void TargetUploadOperation::receiveLoadHeader()
@@ -204,8 +204,8 @@ void TargetUploadOperation::receiveLoadHeader()
   auto partNumber{ configurationV.partNumberOption ? currentLoadV->partNumber : std::string{} };
 
   loadHeaderOperationV = operationV->transferFile(
-    std::bind_front( &TargetUploadOperation::uploadHeaderFileOptionsNegotiation, this, partNumber ),
-    std::bind_front( &TargetUploadOperation::uploadHeaderFileCompleted, this, file ),
+    ArincSupport::bindFront( &TargetUploadOperation::uploadHeaderFileOptionsNegotiation, this, partNumber ),
+    ArincSupport::bindFront( &TargetUploadOperation::uploadHeaderFileCompleted, this, file ),
     file,
     currentLoadV->headerFilename,
     partNumber,
@@ -307,7 +307,7 @@ void TargetUploadOperation::uploadHeaderFileCompleted(
   operationV->inProgress( false, -1, {}, Arinc615a::Information::Ratio{ 0 } );
 
   // receive file
-  boost::asio::post( ioContext(), std::bind_front( &TargetUploadOperation::receiveFile, this ) );
+  boost::asio::post( ioContext(), ArincSupport::bindFront( &TargetUploadOperation::receiveFile, this ) );
 }
 
 void TargetUploadOperation::receiveFile()
@@ -333,8 +333,8 @@ void TargetUploadOperation::receiveFile()
       : ArincChecksum::CheckValue::NoCheckValue };
 
   fileOperationV = operationV->transferFile(
-    std::bind_front( &TargetUploadOperation::fileOptionsNegotiation, this, partNumber, checkValue ),
-    std::bind_front( &TargetUploadOperation::fileCompleted, this, file ),
+    ArincSupport::bindFront( &TargetUploadOperation::fileOptionsNegotiation, this, partNumber, checkValue ),
+    ArincSupport::bindFront( &TargetUploadOperation::fileCompleted, this, file ),
     file,
     currentFileV->filename,
     partNumber,
@@ -429,7 +429,8 @@ void TargetUploadOperation::fileCompleted( Tftp::Files::StreamFilePtr file, Arin
         const auto count = static_cast<std::size_t>(input.gcount());
         length += count;
         crc.process_bytes(buffer.data(), count);
-        hash->process(std::as_bytes(std::span{buffer.data(), count}));
+        hash->process(ArincSupport::RawData_asRawData(
+          boost::span< const char >{ buffer.data(), static_cast< std::size_t >( count ) }));
       }
       valid = input.eof() && !input.bad() && length == currentFileV->length &&
         crc.checksum() == currentFileV->crc &&
@@ -470,7 +471,7 @@ void TargetUploadOperation::fileCompleted( Tftp::Files::StreamFilePtr file, Arin
   if ( currentFileV != filesV.end() )
   {
     // receive the next file
-    boost::asio::post( ioContext(), std::bind_front( &TargetUploadOperation::receiveFile, this ) );
+    boost::asio::post( ioContext(), ArincSupport::bindFront( &TargetUploadOperation::receiveFile, this ) );
     return;
   }
 
@@ -485,7 +486,7 @@ void TargetUploadOperation::fileCompleted( Tftp::Files::StreamFilePtr file, Arin
   if ( currentLoadV != loadsV.end() )
   {
     // receive next load
-    boost::asio::post( ioContext(), std::bind_front( &TargetUploadOperation::receiveLoadHeader, this ) );
+    boost::asio::post( ioContext(), ArincSupport::bindFront( &TargetUploadOperation::receiveLoadHeader, this ) );
     return;
   }
 

@@ -14,13 +14,13 @@ CRC, exceptions and header utilities); there is no separately installed Boost
 runtime. See [dependency details](third_party/DEPENDENCIES.md).
 
 **Validation status:** see [VALIDATION.md](VALIDATION.md). Host tests are not
-proof of a VxWorks build. The exact licensed VxWorks 26.03 SDK/VSB/BSP and board
-are required for final build, load and debug acceptance. The code requires C++20
-including the standard formatting and filesystem libraries.
+proof of a VxWorks build. The exact licensed VxWorks 24.03 SDK/VSB/BSP and board
+are required for final build, load and debug acceptance. The production graph is
+C++17 and does not require `<format>`, `<span>`, `<concepts>`, or `<ranges>`.
 
 ## Offline host verification
 
-With a C++20 compiler, CMake 3.24+, Ninja and Python 3 already installed:
+With a C++17 compiler, CMake 3.24+, Ninja and Python 3 already installed:
 
 ```sh
 cmake -S . -B build -G Ninja -DARINC_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Debug

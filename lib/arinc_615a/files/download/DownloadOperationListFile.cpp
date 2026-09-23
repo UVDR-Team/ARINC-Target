@@ -67,7 +67,7 @@ void DownloadOperationListFile::file( Information::DownloadFileInformation file 
 
 void DownloadOperationListFile::file( std::string filename, std::string description )
 {
-  filesV.emplace_back( std::move( filename ), std::move( description ) );
+  filesV.push_back( { std::move( filename ), std::move( description ) } );
 }
 
 ArincSupport::RawData DownloadOperationListFile::encode() const

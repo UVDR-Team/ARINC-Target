@@ -24,16 +24,18 @@
 
 #include <boost/exception/all.hpp>
 
+#include <algorithm>
+
 namespace Arinc665::Files {
 
 std::string Arinc665File::encodePath( const std::filesystem::path &path )
 {
   std::string convertedPath{ path.string() };
 
-  std::ranges::replace( convertedPath, '/', '\\' );
+  std::replace( convertedPath.begin(), convertedPath.end(), '/', '\\' );
 
   // append final backslash if not present
-  if ( !convertedPath.ends_with( '\\' ) )
+  if ( convertedPath.empty() || convertedPath.back() != '\\' )
   {
     convertedPath += '\\';
   }

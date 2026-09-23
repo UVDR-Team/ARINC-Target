@@ -15,7 +15,7 @@
 
 #include <arinc_615a/Arinc615a.hpp>
 
-#include <format>
+#include <arinc_support/Format.hpp>
 #include <iosfwd>
 #include <string>
 #include <string_view>
@@ -229,7 +229,10 @@ class ARINC_615A_EXPORT TargetId final
      *
      * @return Comparison result of @p this and @p other.
      **/
-    inline auto operator<=>( const TargetId &other ) const;
+    bool operator<( const TargetId &other ) const;
+    bool operator<=( const TargetId &other ) const;
+    bool operator>( const TargetId &other ) const;
+    bool operator>=( const TargetId &other ) const;
 
     /**
      * @brief Equal Comparison Operation.
@@ -239,7 +242,10 @@ class ARINC_615A_EXPORT TargetId final
      *
      * @return The result of the equal comparison operation between @p lhs and @p rhs.
      **/
-    bool operator==( const TargetId &other ) const = default;
+    bool operator==( const TargetId &other ) const
+    {
+      return thwIdV == other.thwIdV && positionV == other.positionV;
+    }
 
     /**
      * @brief Unequal Comparison Operation.
@@ -249,7 +255,10 @@ class ARINC_615A_EXPORT TargetId final
      *
      * @return The result of the unequal comparison operation between @p lhs and @p rhs.
      **/
-    bool operator!=( const TargetId &other ) const = default;
+    bool operator!=( const TargetId &other ) const
+    {
+      return !( *this == other );
+    }
 
     /**
      * @brief String-comparison operator.
@@ -293,10 +302,14 @@ class ARINC_615A_EXPORT TargetId final
     std::string positionV;
 };
 
-inline auto TargetId::operator <=>( const TargetId &other ) const
+inline bool TargetId::operator<( const TargetId &other ) const
 {
-  return toString() <=> other.toString();
+  return toString() < other.toString();
 }
+
+inline bool TargetId::operator<=( const TargetId &other ) const { return !( other < *this ); }
+inline bool TargetId::operator>( const TargetId &other ) const { return other < *this; }
+inline bool TargetId::operator>=( const TargetId &other ) const { return !( *this < other ); }
 
 /**
  * @name %Target ID Operators
@@ -320,7 +333,7 @@ inline auto TargetId::operator <=>( const TargetId &other ) const
  * @retval false
  *   @p lhs and @p rhs are different.
  **/
-auto operator <=>( std::string_view lhs, const TargetId &rhs );
+bool operator<( std::string_view lhs, const TargetId &rhs );
 
 /**
  * @brief Outputs the %Target ID to Stream.
@@ -348,41 +361,10 @@ ARINC_615A_EXPORT std::istream& operator>>( std::istream &stream, TargetId &targ
 
 /** @} **/
 
-inline auto operator <=>( const std::string_view lhs, const TargetId &rhs )
+inline bool operator<( const std::string_view lhs, const TargetId &rhs )
 {
-  return lhs <=> rhs.toString();
+  return lhs < rhs.toString();
 }
-
-}
-
-namespace std {
-
-/**
- * @brief Specialisation of @p std::formatter for @ref Arinc615a::TargetId.
- *
- * @sa @ref Arinc615a::TargetId
- **/
-template <>
-struct formatter< Arinc615a::TargetId > : std::formatter< std::string_view >
-{
-  /**
-   * @brief Arinc615a::TargetId format routine.
-   *
-   * @tparam FmtContext
-   *   Formatting Context
-   * @param[in] targetId
-   *   Target ID
-   * @param[in,out] ctx
-   *   Formatting Context
-   *
-   * @return Iterator to the end of the output.
-   **/
-  template< class FmtContext >
-  FmtContext::iterator format( const Arinc615a::TargetId &targetId, FmtContext &ctx ) const
-  {
-    return std::formatter< string_view >::format( targetId.toString(), ctx );
-  }
-};
 
 }
 

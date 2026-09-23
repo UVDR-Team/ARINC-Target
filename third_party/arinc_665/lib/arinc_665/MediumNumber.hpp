@@ -16,7 +16,7 @@
 #include <arinc_665/Arinc665.hpp>
 
 #include <cstdint>
-#include <format>
+#include <arinc_support/Format.hpp>
 #include <iosfwd>
 
 namespace Arinc665 {
@@ -147,7 +147,12 @@ class ARINC_665_EXPORT MediumNumber final
      *
      * @return Comparison.
      **/
-    auto operator<=>( const MediumNumber &rhs ) const noexcept = default;
+    bool operator==( const MediumNumber &rhs ) const noexcept { return mediumNumberV == rhs.mediumNumberV; }
+    bool operator!=( const MediumNumber &rhs ) const noexcept { return !( *this == rhs ); }
+    bool operator<( const MediumNumber &rhs ) const noexcept { return mediumNumberV < rhs.mediumNumberV; }
+    bool operator<=( const MediumNumber &rhs ) const noexcept { return !( rhs < *this ); }
+    bool operator>( const MediumNumber &rhs ) const noexcept { return rhs < *this; }
+    bool operator>=( const MediumNumber &rhs ) const noexcept { return !( *this < rhs ); }
 
   private:
     //! Medium Number
@@ -168,37 +173,6 @@ class ARINC_665_EXPORT MediumNumber final
  * @sa @ref MediumNumber::toString() const
  **/
 ARINC_665_EXPORT std::ostream& operator<<( std::ostream &stream, const MediumNumber &mediumNumber );
-
-}
-
-namespace std {
-
-/**
- * @brief Specialisation of @p std::formatter for @ref Arinc665::MediumNumber.
- *
- * @sa @ref Arinc665::MediumNumber
- **/
-template<>
-struct formatter< Arinc665::MediumNumber > : std::formatter< std::string >
-{
- /**
-  * @brief Arinc665::MediumNumber format routine.
-  *
-  * @tparam FmtContext
-  *   Formatting Context
-  * @param[in] mediumNumber
-  *   ARINC 665 Medium Number
-  * @param[in,out] ctx
-  *   Formatting Context
-  *
-  * @return Iterator to the end of output.
-  **/
- template< class FmtContext >
- FmtContext::iterator format( const Arinc665::MediumNumber &mediumNumber, FmtContext &ctx ) const
- {
-  return std::formatter< string >::format( mediumNumber.toString(), ctx );
- }
-};
 
 }
 

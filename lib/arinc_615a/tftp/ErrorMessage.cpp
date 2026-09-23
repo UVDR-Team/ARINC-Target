@@ -15,11 +15,12 @@
 #include <arinc_615a/Arinc615aException.hpp>
 
 #include <arinc_support/Exception.hpp>
+#include <arinc_support/SafeCast.hpp>
 
 #include <boost/exception/all.hpp>
 
 #include <charconv>
-#include <format>
+#include <arinc_support/Format.hpp>
 #include <string>
 
 namespace Arinc615a::Tftp {
@@ -39,7 +40,7 @@ ErrorMessageType ErrorMessage_type( const ::Tftp::Packets::ErrorInformation &err
 
   const auto &errorMessage{ std::get< 1 >( *errorInformation ) };
 
-  if ( errorMessage.starts_with( WaitErrorString ) )
+  if ( errorMessage.substr( 0U, WaitErrorString.size() ) == WaitErrorString )
   {
     if ( errorMessage.size() <= WaitErrorString.size() )
     {
@@ -49,7 +50,7 @@ ErrorMessageType ErrorMessage_type( const ::Tftp::Packets::ErrorInformation &err
     return ErrorMessageType::Wait;
   }
 
-  if ( errorMessage.starts_with( AbortErrorString ) )
+  if ( errorMessage.substr( 0U, AbortErrorString.size() ) == AbortErrorString )
   {
     if ( errorMessage.size() <= AbortErrorString.size() )
     {
@@ -64,13 +65,13 @@ ErrorMessageType ErrorMessage_type( const ::Tftp::Packets::ErrorInformation &err
 
 std::string ErrorMessage_abort( const StatusCode statusCode )
 {
-  return std::format( "ABORT:{:04X}", static_cast< uint16_t >( statusCode ) );
+  return ArincSupport::format( "ABORT:{:04X}", static_cast< uint16_t >( statusCode ) );
 }
 
 StatusCode ErrorMessage_abort( const std::string_view errorMessage ) noexcept
 {
   // check abort-string
-  if ( !errorMessage.starts_with( AbortErrorString ) )
+  if ( errorMessage.substr( 0U, AbortErrorString.size() ) != AbortErrorString )
   {
     return StatusCode::Invalid;
   }
@@ -109,18 +110,18 @@ StatusCode ErrorMessage_abort( const std::string_view errorMessage ) noexcept
 
 std::string ErrorMessage_wait( const std::chrono::seconds waitTime )
 {
-  if ( !std::in_range< uint16_t >( waitTime.count() ) )
+  if ( !ArincSupport::inRange< uint16_t >( waitTime.count() ) )
   {
     BOOST_THROW_EXCEPTION( Arinc615aException()
       << ArincSupport::AdditionalInfo( "Value out of range" ) );
   }
 
-  return std::format( "WAIT:{}", waitTime.count() );
+  return ArincSupport::format( "WAIT:{}", waitTime.count() );
 }
 
 std::optional< std::chrono::seconds > ErrorMessage_wait( const std::string_view errorMessage ) noexcept
 {
-  if ( !errorMessage.starts_with( WaitErrorString ) )
+  if ( errorMessage.substr( 0U, WaitErrorString.size() ) != WaitErrorString )
   {
     return {};
   }

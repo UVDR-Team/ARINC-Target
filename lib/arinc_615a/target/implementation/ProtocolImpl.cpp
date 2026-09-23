@@ -49,7 +49,7 @@ ProtocolImpl::ProtocolImpl( boost::asio::io_context &ioContext, ProtocolConfigur
     ->serverAddress(
       { configurationV.configuration.localInterfaceAddress,
         configurationV.configuration.tftpConfiguration.tftpServerPort } )
-    .requestHandler( std::bind_front( &ProtocolImpl::receivedTftpRequest, this ) );
+    .requestHandler( ArincSupport::bindFront( &ProtocolImpl::receivedTftpRequest, this ) );
 }
 
 ProtocolImpl::~ProtocolImpl() noexcept
@@ -198,12 +198,11 @@ void ProtocolImpl::receivedTftpRequest(
 
     switch ( protocolFilename.fileType() )
     {
-      using enum Files::ProtocolFileType;
 
-      case LoadConfigurationInitialization:
-      case UploadInitialization:
-      case MediaDefinedDownloadInitialization:
-      case OperatorDefinedDownloadInitialization:
+      case Files::ProtocolFileType::LoadConfigurationInitialization:
+      case Files::ProtocolFileType::UploadInitialization:
+      case Files::ProtocolFileType::MediaDefinedDownloadInitialization:
+      case Files::ProtocolFileType::OperatorDefinedDownloadInitialization:
         handleInitialisationFile( remote, protocolFilename, clientTftpOptions, clientArinc615aOptions );
         return;
 
@@ -242,24 +241,23 @@ void ProtocolImpl::handleInitialisationFile(
 
   switch ( filename.fileType() )
   {
-    using enum Files::ProtocolFileType;
 
-    case LoadConfigurationInitialization:
+    case Files::ProtocolFileType::LoadConfigurationInitialization:
       ARINC_LOG_INFO( "LOAD CONFIGURATION INITIALIZATION" );
       operationType = OperationType::Information;
       break;
 
-    case UploadInitialization:
+    case Files::ProtocolFileType::UploadInitialization:
       ARINC_LOG_INFO( "UPLOAD INITIALIZATION" );
       operationType = OperationType::Upload;
       break;
 
-    case MediaDefinedDownloadInitialization:
+    case Files::ProtocolFileType::MediaDefinedDownloadInitialization:
       ARINC_LOG_INFO( "MEDIA DEFINED DOWNLOAD INITIALIZATION" );
       operationType = OperationType::MediaDefinedDownload;
       break;
 
-    case OperatorDefinedDownloadInitialization:
+    case Files::ProtocolFileType::OperatorDefinedDownloadInitialization:
       ARINC_LOG_INFO( "OPERATOR DEFINED DOWNLOAD INITIALIZATION" );
       operationType = OperationType::OperatorDefinedDownload;
       break;

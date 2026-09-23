@@ -3,8 +3,8 @@
 #define ARINC_SUPPORT_LOGGING_HPP
 
 #include <atomic>
+#include <arinc_support/Format.hpp>
 #include <cstdio>
-#include <format>
 #include <string_view>
 #include <utility>
 
@@ -32,8 +32,7 @@ inline void write(level::level_enum value, std::string_view message) noexcept
 }
 
 template< typename... Args >
-requires (sizeof...(Args) > 0)
-void write( level::level_enum value, std::format_string< Args... > format, Args&&... args ) noexcept
+void write( level::level_enum value, std::string_view pattern, Args&&... args ) noexcept
 {
   if ( value < minimumLevel.load( std::memory_order_relaxed ) )
   {
@@ -41,7 +40,7 @@ void write( level::level_enum value, std::format_string< Args... > format, Args&
   }
   try
   {
-    auto message = std::format( format, std::forward< Args >( args )... );
+    auto message = ArincSupport::format( pattern, std::forward< Args >( args )... );
     message += '\n';
     std::fwrite( message.data(), 1, message.size(), stdout );
   }

@@ -17,7 +17,7 @@
 
 #include <arinc_support/Description.hpp>
 
-#include <format>
+#include <arinc_support/Format.hpp>
 #include <iosfwd>
 
 namespace Arinc615a {
@@ -76,76 +76,6 @@ ARINC_615A_EXPORT std::ostream& operator<<( std::ostream &stream, StatusCode sta
 ARINC_615A_EXPORT std::ostream& operator<<( std::ostream &stream, OperationAcceptanceStatusCode status );
 
 /** @} **/
-
-}
-
-namespace std {
-
-/**
- * @brief Specialisation of @p std::formatter for @ref Arinc615a::StatusCode.
- *
- * @sa @ref Arinc615a::StatusCodeDescription
- * @sa @ref Arinc615a::StatusCode
- **/
-template <>
-struct formatter< Arinc615a::StatusCode > : std::formatter< std::string_view >
-{
-  /**
-   * @brief Arinc615a::StatusCode format routine.
-   *
-   * @tparam FmtContext
-   *   Formatting Context
-   * @param[in] code
-   *   Status Code
-   * @param[in,out] ctx
-   *   Formatting Context
-   *
-   * @return Iterator to the end of output.
-   **/
-  template< class FmtContext >
-  FmtContext::iterator format( const Arinc615a::StatusCode code, FmtContext &ctx ) const
-  {
-    return std::formatter< string_view >::format(
-      std::format(
-        "{} ({:04X})",
-        Arinc615a::StatusCodeDescription::instance().name( code ),
-        static_cast< uint16_t >( code ) ),
-      ctx );
-  }
-};
-
-/**
- * @brief Specialisation of @p std::formatter for @ref Arinc615a::OperationAcceptanceStatusCode
- *
- * @sa @ref Arinc615a::StatusCodeDescription
- * @sa @ref Arinc615a::OperationAcceptanceStatusCode
- **/
-template <>
-struct formatter< Arinc615a::OperationAcceptanceStatusCode > : std::formatter< std::string_view >
-{
-  /**
-   * @brief Arinc615a::OperationAcceptanceStatusCode format routine.
-   *
-   * @tparam FmtContext
-   *   Formatting Context
-   * @param[in] code
-   *   Operation Acceptance Status Code
-   * @param[in,out] ctx
-   *   Formatting Context
-   *
-   * @return Iterator to the end of output.
-   **/
-  template< class FmtContext >
-  FmtContext::iterator format( const Arinc615a::OperationAcceptanceStatusCode code, FmtContext &ctx ) const
-  {
-    return std::formatter< string_view >::format(
-      std::format(
-        "{} ({:04X})",
-        Arinc615a::StatusCodeDescription::instance().name( static_cast< Arinc615a::StatusCode >( code ) ),
-        static_cast< uint16_t >( code ) ),
-      ctx );
-  }
-};
 
 }
 

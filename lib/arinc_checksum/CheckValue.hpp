@@ -17,11 +17,10 @@
 
 #include <arinc_support/RawData.hpp>
 
-#include <format>
+#include <arinc_support/Format.hpp>
 #include <iosfwd>
 #include <map>
 #include <optional>
-#include <span>
 #include <string>
 
 namespace ArincChecksum {
@@ -162,7 +161,15 @@ class ARINC_645_EXPORT CheckValue final
      *
      * @return Comparison information
      **/
-    auto operator<=>( const CheckValue &other ) const = default;
+    bool operator==( const CheckValue &other ) const noexcept
+    {
+      return typeV == other.typeV && valueV == other.valueV;
+    }
+
+    bool operator!=( const CheckValue &other ) const noexcept
+    {
+      return !( *this == other );
+    }
 
   private:
     //! Check Value Type
@@ -188,30 +195,5 @@ class ARINC_645_EXPORT CheckValue final
 ARINC_645_EXPORT std::ostream& operator<<( std::ostream &stream, const CheckValue &checkValue );
 
 }
-
-/**
- * @brief Specialisation of @p std::formatter for @ref ArincChecksum::CheckValue
- **/
-template<>
-struct std::formatter< ArincChecksum::CheckValue > : std::formatter< std::string_view >
-{
-  /**
-   * @brief ArincChecksum::CheckValue format routine.
-   *
-   * @tparam FmtContext
-   *   Formatting Context
-   * @param[in] checkValue
-   *   ARINC 645 Check Value
-   * @param[in,out] ctx
-   *   Formatting Context
-   *
-   * @return Iterator to end of output.
-   **/
-  template< class FmtContext >
-  FmtContext::iterator format( const ArincChecksum::CheckValue &checkValue, FmtContext &ctx ) const
-  {
-    return std::formatter< string_view >::format( checkValue.format(), ctx );
-  }
-};
 
 #endif

@@ -20,7 +20,7 @@
 #include <boost/exception/all.hpp>
 
 #include <algorithm>
-#include <format>
+#include <arinc_support/Format.hpp>
 #include <utility>
 
 namespace Tftp::Packets {
@@ -29,15 +29,13 @@ std::string_view ReadWriteRequestPacket::decodeMode( const TransferMode mode )
 {
   switch ( mode )
   {
-    using enum TransferMode;
-
-    case OCTET:
+    case TransferMode::OCTET:
       return "OCTET";
 
-    case NETASCII:
+    case TransferMode::NETASCII:
       return "NETASCII";
 
-    case MAIL:
+    case TransferMode::MAIL:
       return "MAIL";
 
     default:
@@ -49,7 +47,7 @@ TransferMode ReadWriteRequestPacket::decodeMode( std::string_view mode )
 {
   std::string upperMode;
 
-  std::ranges::transform( mode, std::back_inserter( upperMode ), toupper );
+  std::transform( mode.begin(), mode.end(), std::back_inserter( upperMode ), toupper );
 
   if ( upperMode == "OCTET" )
   {
@@ -106,7 +104,7 @@ void ReadWriteRequestPacket::options( Options options )
 
 ReadWriteRequestPacket::operator std::string() const
 {
-  return std::format(
+  return ArincSupport::format(
     "{}: FILE: '{}' MODE: '{}' OPT: '{}'",
     Packet::operator std::string(),
     filenameV,
@@ -219,18 +217,18 @@ ArincSupport::RawData ReadWriteRequestPacket::encode() const
 
   // encode filename
   auto rawFilename{ ArincSupport::RawData_asRawData( filenameV  ) };
-  auto filenameEnd{ std::ranges::copy( rawFilename, rawSpan.begin() ).out };
+  auto filenameEnd{ std::copy( rawFilename.begin(), rawFilename.end(), rawSpan.begin() ) };
   *filenameEnd = std::byte{ 0 };
   ++filenameEnd;
 
   // encode transfer mode
   auto rawMode{ ArincSupport::RawData_asRawData( mode ) };
-  auto modeEnd{ std::ranges::copy( rawMode, filenameEnd ).out };
+  auto modeEnd{ std::copy( rawMode.begin(), rawMode.end(), filenameEnd ) };
   *modeEnd = std::byte{ 0 };
   ++modeEnd;
 
   // encode options
-  std::ranges::copy( rawOptions, modeEnd );
+  std::copy( rawOptions.begin(), rawOptions.end(), modeEnd );
 
   return rawPacket;
 }

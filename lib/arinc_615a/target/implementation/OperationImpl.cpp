@@ -191,7 +191,7 @@ void OperationImpl::sendInitFile(
     const auto file{ std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< ArincSupport::RawData >( initFile ) ) };
     assert( file );
 
-    protocolFileLoggerV.transmitProtocolFile( std::format( "{}.INIT", targetIdV ), file->data() );
+    protocolFileLoggerV.transmitProtocolFile( ArincSupport::format( "{}.INIT", targetIdV ), file->data() );
 
     // TFTP server response to read request
     initialisationOperationV = tftpServerV->readOperation();
@@ -200,7 +200,7 @@ void OperationImpl::sendInitFile(
     ( *initialisationOperationV )
       .tftpTimeout( configurationV.tftpConfiguration.tftpTimeout )
       .tftpRetries( configurationV.tftpConfiguration.tftpRetries )
-      .completionHandler( std::bind_front( &OperationImpl::sendInitFileComplete, this ) )
+      .completionHandler( ArincSupport::bindFront( &OperationImpl::sendInitFileComplete, this ) )
       .dataHandler( file )
       .remote( std::move( hostAddress ) )
       .local( configuration().localInterfaceAddress )
@@ -258,11 +258,10 @@ Tftp::Clients::WriteOperationPtr OperationImpl::protocolFileOperation(
 
   switch ( fileType )
   {
-    using enum Arinc615a::Files::ProtocolFileType;
 
-    case LoadConfigurationStatus:
-    case UploadStatus:
-    case DownloadStatus:
+    case Arinc615a::Files::ProtocolFileType::LoadConfigurationStatus:
+    case Arinc615a::Files::ProtocolFileType::UploadStatus:
+    case Arinc615a::Files::ProtocolFileType::DownloadStatus:
       // for status files abort handling is activated
       handleAbort = true;
       break;
@@ -283,7 +282,7 @@ Tftp::Clients::WriteOperationPtr OperationImpl::protocolFileOperation(
     .dlpRetries( configurationV.dlpRetries )
     .handleAbort( handleAbort )
     .operationDeferredHandler( std::move( operationDeferredHandler ) )
-    .optionNegotiationHandler( std::bind_front( &OperationImpl::protocolFileOptionsNegotiation, this, checkValue ) )
+    .optionNegotiationHandler( ArincSupport::bindFront( &OperationImpl::protocolFileOptionsNegotiation, this, checkValue ) )
     .completionHandler( std::move( completionHandler ) )
     .dataHandler( std::move( dataHandler ) )
     .filename( protocolFilename( fileType ) )
@@ -300,7 +299,7 @@ void OperationImpl::triggerStatusTransmission()
   statusTransmissionTimerV.expires_after( std::chrono::seconds::zero() );
 
   // connect time-out operation to timer expiration
-  statusTransmissionTimerV.async_wait( std::bind_front( &OperationImpl::statusTransmissionTimerHandler, this ) );
+  statusTransmissionTimerV.async_wait( ArincSupport::bindFront( &OperationImpl::statusTransmissionTimerHandler, this ) );
 }
 
 void OperationImpl::triggerStatusTransmissionTimer()
@@ -309,7 +308,7 @@ void OperationImpl::triggerStatusTransmissionTimer()
   statusTransmissionTimerV.expires_after( statusTransmissionRateV );
 
   // connect time-out operation to timer expiration
-  statusTransmissionTimerV.async_wait( std::bind_front( &OperationImpl::statusTransmissionTimerHandler, this ) );
+  statusTransmissionTimerV.async_wait( ArincSupport::bindFront( &OperationImpl::statusTransmissionTimerHandler, this ) );
 }
 
 void OperationImpl::finalise( FinalStatus finalStatus, std::string_view description )

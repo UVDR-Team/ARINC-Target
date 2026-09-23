@@ -17,7 +17,7 @@
 #include <mutex>
 #include <algorithm>
 #include <ostream>
-#include <format>
+#include <arinc_support/Format.hpp>
 
 namespace Tftp::Packets {
 
@@ -38,7 +38,7 @@ PacketStatistic::Value PacketStatistic::total( const Statistic &statistic )
   Value total{ 0, 0};
 
   // accumulate all values
-  std::ranges::for_each( statistic, [ &total ]( auto value ){
+  std::for_each( statistic.begin(), statistic.end(), [ &total ]( auto value ){
     std::get< 0 >( total ) += std::get< 0 >( value.second );
     std::get< 1 >( total ) += std::get< 1 >( value.second );
   } );
@@ -75,7 +75,7 @@ std::string PacketStatistic::toString() const
 
   for ( const auto &[ packetType, statistic ] : statistic() )
   {
-    str += std::format(
+    str += ArincSupport::format(
       "{:22}: Count: {} Total Size: {}\n",
       PacketTypeDescription::instance().name( packetType),
       std::get< 0 >( statistic ),
@@ -85,7 +85,7 @@ std::string PacketStatistic::toString() const
     size += std::get< 1 >( statistic );
   }
 
-  str += std::format( "{:22}: Count: {} Total Size: {}\n", "Total", count, size );
+  str += ArincSupport::format( "{:22}: Count: {} Total Size: {}\n", "Total", count, size );
 
   return str;
 }

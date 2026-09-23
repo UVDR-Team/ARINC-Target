@@ -19,8 +19,8 @@ inline char const *DescriptionNotFoundException::what() const noexcept
 
 template<
   typename SingletonT,
-  Enumeration EnumT,
-  Value ValueT,DerivedFromDescriptionEntry< EnumT, ValueT > DescEntryT >
+  typename EnumT,
+  typename ValueT,typename DescEntryT >
 const SingletonT& Description< SingletonT, EnumT, ValueT, DescEntryT >::instance()
 {
   static SingletonT instance;
@@ -29,9 +29,9 @@ const SingletonT& Description< SingletonT, EnumT, ValueT, DescEntryT >::instance
 
 template<
   typename SingletonT,
-  Enumeration EnumT,
-  Value ValueT,
-  DerivedFromDescriptionEntry< EnumT, ValueT > DescEntryT >
+  typename EnumT,
+  typename ValueT,
+  typename DescEntryT >
 typename Description< SingletonT, EnumT, ValueT, DescEntryT >::Iterator
 Description< SingletonT, EnumT, ValueT, DescEntryT >::begin() const
 {
@@ -40,9 +40,9 @@ Description< SingletonT, EnumT, ValueT, DescEntryT >::begin() const
 
 template<
   typename SingletonT,
-  Enumeration EnumT,
-  Value ValueT,
-  DerivedFromDescriptionEntry< EnumT, ValueT > DescEntryT >
+  typename EnumT,
+  typename ValueT,
+  typename DescEntryT >
 typename Description< SingletonT, EnumT, ValueT, DescEntryT >::Iterator
 Description< SingletonT, EnumT, ValueT, DescEntryT >::end() const
 {
@@ -51,9 +51,9 @@ Description< SingletonT, EnumT, ValueT, DescEntryT >::end() const
 
 template<
   typename SingletonT,
-  Enumeration EnumT,
-  Value ValueT,
-  DerivedFromDescriptionEntry< EnumT, ValueT > DescEntryT >
+  typename EnumT,
+  typename ValueT,
+  typename DescEntryT >
 const typename Description< SingletonT, EnumT, ValueT, DescEntryT >::DescriptionIndex&
 Description< SingletonT, EnumT, ValueT, DescEntryT >::descriptions() const
 {
@@ -62,9 +62,9 @@ Description< SingletonT, EnumT, ValueT, DescEntryT >::descriptions() const
 
 template<
   typename SingletonT,
-  Enumeration EnumT,
-  Value ValueT,
-  DerivedFromDescriptionEntry< EnumT, ValueT > DescEntryT >
+  typename EnumT,
+  typename ValueT,
+  typename DescEntryT >
 const DescEntryT& Description< SingletonT, EnumT, ValueT, DescEntryT >::description( const Enum enumeration ) const
 {
   auto &enumerationIndex{ descriptionV.template get< ByEnum >() };
@@ -81,9 +81,9 @@ const DescEntryT& Description< SingletonT, EnumT, ValueT, DescEntryT >::descript
 
 template<
   typename SingletonT,
-  Enumeration EnumT,
-  Value ValueT,
-  DerivedFromDescriptionEntry< EnumT, ValueT > DescEntryT >
+  typename EnumT,
+  typename ValueT,
+  typename DescEntryT >
 const DescEntryT&
 Description< SingletonT, EnumT, ValueT, DescEntryT >::description( const Value value ) const
 {
@@ -101,9 +101,9 @@ Description< SingletonT, EnumT, ValueT, DescEntryT >::description( const Value v
 
 template<
   typename SingletonT,
-  Enumeration EnumT,
-  Value ValueT,
-  DerivedFromDescriptionEntry< EnumT, ValueT > DescEntryT >
+  typename EnumT,
+  typename ValueT,
+  typename DescEntryT >
 const DescEntryT&
 Description< SingletonT, EnumT, ValueT, DescEntryT >::description( std::string_view name ) const
 {
@@ -121,9 +121,9 @@ Description< SingletonT, EnumT, ValueT, DescEntryT >::description( std::string_v
 
 template<
   typename SingletonT,
-  Enumeration EnumT,
-  Value ValueT,
-  DerivedFromDescriptionEntry< EnumT, ValueT > DescEntryT >
+  typename EnumT,
+  typename ValueT,
+  typename DescEntryT >
 std::optional< typename Description<
   SingletonT,
   EnumT,
@@ -146,9 +146,9 @@ Description< SingletonT, EnumT, ValueT, DescEntryT >::value(
 
 template<
   typename SingletonT,
-  Enumeration EnumT,
-  Value ValueT,
-  DerivedFromDescriptionEntry< EnumT, ValueT > DescEntryT >
+  typename EnumT,
+  typename ValueT,
+  typename DescEntryT >
 std::optional< typename Description< SingletonT, EnumT, ValueT, DescEntryT >::Value >
 Description< SingletonT, EnumT, ValueT, DescEntryT >::value( std::string_view name ) const
 {
@@ -166,9 +166,9 @@ Description< SingletonT, EnumT, ValueT, DescEntryT >::value( std::string_view na
 
 template<
   typename SingletonT,
-  Enumeration EnumT,
-  Value ValueT,
-  DerivedFromDescriptionEntry< EnumT, ValueT > DescEntryT >
+  typename EnumT,
+  typename ValueT,
+  typename DescEntryT >
 std::optional< typename Description< SingletonT, EnumT, ValueT, DescEntryT >::Enum >
 Description< SingletonT, EnumT, ValueT, DescEntryT >::enumeration( const Value value ) const
 {
@@ -186,9 +186,9 @@ Description< SingletonT, EnumT, ValueT, DescEntryT >::enumeration( const Value v
 
 template<
   typename SingletonT,
-  Enumeration EnumT,
-  Value ValueT,
-  DerivedFromDescriptionEntry< EnumT, ValueT > DescEntryT >
+  typename EnumT,
+  typename ValueT,
+  typename DescEntryT >
 std::optional< typename Description< SingletonT, EnumT, ValueT, DescEntryT >::Enum >
 Description< SingletonT, EnumT, ValueT, DescEntryT >::enumeration( std::string_view name ) const
 {
@@ -206,9 +206,9 @@ Description< SingletonT, EnumT, ValueT, DescEntryT >::enumeration( std::string_v
 
 template<
   typename SingletonT,
-  Enumeration EnumT,
-  Value ValueT,
-  DerivedFromDescriptionEntry< EnumT, ValueT > DescEntryT >
+  typename EnumT,
+  typename ValueT,
+  typename DescEntryT >
 std::string_view Description< SingletonT, EnumT, ValueT, DescEntryT >::name( const Value value ) const
 {
   auto &valueIndex{ descriptionV.template get<ByValue>() };
@@ -225,9 +225,9 @@ std::string_view Description< SingletonT, EnumT, ValueT, DescEntryT >::name( con
 
 template<
   typename SingletonT,
-  Enumeration EnumT,
-  Value ValueT,
-  DerivedFromDescriptionEntry< EnumT, ValueT > DescEntryT >
+  typename EnumT,
+  typename ValueT,
+  typename DescEntryT >
 std::string_view Description< SingletonT, EnumT, ValueT, DescEntryT >::name( const Enum enumeration ) const
 {
   auto &enumerationIndex{ descriptionV.template get< ByEnum >() };
@@ -244,9 +244,9 @@ std::string_view Description< SingletonT, EnumT, ValueT, DescEntryT >::name( con
 
 template<
   typename SingletonT,
-  Enumeration EnumT,
-  Value ValueT,
-  DerivedFromDescriptionEntry< EnumT, ValueT > DescEntryT >
+  typename EnumT,
+  typename ValueT,
+  typename DescEntryT >
 Description< SingletonT, EnumT, ValueT, DescEntryT >::Description( std::initializer_list< DescEntryT > descriptions ) :
   descriptionV{ std::move( descriptions ) }
 {

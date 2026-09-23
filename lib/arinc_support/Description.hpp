@@ -35,7 +35,6 @@
 
 #include <boost/exception/exception.hpp>
 
-#include <concepts>
 #include <exception>
 #include <optional>
 #include <string>
@@ -69,7 +68,7 @@ class DescriptionNotFoundException : public std::exception, public boost::except
  *   Value Type
  **/
 template< typename DescT, typename EnumT, typename ValueT >
-concept DerivedFromDescriptionEntry = std::is_base_of_v< DescriptionEntry< EnumT, ValueT >, DescT >;
+constexpr bool DerivedFromDescriptionEntry = std::is_base_of< DescriptionEntry< EnumT, ValueT >, DescT >::value;
 
 /**
  * @brief Template class to give a description to an enumeration
@@ -88,11 +87,15 @@ concept DerivedFromDescriptionEntry = std::is_base_of_v< DescriptionEntry< EnumT
  **/
 template<
   typename SingletonT,
-  Enumeration EnumT,
-  Value ValueT = typename std::underlying_type_t< EnumT >,
-  DerivedFromDescriptionEntry< EnumT, ValueT > DescEntryT = DescriptionEntry< EnumT, ValueT > >
+  typename EnumT,
+  typename ValueT = typename std::underlying_type< EnumT >::type,
+  typename DescEntryT = DescriptionEntry< EnumT, ValueT > >
 class Description
 {
+  static_assert( Enumeration< EnumT >, "Description requires an enumeration" );
+  static_assert( Value< ValueT >, "Description value must be integral or an enumeration" );
+  static_assert( DerivedFromDescriptionEntry< DescEntryT, EnumT, ValueT >,
+    "Description entry must derive from DescriptionEntry" );
   public:
     //! Enumeration Type
     using Enum = EnumT;

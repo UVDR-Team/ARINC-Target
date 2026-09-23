@@ -17,7 +17,8 @@
 #include <arinc_support/Logging.hpp>
 
 #include <chrono>
-#include <format>
+#include <cstdio>
+#include <ctime>
 #include <fstream>
 
 namespace Arinc615a::Files {
@@ -66,11 +67,23 @@ void ProtocolFileLogger::logProtocolFile(
   std::string_view filename,
   ArincSupport::ConstRawDataSpan file )
 {
+  const auto now{ std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() ) };
+  std::tm localTime{};
+#if defined(_WIN32)
+  localtime_s( &localTime, &now );
+#else
+  localtime_r( &now, &localTime );
+#endif
+  char timestamp[ 40 ]{};
+  if ( 0U == std::strftime( timestamp, sizeof( timestamp ), "%Y-%m-%dT%H-%M-%S%z", &localTime ) )
+  {
+    std::snprintf( timestamp, sizeof( timestamp ), "%lld", static_cast< long long >( now ) );
+  }
   auto protocolFileLoggingFilename{
     loggingDirectoryV
-    / std::format(
-      "{:%FT%H-%M-%S%z}_{}_{}_{}",
-      std::chrono::system_clock::now(),
+    / ArincSupport::format(
+      "{}_{}_{}_{}",
+      timestamp,
       OperationTypeDescription::instance().name( operationV ),
       prefix,
       filename ) };

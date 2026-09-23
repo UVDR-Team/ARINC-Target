@@ -247,7 +247,7 @@ void OperationImpl::handleCompletion( const ::Tftp::TransferStatus status )
 
         // Wait the requested time and Retry without decrementing retry counter
         waitTimerV.expires_after( waitTime.value() );
-        waitTimerV.async_wait( std::bind_front( &OperationImpl::handleWaitTimeout, this ) );
+        waitTimerV.async_wait( ArincSupport::bindFront( &OperationImpl::handleWaitTimeout, this ) );
 
         if ( operationDeferredHandlerV )
         {

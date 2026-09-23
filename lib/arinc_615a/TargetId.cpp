@@ -85,7 +85,7 @@ void TargetId::position( std::string position )
 
 std::string TargetId::toString() const
 {
-  return std::format( "{}_{}", thwIdV, positionV );
+  return ArincSupport::format( "{}_{}", thwIdV, positionV );
 }
 
 TargetId::operator std::string() const
@@ -127,7 +127,7 @@ bool TargetId::isCompliant( const std::string_view stringToCheck, const size_t m
   const std::function< bool( std::string::value_type ) > compareFunction{
     std::bind( &std::isalnum< std::string::value_type >, std::placeholders::_1, std::locale::classic() ) };
 
-  return std::ranges::all_of( stringToCheck, compareFunction );
+  return std::all_of( stringToCheck.begin(), stringToCheck.end(), compareFunction );
 }
 
 std::ostream& operator<<( std::ostream &stream, const TargetId &targetId )

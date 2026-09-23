@@ -42,7 +42,7 @@
 
 #include <boost/exception/diagnostic_information.hpp>
 
-#include <format>
+#include <arinc_support/Format.hpp>
 #include <fstream>
 
 namespace Arinc615aTha {
@@ -95,8 +95,8 @@ void TargetMediaDefinedDownloadOperation::initialise(
 
   try
   {
-    std::ranges::for_each(
-      configurationV.directories,
+    std::for_each(
+      configurationV.directories.begin(), configurationV.directories.end(),
       []( auto &directory )
       {
         std::error_code errorCode{};
@@ -219,7 +219,7 @@ void TargetMediaDefinedDownloadOperation::downloadingRequest(
 
   operationV->inProgress( false );
 
-  boost::asio::post( ioContext(), std::bind_front( &TargetMediaDefinedDownloadOperation::sendFile, this ) );
+  boost::asio::post( ioContext(), ArincSupport::bindFront( &TargetMediaDefinedDownloadOperation::sendFile, this ) );
 }
 
 void TargetMediaDefinedDownloadOperation::sendFile()
@@ -258,8 +258,8 @@ void TargetMediaDefinedDownloadOperation::sendFile()
       : ArincChecksum::CheckValueGenerator::checkValue( configurationV.checksumOption, fileInfo->second ) };
 
   fileOperationV = operationV->transferFile(
-    std::bind_front( &TargetMediaDefinedDownloadOperation::fileOptionsNegotiation, this, partNumber, checkValue ),
-    std::bind_front( &TargetMediaDefinedDownloadOperation::fileCompleted, this ),
+    ArincSupport::bindFront( &TargetMediaDefinedDownloadOperation::fileOptionsNegotiation, this, partNumber, checkValue ),
+    ArincSupport::bindFront( &TargetMediaDefinedDownloadOperation::fileCompleted, this ),
     fileStream,
     *currentFileV,
     partNumber,
@@ -372,7 +372,7 @@ void TargetMediaDefinedDownloadOperation::fileCompleted( const Arinc615a::Tftp::
   }
 
   // send the next file
-  boost::asio::post( ioContext(), std::bind_front( &TargetMediaDefinedDownloadOperation::sendFile, this ) );
+  boost::asio::post( ioContext(), ArincSupport::bindFront( &TargetMediaDefinedDownloadOperation::sendFile, this ) );
 }
 
 }

@@ -18,7 +18,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <arinc_support/Format.hpp>
 #include <utility>
 
 namespace Tftp::Packets {
@@ -80,7 +80,7 @@ size_t DataPacket::dataSize() const
 
 DataPacket::operator std::string() const
 {
-  return std::format( "DATA: Block No: {} DATA: {} bytes", static_cast< uint16_t >( blockNumber() ), dataSize() );
+  return ArincSupport::format( "DATA: Block No: {} DATA: {} bytes", static_cast< uint16_t >( blockNumber() ), dataSize() );
 }
 
 ArincSupport::RawData DataPacket::encode() const
@@ -96,7 +96,7 @@ ArincSupport::RawData DataPacket::encode() const
   assert( rawSpan.size() == dataV.size() );
 
   // data
-  std::ranges::copy( dataV, rawSpan.begin() );
+  std::copy( dataV.begin(), dataV.end(), rawSpan.begin() );
 
   return rawPacket;
 }

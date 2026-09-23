@@ -92,7 +92,8 @@ bool LoadListFile::belongsToSameMediaSet( const LoadListFile &other ) const
 {
   return ( mediaSetPn() == other.mediaSetPn() )
     && ( numberOfMediaSetMembers() == other.numberOfMediaSetMembers() )
-    && std::ranges::equal( userDefinedDataV, other.userDefinedData() )
+    && std::equal( userDefinedDataV.begin(), userDefinedDataV.end(),
+      other.userDefinedData().begin(), other.userDefinedData().end() )
     && ( loadsV == other.loads() );
 }
 

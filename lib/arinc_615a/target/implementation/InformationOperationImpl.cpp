@@ -120,13 +120,13 @@ void InformationOperationImpl::targetInformation(
 
   const auto checkValueGenerator{ ArincChecksum::CheckValueGenerator::create( checkValueType ) };
 
-  checkValueGenerator->process( std::as_bytes( rawFile->data() ) );
+  checkValueGenerator->process( ArincSupport::RawData_asRawData( rawFile->data() ) );
 
   // send the protocol file
   targetInformationOperation = protocolFileOperation(
     Files::ProtocolFileType::LoadConfigurationList,
     {}, // Operation deferred is ignored
-    std::bind_front( &InformationOperationImpl::targetInformationCompleted, this ),
+    ArincSupport::bindFront( &InformationOperationImpl::targetInformationCompleted, this ),
     std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< ArincSupport::RawData >( configList ) ),
     checkValueGenerator->checkValue() );
   assert( targetInformationOperation );
@@ -197,7 +197,7 @@ void InformationOperationImpl::statusFile()
   statusOperation = protocolFileOperation(
     Files::ProtocolFileType::LoadConfigurationStatus,
     {}, // Operation deferred is ignored
-    std::bind_front( &InformationOperationImpl::statusFileCompleted, this, statusV ),
+    ArincSupport::bindFront( &InformationOperationImpl::statusFileCompleted, this, statusV ),
     file );
   assert( statusOperation );
 
@@ -219,18 +219,9 @@ void InformationOperationImpl::statusFileCompleted(
 
   switch ( transferStatus )
   {
-    using enum Tftp::TransferStatus;
 
-    case Successful:
+    case Tftp::TransferStatus::Successful:
       break;
-
-    case OperationAbortedByDlp:
-      handler.abortRequest( AbortRequest::AbortByDlp );
-      return;
-
-    case OperationAbortedByOperator:
-      handler.abortRequest( AbortRequest::AbortByOperator );
-      return;
 
     default:
       ARINC_LOG_ERROR( "Sending of status failed" );
@@ -257,18 +248,17 @@ void InformationOperationImpl::statusFileCompleted(
 
   switch ( sentStatus.code() )
   {
-    using enum StatusCode;
 
     // First transmission of status -> set to in progress
-    case OperationAccepted:
+    case StatusCode::OperationAccepted:
       ARINC_LOG_INFO( "Force sending of in progress status" );
 
       // set in progress status and immediate transmit
       inProgress( true );
       break;
 
-    case OperationInProgress:
-    case OperationInProgressAdditionalInfo:
+    case StatusCode::OperationInProgress:
+    case StatusCode::OperationInProgressAdditionalInfo:
       triggerStatusTransmissionTimer();
       break;
 

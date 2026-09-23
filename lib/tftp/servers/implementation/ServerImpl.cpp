@@ -255,7 +255,7 @@ void ServerImpl::receive()
     socketV.async_receive_from(
       boost::asio::buffer( receivePacketV ),
       remoteEndpointV,
-      std::bind_front( &ServerImpl::receiveHandler, this ) );
+      ArincSupport::bindFront( &ServerImpl::receiveHandler, this ) );
   }
   catch ( const boost::system::system_error &err )
   {
@@ -284,7 +284,7 @@ void ServerImpl::receiveHandler( const boost::system::error_code &errorCode, con
   try
   {
     // handle the received packet (decode it and call the appropriate handler)
-    packet( remoteEndpointV, ArincSupport::ConstRawDataSpan{ receivePacketV.begin(), bytesTransferred } );
+    packet( remoteEndpointV, ArincSupport::ConstRawDataSpan{ receivePacketV.data(), bytesTransferred } );
   }
   catch ( const TftpException &e )
   {

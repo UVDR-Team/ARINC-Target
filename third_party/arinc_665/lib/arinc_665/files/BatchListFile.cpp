@@ -90,7 +90,8 @@ bool BatchListFile::belongsToSameMediaSet( const BatchListFile &other ) const
 {
   return ( mediaSetPn() == other.mediaSetPn() )
     && ( numberOfMediaSetMembers() == other.numberOfMediaSetMembers() )
-    && std::ranges::equal( userDefinedDataV, other.userDefinedData() )
+    && std::equal( userDefinedDataV.begin(), userDefinedDataV.end(),
+      other.userDefinedData().begin(), other.userDefinedData().end() )
     && ( batchesV == other.batches() );
 }
 

@@ -15,13 +15,15 @@
 
 namespace Tftp::Packets {
 
-template< std::unsigned_integral IntT >
+template< typename IntT >
 std::pair< bool, std::optional< IntT > > Options_getOption(
   Options &options,
   std::string_view name,
   const IntT min,
   const IntT max )
 {
+  static_assert( std::is_integral< IntT >::value && std::is_unsigned< IntT >::value,
+    "Options_getOption requires an unsigned integral type" );
   // TODO remove std::string generation if P2077R3 is implemented within stdlibc++ (GCC)
   const auto option{ options.extract( std::string{ name } ) };
 

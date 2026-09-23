@@ -9,6 +9,12 @@ file(GLOB file_tests CONFIGURE_DEPENDS
   "${ARINC665_SOURCE_DIR}/lib/arinc_665/files/test/*Test.cpp")
 add_executable(arinc_regression_tests tests/TestMain.cpp ${regression_sources} ${file_tests}
   lib/arinc_checksum/test/Arinc645TestData.cpp tests/RuntimeTest.cpp tests/HashVectorsTest.cpp tests/CInterfaceSmoke.c)
+# The imported upstream test sources use C++20-only test conveniences such as
+# std::to_array and std::ranges. Production libraries above remain C++17 and
+# are already compiled before this host-only harness.
+target_compile_features(arinc_regression_tests PRIVATE cxx_std_20)
+target_precompile_headers(arinc_regression_tests PRIVATE
+  "${CMAKE_SOURCE_DIR}/tests/compat/StandardLibrary.hpp")
 target_include_directories(arinc_regression_tests PRIVATE "${CMAKE_SOURCE_DIR}/tests/compat")
 target_link_libraries(arinc_regression_tests PRIVATE arinc_615a_tha_target)
 add_test(NAME arinc_regression COMMAND arinc_regression_tests --report_level=short)

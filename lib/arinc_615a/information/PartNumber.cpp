@@ -14,7 +14,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-#include <ranges>
 
 namespace Arinc615a::Information {
 
@@ -22,9 +21,9 @@ PartNumbers PartNumber::partNumbers( const boost::property_tree::ptree &properti
 {
   PartNumbers partNumbers;
 
-  for ( const auto &partNumber : properties | std::views::values )
+  for ( const auto &entry : properties )
   {
-    partNumbers.emplace_back( partNumber );
+    partNumbers.emplace_back( entry.second );
   }
 
   return partNumbers;

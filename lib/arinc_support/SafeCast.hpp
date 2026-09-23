@@ -17,8 +17,8 @@
 
 #include <arinc_support/Support.hpp>
 
-#include <concepts>
 #include <limits>
+#include <type_traits>
 
 namespace ArincSupport {
 
@@ -45,8 +45,7 @@ namespace ArincSupport {
  * @throws std::range_error
  *   When the parameter @p source does not fit into type @p TargetT.
  **/
-template< std::integral TargetT, std::integral SourceT >
-requires std::is_convertible_v< SourceT, TargetT >
+template< typename TargetT, typename SourceT >
 [[nodiscard]] constexpr TargetT safeCast( SourceT source );
 
 /**
@@ -67,10 +66,10 @@ requires std::is_convertible_v< SourceT, TargetT >
  * @return if the parameter @p source is of type @p TargetT and in range @p [min,max]
  **/
 template<
-  std::integral TargetT,
+  typename TargetT,
   TargetT min = std::numeric_limits< TargetT >::min(),
   TargetT max = std::numeric_limits< TargetT >::max(),
-  std::integral SourceT >
+  typename SourceT >
 [[nodiscard]] constexpr bool inRange( SourceT source ) noexcept;
 
 /** @} **/

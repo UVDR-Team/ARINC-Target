@@ -27,7 +27,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <arinc_support/Format.hpp>
 
 namespace Arinc615a::Find::Clients {
 
@@ -104,7 +104,7 @@ void QueryImpl::start()
     timerV.expires_after( timeoutV );
 
     // connect time-out operation to timer expiration
-    timerV.async_wait( std::bind_front( &QueryImpl::timerHandler, this ) );
+    timerV.async_wait( ArincSupport::bindFront( &QueryImpl::timerHandler, this ) );
   }
   catch ( const boost::system::system_error &err )
   {
@@ -164,7 +164,7 @@ void QueryImpl::receive()
   socketV.async_receive_from(
     boost::asio::buffer( rawReceivePacketV ),
     receiveRemoteEndpointV,
-    std::bind_front( &QueryImpl::receiveHandler, this ) );
+    ArincSupport::bindFront( &QueryImpl::receiveHandler, this ) );
 }
 
 void QueryImpl::timerHandler( const boost::system::error_code &error )

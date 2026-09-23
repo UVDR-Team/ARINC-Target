@@ -199,13 +199,13 @@ void OperationImpl::receiveFirst()
     socketV.async_receive_from(
       boost::asio::buffer( receivePacketV ),
       receiveEndpointV,
-      std::bind_front( &OperationImpl::receiveFirstHandler, this ) );
+      ArincSupport::bindFront( &OperationImpl::receiveFirstHandler, this ) );
 
     // Set receive timeout
     timerV.expires_after( receiveTimeoutV );
 
     // start waiting for receive timeout
-    timerV.async_wait( std::bind_front( &OperationImpl::timeoutFirstHandler, this ) );
+    timerV.async_wait( ArincSupport::bindFront( &OperationImpl::timeoutFirstHandler, this ) );
   }
   catch ( const boost::system::system_error &err )
   {
@@ -222,13 +222,13 @@ void OperationImpl::receive()
     // start the receive operation
     socketV.async_receive(
       boost::asio::buffer( receivePacketV ),
-      std::bind_front( &OperationImpl::receiveHandler, this ) );
+      ArincSupport::bindFront( &OperationImpl::receiveHandler, this ) );
 
     // set receive timeout
     timerV.expires_after( receiveTimeoutV );
 
     // start waiting for receive timeout
-    timerV.async_wait( std::bind_front( &OperationImpl::timeoutHandler, this ) );
+    timerV.async_wait( ArincSupport::bindFront( &OperationImpl::timeoutHandler, this ) );
   }
   catch ( const boost::system::system_error &err )
   {
@@ -245,13 +245,13 @@ void OperationImpl::receiveDally()
     // start the receive operation
     socketV.async_receive(
       boost::asio::buffer( receivePacketV ),
-      std::bind_front( &OperationImpl::receiveHandler, this ) );
+      ArincSupport::bindFront( &OperationImpl::receiveHandler, this ) );
 
     // set receive timeout
     timerV.expires_after( 2U * receiveTimeoutV );
 
     // start waiting for receive timeout
-    timerV.async_wait( std::bind_front( &OperationImpl::timeoutDallyHandler, this ) );
+    timerV.async_wait( ArincSupport::bindFront( &OperationImpl::timeoutDallyHandler, this ) );
   }
   catch ( const boost::system::system_error &err )
   {
@@ -404,7 +404,7 @@ void OperationImpl::receiveFirstHandler(
       socketV.async_receive_from(
         boost::asio::buffer( receivePacketV ),
         receiveEndpointV,
-        std::bind_front( &OperationImpl::receiveFirstHandler, this ) );
+        ArincSupport::bindFront( &OperationImpl::receiveFirstHandler, this ) );
 
       return;
     }
@@ -430,7 +430,7 @@ void OperationImpl::receiveFirstHandler(
     return;
   }
 
-  packet( receiveEndpointV, ArincSupport::ConstRawDataSpan{ receivePacketV.begin(), bytesTransferred } );
+  packet( receiveEndpointV, ArincSupport::ConstRawDataSpan{ receivePacketV.data(), bytesTransferred } );
 }
 
 void OperationImpl::receiveHandler( const boost::system::error_code &errorCode, const std::size_t bytesTransferred )
@@ -452,7 +452,7 @@ void OperationImpl::receiveHandler( const boost::system::error_code &errorCode, 
   }
 
   // handle the received packet
-  packet( receiveEndpointV, ArincSupport::ConstRawDataSpan{ receivePacketV.begin(), bytesTransferred } );
+  packet( receiveEndpointV, ArincSupport::ConstRawDataSpan{ receivePacketV.data(), bytesTransferred } );
 }
 
 void OperationImpl::timeoutFirstHandler( const boost::system::error_code &errorCode )
@@ -500,7 +500,7 @@ void OperationImpl::timeoutFirstHandler( const boost::system::error_code &errorC
 
     timerV.expires_after( receiveTimeoutV );
 
-    timerV.async_wait( std::bind_front( &OperationImpl::timeoutFirstHandler, this ) );
+    timerV.async_wait( ArincSupport::bindFront( &OperationImpl::timeoutFirstHandler, this ) );
   }
   catch ( const boost::system::system_error &err )
   {
@@ -553,7 +553,7 @@ void OperationImpl::timeoutHandler( const boost::system::error_code& errorCode )
 
     timerV.expires_after( receiveTimeoutV );
 
-    timerV.async_wait( std::bind_front( &OperationImpl::timeoutHandler, this ) );
+    timerV.async_wait( ArincSupport::bindFront( &OperationImpl::timeoutHandler, this ) );
   }
   catch ( const boost::system::system_error &err )
   {

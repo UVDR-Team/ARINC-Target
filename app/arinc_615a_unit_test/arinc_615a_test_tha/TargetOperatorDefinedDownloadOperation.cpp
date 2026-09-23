@@ -184,7 +184,7 @@ void TargetOperatorDefinedDownloadOperation::status( const Arinc615a::Informatio
 
   if ( !fileListSent )
   {
-    boost::asio::post( ioContext(), std::bind_front( &TargetOperatorDefinedDownloadOperation::sendLoadList, this ) );
+    boost::asio::post( ioContext(), ArincSupport::bindFront( &TargetOperatorDefinedDownloadOperation::sendLoadList, this ) );
     fileListSent = true;
   }
 }
@@ -210,7 +210,7 @@ void TargetOperatorDefinedDownloadOperation::downloadingAnswer( const Arinc615a:
 
   operationV->inProgress( false );
 
-  boost::asio::post( ioContext(), std::bind_front( &TargetOperatorDefinedDownloadOperation::sendFile, this ) );
+  boost::asio::post( ioContext(), ArincSupport::bindFront( &TargetOperatorDefinedDownloadOperation::sendFile, this ) );
 }
 
 void TargetOperatorDefinedDownloadOperation::sendLoadList()
@@ -271,8 +271,8 @@ void TargetOperatorDefinedDownloadOperation::sendFile()
       : ArincChecksum::CheckValueGenerator::checkValue( configurationV.checksumOption, fileInfo->second ) };
 
   fileOperationV = operationV->transferFile(
-    std::bind_front( &TargetOperatorDefinedDownloadOperation::fileOptionsNegotiation, this, partNumber, checkValue ),
-    std::bind_front( &TargetOperatorDefinedDownloadOperation::fileCompleted, this ),
+    ArincSupport::bindFront( &TargetOperatorDefinedDownloadOperation::fileOptionsNegotiation, this, partNumber, checkValue ),
+    ArincSupport::bindFront( &TargetOperatorDefinedDownloadOperation::fileCompleted, this ),
     fileStream,
     *currentFileV,
     partNumber,
@@ -385,7 +385,7 @@ void TargetOperatorDefinedDownloadOperation::fileCompleted( const Arinc615a::Tft
   }
 
   // send the next file
-  boost::asio::post( ioContext(), std::bind_front( &TargetOperatorDefinedDownloadOperation::sendFile, this ) );
+  boost::asio::post( ioContext(), ArincSupport::bindFront( &TargetOperatorDefinedDownloadOperation::sendFile, this ) );
 }
 
 }

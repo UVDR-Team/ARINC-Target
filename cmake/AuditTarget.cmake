@@ -46,6 +46,12 @@ foreach(index RANGE 0 ${compile_last})
   if(command MATCHES "-DARINC_ENABLE_COMMAND_LINE=1")
     message(FATAL_ERROR "Desktop command-line mode leaked into: ${source_file}")
   endif()
+  if(NOT command MATCHES "(^|[ ;])-std=c\\+\\+17([ ;]|$)")
+    message(FATAL_ERROR "Target source was not compiled as C++17: ${source_file}")
+  endif()
+  if(command MATCHES "-std=c\\+\\+20")
+    message(FATAL_ERROR "C++20 leaked into the VxWorks target graph: ${source_file}")
+  endif()
 
   if(source_lower MATCHES
       "/(helper|arinc[-_]649|arinc_615a_qt|arinc_615a_dla_qt|qt_icon_resources|commands)/")
@@ -133,7 +139,8 @@ file(WRITE "${BUILD_DIR}/DEPENDENCY_AUDIT.txt"
   "\n"
   "Boost 1.88+ headers remain an intentional SDK/header dependency.\n"
   "ARINC 665, TFTP, local support headers, and checksum sources are intentional.\n"
-  "A matching VxWorks 26.03 SDK/BSP build and on-target test are still required.\n")
+  "Production translation units were compiled as C++17.\n"
+  "A matching VxWorks 24.03 SDK/VSB/BSP build and on-target test are still required.\n")
 
 message(STATUS
   "ARINC target dependency audit passed; report: ${BUILD_DIR}/DEPENDENCY_AUDIT.txt")

@@ -24,7 +24,7 @@
 #include <cstddef>
 #include <map>
 #include <optional>
-#include <span>
+#include <arinc_support/RawData.hpp>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -147,8 +147,8 @@ constexpr uint8_t TimeoutOptionMax{ 255U };
 
 //! Raw Options.
 using RawOptions = std::vector< std::byte >;
-//! Constant Raw TFTP Options as @p std::span.
-using ConstRawOptionsSpan = std::span< const std::byte >;
+//! Constant Raw TFTP Options as @p boost::span.
+using ConstRawOptionsSpan = ArincSupport::ConstRawDataSpan;
 //! TFTP Options (Maps Option Name to Option Value)
 using Options = std::map< std::string, std::string, std::less< > >;
 

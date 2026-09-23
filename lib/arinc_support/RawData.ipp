@@ -22,9 +22,10 @@
 
 namespace ArincSupport {
 
-template< std::integral IntT, boost::endian::order RawOrder >
+template< typename IntT, boost::endian::order RawOrder >
 [[nodiscard]] constexpr std::tuple< ConstRawDataSpan, IntT > RawData_getInt( ConstRawDataSpan raw )
 {
+  static_assert( std::is_integral< IntT >::value, "RawData_getInt requires an integral type" );
   // Check minimum size
   if ( raw.size() < sizeof( IntT ) )
   {
@@ -39,11 +40,12 @@ template< std::integral IntT, boost::endian::order RawOrder >
   return { raw.subspan( sizeof( IntT ) ), value };
 }
 
-template< std::integral IntT >
+template< typename IntT >
 [[nodiscard]] constexpr std::tuple< ConstRawDataSpan, IntT > RawData_getInt(
   ConstRawDataSpan raw,
   const boost::endian::order rawOrder )
 {
+  static_assert( std::is_integral< IntT >::value, "RawData_getInt requires an integral type" );
   // Check minimum size
   if ( raw.size() < sizeof( IntT ) )
   {
@@ -60,9 +62,10 @@ template< std::integral IntT >
   return { raw.subspan( sizeof( IntT ) ), value };
 }
 
-template< std::integral IntT, boost::endian::order RawOrder >
+template< typename IntT, boost::endian::order RawOrder >
 constexpr RawDataSpan RawData_setInt( RawDataSpan raw, const IntT value )
 {
+  static_assert( std::is_integral< IntT >::value, "RawData_setInt requires an integral type" );
   // Check minimum size
   if ( raw.size() < sizeof( IntT ) )
   {
@@ -76,9 +79,10 @@ constexpr RawDataSpan RawData_setInt( RawDataSpan raw, const IntT value )
   return raw.subspan( sizeof( IntT ) );
 }
 
-template< std::integral IntT >
+template< typename IntT >
 constexpr RawDataSpan RawData_setInt( RawDataSpan raw, IntT value, const boost::endian::order rawOrder )
 {
+  static_assert( std::is_integral< IntT >::value, "RawData_setInt requires an integral type" );
   // Check minimum size
   if ( raw.size() < sizeof( IntT ) )
   {
@@ -93,20 +97,22 @@ constexpr RawDataSpan RawData_setInt( RawDataSpan raw, IntT value, const boost::
   return raw.subspan( sizeof( IntT ) );
 }
 
-template< std::integral IntT, boost::endian::order RawOrder >
+template< typename IntT, boost::endian::order RawOrder >
 [[nodiscard]] constexpr std::array< std::byte, sizeof( IntT ) > RawData_toRaw( const IntT value )
 {
+  static_assert( std::is_integral< IntT >::value, "RawData_toRaw requires an integral type" );
   std::array< std::byte, sizeof( IntT ) > result;
   [[maybe_unused]] auto remaining{ RawData_setInt< IntT, RawOrder >( result, value ) };
   assert( remaining.empty() );
   return result;
 }
 
-template< std::integral IntT >
+template< typename IntT >
 [[nodiscard]] constexpr std::array< std::byte, sizeof( IntT ) > RawData_toRaw(
   const IntT value,
   const boost::endian::order rawOrder )
 {
+  static_assert( std::is_integral< IntT >::value, "RawData_toRaw requires an integral type" );
   std::array< std::byte, sizeof( IntT ) > result;
   [[maybe_unused]] auto remaining{ RawData_setInt< IntT >( result, value, rawOrder ) };
   assert( remaining.empty() );
@@ -134,7 +140,8 @@ inline RawDataSpan RawData_setString( RawDataSpan raw, std::string_view string )
     BOOST_THROW_EXCEPTION( std::out_of_range( "RawData_setString: not enough data" ) ) ;
   }
 
-  std::ranges::copy( RawData_asRaw( string ), raw.begin() );
+  const auto source{ RawData_asRaw( string ) };
+  std::copy( source.begin(), source.end(), raw.begin() );
 
   return raw.subspan( string.size() );
 }
@@ -161,15 +168,16 @@ inline std::string_view RawData_asString( ConstRawDataSpan raw, std::size_t stri
 }
 
 template< typename T >
-constexpr ConstRawDataSpan RawData_asRawData( std::span< const T > data ) noexcept
+constexpr ConstRawDataSpan RawData_asRawData( boost::span< const T > data ) noexcept
 {
-  return std::as_bytes( data );
+  return { reinterpret_cast< const std::byte * >( data.data() ), data.size_bytes() };
 }
 
 template< typename T >
 constexpr ConstRawDataSpan RawData_asRawData( const T &data ) noexcept( noexcept( std::data( data ) ) )
 {
-  return RawData_asRawData( std::span{ std::data( data ), std::size( data ) } );
+  using ElementT = typename std::remove_reference< decltype( *std::data( data ) ) >::type;
+  return RawData_asRawData( boost::span< const ElementT >{ std::data( data ), std::size( data ) } );
 }
 
 constexpr std::byte operator ""_b( const unsigned long long int value )

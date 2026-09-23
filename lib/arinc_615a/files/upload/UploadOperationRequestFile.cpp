@@ -140,7 +140,7 @@ void UploadOperationRequestFile::decode( ArincSupport::ConstRawDataSpan rawData 
     }
 
     // Add load header info to the loads list
-    loadsV.emplace_back( std::move( headerFilename ), std::move( loadPartNumber ) );
+    loadsV.push_back( { std::move( headerFilename ), std::move( loadPartNumber ) } );
   }
 
   // Final Check for additional data

@@ -5,12 +5,13 @@ Date: 23 September 2026 (Asia/Kolkata)
 ## Result and scope
 
 The target-only source graph builds successfully on the available macOS host
-with AppleClang 17 in C++20 mode. The independently implemented loopback peer
+with AppleClang 17; all 128 production translation units compile in C++17 mode.
+The independently implemented loopback peer
 exercises real UDP/TFTP packets and all four ARINC 615A target operations. A
 relocated copy of the office handoff also builds and passes with AddressSanitizer
 and UndefinedBehaviorSanitizer enabled.
 
-This is strong host-side evidence, but it is **not VxWorks 26.03 validation**.
+This is strong host-side evidence, but it is **not VxWorks 24.03 validation**.
 The licensed Wind River compiler, exact VSB/BSP, LS1028ARDB target image and
 board were not available. A Workbench compile, DKM link/load, on-board network
 test, stop/restart and unload test remain mandatory. No document in this project

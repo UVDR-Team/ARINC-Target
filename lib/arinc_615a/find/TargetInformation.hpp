@@ -194,7 +194,7 @@ class ARINC_615A_EXPORT TargetInformation
      *
      * @return Comparison esult of Target IDs.
      **/
-    inline auto operator <=>( const TargetId &rhs ) const;
+    inline bool operator<( const TargetId &rhs ) const;
 
     /**
      * @brief Create a Target ID from the given Target Information
@@ -215,9 +215,9 @@ class ARINC_615A_EXPORT TargetInformation
     std::string manufacturerCode;
 };
 
-inline auto TargetInformation::operator<=>( const TargetId &rhs ) const
+inline bool TargetInformation::operator<( const TargetId &rhs ) const
 {
-  return ( targetId() <=> rhs );
+  return targetId() < rhs;
 }
 
 /**

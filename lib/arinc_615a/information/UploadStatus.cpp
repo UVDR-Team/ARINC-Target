@@ -67,7 +67,7 @@ UploadLoadStatus& UploadStatus::load( std::string headerFilename, std::string pa
 
 UploadLoadStatus& UploadStatus::load( std::string_view headerFilename )
 {
-  const auto loadIt = std::ranges::find_if( loadsStatusV, [ &headerFilename ]( const UploadLoadStatus &load ) {
+  const auto loadIt = std::find_if( loadsStatusV.begin(), loadsStatusV.end(), [ &headerFilename ]( const UploadLoadStatus &load ) {
     return load.headerFilename() == headerFilename;
   } );
 

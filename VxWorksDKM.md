@@ -1,4 +1,4 @@
-# VxWorks 26.03 DKM integration
+# VxWorks 24.03 DKM integration
 
 The simplest source handoff uses [workbench/START_HERE.md](workbench/START_HERE.md).
 It compiles all production sources in one native Workbench managed DKM project,
@@ -6,7 +6,7 @@ with included Boost/generated headers and no external third-party libraries.
 
 This document describes the alternative CMake static-library route for an
 engineer who already has the matching office SDK toolchain configuration.
-Neither route has been validated with the unavailable VxWorks 26.03 SDK/board.
+Neither route has been validated with the unavailable office VxWorks 24.03 SDK/board.
 
 ## Use the actual SDK toolchain
 
@@ -30,8 +30,8 @@ cmake --build build-vxworks --target arinc_target_audit
 
 No sibling checkout or Boost path is necessary. CMake extracts the bundled
 Boost headers locally. CMake must report VxWorks as the target system; this
-enables the force-included platform profile. C++20 and its required library
-features must be supported by the selected compiler/runtime.
+enables the force-included platform profile. Select C++17; the production graph
+does not require C++20 format, span, concepts, ranges, or bind-front support.
 
 ## Link into the managed DKM
 

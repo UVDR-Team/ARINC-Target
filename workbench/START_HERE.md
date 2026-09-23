@@ -8,7 +8,7 @@ Git, Qt, external Helper, ARINC 649, or separate ARINC 645 library is needed.
 Boost is required by the existing networking, hashing and utility implementation;
 its headers are included and do not require a Boost runtime installation.
 
-The host build and network tests are described in `VALIDATION.md`. **VxWorks 26.03
+The host build and network tests are described in `VALIDATION.md`. **VxWorks 24.03
 compilation, loading, and board debugging have not been verified here.** The
 licensed office SDK, matching VSB/BSP, target image, CPU and ABI are not available
 on the development Mac. It is not possible to guarantee a zero-error target build
@@ -22,8 +22,9 @@ Do not import the old full repository as a recursively compiled project.
 
 In Workbench 4 create a **VxWorks Downloadable Kernel Module** managed project,
 using this extracted folder as the project location (disable the default location).
-Choose the office's VxWorks 26.03 platform and the **same VSB, BSP, CPU and ABI as
-your running target image**. If the wizard requires an empty location, create the
+Choose the office's **vxworks/24.03** platform, CPU **CORTEX_A72 / ARM64**, the
+**LLVM 17.0.6.1** toolchain, and the **same VSB, BSP, CPU and ABI as your running
+target image**. If the wizard requires an empty location, create the
 project first and copy this folder's contents into it, then refresh the project.
 Remove any wizard-generated example `main` source from the build.
 
@@ -39,9 +40,12 @@ Select **only `src/` as build input**. Exclude `include/`, `tests/`, and the top
 `SOURCES.txt` is the exact production source list if the UI needs explicit inputs.
 Enable normal managed DKM C++ initialization/constructor processing. Build Debug.
 
-The SDK must provide the C++20 library features listed in `BUILD_OPTIONS.txt`,
-especially `<format>` and `<filesystem>`. A missing standard-library header is an
-SDK capability issue, not a missing Boost download. Do not lower `-std=c++20`.
+The SDK must provide the C++17 library features listed in `BUILD_OPTIONS.txt`,
+especially `<filesystem>`, exceptions and RTTI. The production graph deliberately
+avoids `<format>`, `<span>`, `<concepts>`, `<ranges>` and `std::bind_front`, so a
+missing standard-library header is an SDK capability issue, not a missing Boost
+download. Build with `-std=c++17`; do not raise it to `-std=c++20`, because the
+24.03 LLVM 17 runtime does not supply those C++20 library facilities.
 Use the matching supported SDK/runtime configuration before continuing.
 
 ## 3. Check the target image
@@ -96,7 +100,7 @@ aviation-certified software-update installation procedure. Validate those separa
 
 ## 6. Office acceptance checklist
 
-- Clean Debug build succeeds with the correct 26.03 SDK and no unresolved symbols.
+- Clean Debug build succeeds with the correct 24.03 SDK and no unresolved symbols.
 - Module loads; `arinc615aSelfTest` returns 0; debugger hits the demo breakpoint.
 - Your real data loader discovers the correct hardware and reads Information.
 - Upload a known test load; compare the resulting bytes/checksums.
@@ -108,4 +112,4 @@ build log, target image configuration and data-loader results with the release.
 
 Reference: Wind River's [SDK application guide](https://labs.windriver.com/downloads/wrsdk-vxworks7-docs/Application-Developer-Guide.html)
 explains the matching SDK/VSB/VIP relationship and module/task workflow. It is not
-evidence that this code has passed a VxWorks 26.03 build.
+evidence that this code has passed a VxWorks 24.03 build.

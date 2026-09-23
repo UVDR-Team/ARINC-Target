@@ -21,7 +21,7 @@
 #include <boost/exception/all.hpp>
 
 #include <charconv>
-#include <format>
+#include <arinc_support/Format.hpp>
 #include <iostream>
 
 namespace ArincChecksum {
@@ -95,7 +95,7 @@ std::string CheckValue::toString() const
   // check value string
   for ( const auto &checkValueByte : valueV )
   {
-    checkValueRawString += std::format( "{:02X}", std::to_integer< uint8_t >( checkValueByte ) );
+    checkValueRawString += ArincSupport::format( "{:02X}", std::to_integer< uint8_t >( checkValueByte ) );
   }
 
   return checkValueRawString;
@@ -103,7 +103,7 @@ std::string CheckValue::toString() const
 
 std::string CheckValue::format() const
 {
-  return std::format( "{}:{}", CheckValueTypeDescription::instance().name( typeV ), toString() );
+  return ArincSupport::format( "{}:{}", CheckValueTypeDescription::instance().name( typeV ), toString() );
 }
 
 CheckValueType CheckValue::type() const

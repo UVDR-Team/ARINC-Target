@@ -158,9 +158,9 @@ const ::Tftp::Packets::ErrorInformation& WriteOperationImpl::errorInformation() 
     .tftpRetries( tftpRetriesV )
     .optionsConfiguration( tftpOptionsConfigurationV )
     .optionNegotiationHandler(
-      std::bind_front( &WriteOperationImpl::handleOptionNegotiation, static_cast< OperationImpl * >( this ) ) )
+      ArincSupport::bindFront( &WriteOperationImpl::handleOptionNegotiation, static_cast< OperationImpl * >( this ) ) )
     .completionHandler(
-      std::bind_front( &WriteOperationImpl::handleCompletion, static_cast< OperationImpl * >( this ) ) )
+      ArincSupport::bindFront( &WriteOperationImpl::handleCompletion, static_cast< OperationImpl * >( this ) ) )
     .dataHandler( dataHandlerV )
     .filename( filenameV )
     .mode( ::Tftp::Packets::TransferMode::OCTET )

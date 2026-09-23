@@ -167,13 +167,13 @@ void OperationImpl::receive()
     // start the receive operation
     socket.async_receive(
       boost::asio::buffer( receivePacket ),
-      std::bind_front( &OperationImpl::receiveHandler, this ) );
+      ArincSupport::bindFront( &OperationImpl::receiveHandler, this ) );
 
     // set receive timeout
     timer.expires_after( receiveTimeoutV );
 
     // start waiting for receive timeout
-    timer.async_wait( std::bind_front( &OperationImpl::timeoutHandler, this ) );
+    timer.async_wait( ArincSupport::bindFront( &OperationImpl::timeoutHandler, this ) );
   }
   catch ( const boost::system::system_error &err )
   {
@@ -190,13 +190,13 @@ void OperationImpl::receiveDally()
     // start the receive operation
     socket.async_receive(
       boost::asio::buffer( receivePacket ),
-      std::bind_front( &OperationImpl::receiveHandler, this ) );
+      ArincSupport::bindFront( &OperationImpl::receiveHandler, this ) );
 
     // set receive timeout
     timer.expires_after( 2U * receiveTimeoutV );
 
     // start waiting for receive timeout
-    timer.async_wait( std::bind_front( &OperationImpl::timeoutDallyHandler, this ) );
+    timer.async_wait( ArincSupport::bindFront( &OperationImpl::timeoutDallyHandler, this ) );
   }
   catch ( const boost::system::system_error &err )
   {
@@ -327,7 +327,7 @@ void OperationImpl::receiveHandler( const boost::system::error_code &errorCode, 
   }
 
   // handle the received packet
-  packet( socket.remote_endpoint(), ArincSupport::ConstRawDataSpan{ receivePacket.begin(), bytesTransferred } );
+  packet( socket.remote_endpoint(), ArincSupport::ConstRawDataSpan{ receivePacket.data(), bytesTransferred } );
 }
 
 void OperationImpl::timeoutHandler( const boost::system::error_code& errorCode )
@@ -373,7 +373,7 @@ void OperationImpl::timeoutHandler( const boost::system::error_code& errorCode )
 
     timer.expires_after( receiveTimeoutV );
 
-    timer.async_wait( std::bind_front( &OperationImpl::timeoutHandler, this ) );
+    timer.async_wait( ArincSupport::bindFront( &OperationImpl::timeoutHandler, this ) );
   }
   catch ( const boost::system::system_error &err )
   {

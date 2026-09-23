@@ -162,15 +162,14 @@ void OperatorDefinedDownloadOperationImpl::filesFinished( const FinalStatus fina
   {
     switch ( fileStatus.code() )
     {
-      using enum Arinc615a::StatusCode;
 
-      case OperationNotAccepted:
-      case OperationNotSupported:
-      case OperationCompleted:
-      case OperationAbortedByTargetHw:
-      case OperationAbortedByDlp:
-      case OperationAbortedByOperator:
-      case LoadPartNumberOrDownloadFileFailed:
+      case StatusCode::OperationNotAccepted:
+      case StatusCode::OperationNotSupported:
+      case StatusCode::OperationCompleted:
+      case StatusCode::OperationAbortedByTargetHw:
+      case StatusCode::OperationAbortedByDlp:
+      case StatusCode::OperationAbortedByOperator:
+      case StatusCode::LoadPartNumberOrDownloadFileFailed:
         // Don't update this file status.
         continue;
 
@@ -206,7 +205,7 @@ Tftp::Clients::OperationPtr OperatorDefinedDownloadOperationImpl::transferFile(
 
   return tftpClientWriteOperation(
     {}, // Operation deferred is ignored
-    std::bind_front(
+    ArincSupport::bindFront(
       &OperatorDefinedDownloadOperationImpl::fileOptionNegotiation,
       this,
       std::move( optionNegotiationHandler ) ),
@@ -289,7 +288,7 @@ void OperatorDefinedDownloadOperationImpl::downloadingList( Information::Downloa
   downloadingListOperation = protocolFileOperation(
     Files::ProtocolFileType::OperatorDefinedDownloadList,
     {}, // Operation deferred is ignored
-    std::bind_front( &OperatorDefinedDownloadOperationImpl::downloadingListCompleted, this ),
+    ArincSupport::bindFront( &OperatorDefinedDownloadOperationImpl::downloadingListCompleted, this ),
     file );
   assert( downloadingListOperation );
 
@@ -344,7 +343,7 @@ void OperatorDefinedDownloadOperationImpl::statusFile()
   statusOperation = protocolFileOperation(
     Files::ProtocolFileType::DownloadStatus,
     {}, // Operation deferred is ignored
-    std::bind_front( &OperatorDefinedDownloadOperationImpl::statusFileCompleted, this, statusV ),
+    ArincSupport::bindFront( &OperatorDefinedDownloadOperationImpl::statusFileCompleted, this, statusV ),
     file );
   assert( statusOperation );
 
@@ -366,18 +365,9 @@ void OperatorDefinedDownloadOperationImpl::statusFileCompleted(
 
   switch ( transferStatus )
   {
-    using enum Tftp::TransferStatus;
 
-    case Successful:
+    case Tftp::TransferStatus::Successful:
       break;
-
-    case OperationAbortedByDlp:
-      handler.abortRequest( AbortRequest::AbortByDlp );
-      return;
-
-    case OperationAbortedByOperator:
-      handler.abortRequest( AbortRequest::AbortByOperator );
-      return;
 
     default:
       ARINC_LOG_ERROR( "Sending of status failed" );
@@ -404,12 +394,11 @@ void OperatorDefinedDownloadOperationImpl::statusFileCompleted(
 
   switch ( sentStatus.code() )
   {
-    using enum StatusCode;
 
     // First transmission of status -> set to in progress
-    case OperationAccepted:
-    case OperationInProgress:
-    case OperationInProgressAdditionalInfo:
+    case StatusCode::OperationAccepted:
+    case StatusCode::OperationInProgress:
+    case StatusCode::OperationInProgressAdditionalInfo:
       triggerStatusTransmissionTimer();
       break;
 
@@ -448,7 +437,7 @@ void OperatorDefinedDownloadOperationImpl::answerFileRequest(
       .tftpRetries( configuration().tftpConfiguration.tftpRetries )
       .dally( configuration().tftpConfiguration.dally )
       .optionsConfiguration( configuration().tftpOptionsConfiguration )
-      .completionHandler( std::bind_front( &OperatorDefinedDownloadOperationImpl::answerFileCompleted, this, memFile ) )
+      .completionHandler( ArincSupport::bindFront( &OperatorDefinedDownloadOperationImpl::answerFileCompleted, this, memFile ) )
       .dataHandler( memFile )
       .remote( std::move( remote ) )
       .local( configuration().localInterfaceAddress )

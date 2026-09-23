@@ -14,7 +14,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-#include <ranges>
 
 namespace Arinc615a::Find {
 
@@ -22,10 +21,10 @@ TargetsAddressInformation TargetInformation::targetsAddressInformation( const bo
 {
   TargetsAddressInformation information;
 
-  for ( const auto &entry : properties | std::views::values )
+  for ( const auto &entry : properties )
   {
     // key is ignored
-    information.emplace_back( targetAddressInformation( entry ) );
+    information.emplace_back( targetAddressInformation( entry.second ) );
   }
 
   return information;
@@ -50,9 +49,9 @@ boost::property_tree::ptree TargetInformation::targetsAddressInformation(
   boost::property_tree::ptree properties;
 
   // TODO change to from_range construction when available in GCC 15 and Clang > 19
-  for ( const auto &targetInformation : information | std::views::values  )
+  for ( const auto &entry : information )
   {
-    properties.add_child( "target", targetAddressInformation( targetInformation ) );
+    properties.add_child( "target", targetAddressInformation( entry.second ) );
   }
 
   return properties;
@@ -85,10 +84,10 @@ TargetsInformation TargetInformation::targetsInformation( const boost::property_
 {
   TargetsInformation targets{};
 
-  for ( const auto &entry : properties | std::views::values )
+  for ( const auto &entry : properties )
   {
     // key is ignored (could be also an array list)
-    targets.emplace_back( entry );
+    targets.emplace_back( entry.second );
   }
 
   return targets;

@@ -16,7 +16,7 @@
 #include <arinc_665/Arinc665.hpp>
 #include <arinc_665/Arinc665Exception.hpp>
 
-#include <format>
+#include <arinc_support/Format.hpp>
 #include <string>
 #include <string_view>
 
@@ -186,37 +186,6 @@ class ARINC_665_EXPORT PartNumber
  * @sa @ref PartNumber
  **/
 ARINC_665_EXPORT std::ostream &operator<<( std::ostream &ostream, const PartNumber &partNumber );
-
-}
-
-namespace std {
-
-/**
- * @brief Specialisation of @p std::formatter for @ref Arinc665::PartNumber.
- *
- * @sa @ref Arinc665::PartNumber
- **/
-template<>
-struct formatter< Arinc665::PartNumber > : std::formatter< std::string >
-{
-  /**
-   * @brief Arinc665::PartNumber format routine.
-   *
-   * @tparam FmtContext
-   *   Formatting Context
-   * @param[in] partNumber
-   *   ARINC 665 Part Number
-   * @param[in,out] ctx
-   *   Formatting Context
-   *
-   * @return Iterator to the end of output.
-   **/
-  template< class FmtContext >
-  FmtContext::iterator format( const Arinc665::PartNumber &partNumber, FmtContext &ctx ) const
-  {
-    return std::formatter< string >::format( partNumber.toString(), ctx );
-  }
-};
 
 }
 

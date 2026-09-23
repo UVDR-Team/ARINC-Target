@@ -20,7 +20,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <arinc_support/Format.hpp>
 
 namespace Arinc615a {
 
@@ -28,18 +28,16 @@ StatusCode statusCode( const FinalStatus status )
 {
   switch ( status )
   {
-    using enum FinalStatus;
-
-    case Completed:
+    case FinalStatus::Completed:
       return StatusCode::OperationCompleted;
 
-    case AbortedByDlp:
+    case FinalStatus::AbortedByDlp:
       return StatusCode::OperationAbortedByDlp;
 
-    case AbortedByOperator:
+    case FinalStatus::AbortedByOperator:
       return StatusCode::OperationAbortedByOperator;
 
-    case AbortedByTargetHardware:
+    case FinalStatus::AbortedByTargetHardware:
       return StatusCode::OperationAbortedByTargetHw;
 
     default:
@@ -52,21 +50,19 @@ FinalStatus finalStatus( const StatusCode code )
 {
   switch ( code )
   {
-    using enum StatusCode;
-
-    case OperationCompleted:
+    case StatusCode::OperationCompleted:
       return FinalStatus::Completed;
 
-    case OperationAbortedByDlp:
+    case StatusCode::OperationAbortedByDlp:
       return FinalStatus::AbortedByDlp;
 
-    case OperationAbortedByOperator:
+    case StatusCode::OperationAbortedByOperator:
       return FinalStatus::AbortedByOperator;
 
-    case OperationAbortedByTargetHw:
+    case StatusCode::OperationAbortedByTargetHw:
       return FinalStatus::AbortedByTargetHardware;
 
-    case LoadPartNumberOrDownloadFileFailed:
+    case StatusCode::LoadPartNumberOrDownloadFileFailed:
       return FinalStatus::LoadPartNumberOrDownloadFileFailed;
 
     default:
@@ -79,12 +75,10 @@ FinalStatus finalStatus( const AbortRequest abortRequest )
 {
   switch ( abortRequest )
   {
-    using enum AbortRequest;
-
-    case AbortByDlp:
+    case AbortRequest::AbortByDlp:
       return Arinc615a::FinalStatus::AbortedByDlp;
 
-    case AbortByOperator:
+    case AbortRequest::AbortByOperator:
       return Arinc615a::FinalStatus::AbortedByOperator;
 
     default:
@@ -98,18 +92,16 @@ StatusCode statusCode( uint16_t const code )
   // NOLINTNEXTLINE( clang-analyzer-optin.core.EnumCastOutOfRange ): Check for validity
   switch ( StatusCode{ code } )
   {
-    using enum Arinc615a::StatusCode;
-
-    case OperationAccepted:
-    case OperationNotAccepted:
-    case OperationNotSupported:
-    case OperationInProgress:
-    case OperationCompleted:
-    case OperationInProgressAdditionalInfo:
-    case OperationAbortedByTargetHw:
-    case OperationAbortedByDlp:
-    case OperationAbortedByOperator:
-    case LoadPartNumberOrDownloadFileFailed:
+    case StatusCode::OperationAccepted:
+    case StatusCode::OperationNotAccepted:
+    case StatusCode::OperationNotSupported:
+    case StatusCode::OperationInProgress:
+    case StatusCode::OperationCompleted:
+    case StatusCode::OperationInProgressAdditionalInfo:
+    case StatusCode::OperationAbortedByTargetHw:
+    case StatusCode::OperationAbortedByDlp:
+    case StatusCode::OperationAbortedByOperator:
+    case StatusCode::LoadPartNumberOrDownloadFileFailed:
       break;
 
     default:
@@ -124,11 +116,9 @@ OperationAcceptanceStatusCode operationAcceptanceStatusCode( uint16_t const code
   // NOLINTNEXTLINE( clang-analyzer-optin.core.EnumCastOutOfRange ): Check for validity
   switch ( OperationAcceptanceStatusCode{ code } )
   {
-    using enum Arinc615a::OperationAcceptanceStatusCode;
-
-    case OperationAccepted:
-    case OperationDenied:
-    case OperationNotSupported:
+    case OperationAcceptanceStatusCode::OperationAccepted:
+    case OperationAcceptanceStatusCode::OperationDenied:
+    case OperationAcceptanceStatusCode::OperationNotSupported:
       break;
 
     default:
@@ -170,34 +160,34 @@ std::string status(
       return {};
 
     case StatusCode::OperationNotAccepted:
-      return std::format( "{} Operation Denied. {}", operation, description );
+      return ArincSupport::format( "{} Operation Denied. {}", operation, description );
 
     case StatusCode::OperationNotSupported:
-      return std::format( "{} Operation not supported by the target. {}", operation, description );
+      return ArincSupport::format( "{} Operation not supported by the target. {}", operation, description );
 
     case StatusCode::OperationInProgress:
       return {};
 
     case StatusCode::OperationCompleted:
-      return std::format( "{} Operation Completed.", operation );
+      return ArincSupport::format( "{} Operation Completed.", operation );
 
     case StatusCode::OperationInProgressAdditionalInfo:
       return std::string{ description };
 
     case StatusCode::OperationAbortedByTargetHw:
-      return std::format( "{} Operation aborted by the Target Hardware. {}", operation, description );
+      return ArincSupport::format( "{} Operation aborted by the Target Hardware. {}", operation, description );
 
     case StatusCode::OperationAbortedByDlp:
-      return std::format( "{} Operation aborted by the Data Loader. {}", operation, description );
+      return ArincSupport::format( "{} Operation aborted by the Data Loader. {}", operation, description );
 
     case StatusCode::OperationAbortedByOperator:
-      return std::format( "{} Operation cancelled by the operator.", operation );
+      return ArincSupport::format( "{} Operation cancelled by the operator.", operation );
 
     case StatusCode::LoadPartNumberOrDownloadFileFailed:
-      return std::format( "{} failed. {}", loadPartNumberOrFilename, description );
+      return ArincSupport::format( "{} failed. {}", loadPartNumberOrFilename, description );
 
     case StatusCode::OperationDeferred:
-      return std::format( "{} Operation deferred. {}", operation, description );
+      return ArincSupport::format( "{} Operation deferred. {}", operation, description );
 
     default:
       return "**INVALID**";

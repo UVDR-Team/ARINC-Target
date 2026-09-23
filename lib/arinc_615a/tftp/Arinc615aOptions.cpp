@@ -15,7 +15,7 @@
 #include <arinc_checksum/Arinc645Exception.hpp>
 
 #include <ostream>
-#include <format>
+#include <arinc_support/Format.hpp>
 
 namespace Arinc615a::Tftp {
 
@@ -87,30 +87,29 @@ std::string_view Arinc615aOptions_name( const ArincChecksum::CheckValueType type
 {
   switch ( type )
   {
-    using enum ArincChecksum::CheckValueType;
 
-    case Crc8:
+    case ArincChecksum::CheckValueType::Crc8:
       return "checksum_1";
 
-    case Crc16:
+    case ArincChecksum::CheckValueType::Crc16:
       return "checksum_2";
 
-    case Crc32:
+    case ArincChecksum::CheckValueType::Crc32:
       return "checksum_3";
 
-    case Md5:
+    case ArincChecksum::CheckValueType::Md5:
       return "checksum_4";
 
-    case Sha1:
+    case ArincChecksum::CheckValueType::Sha1:
       return "checksum_5";
 
-    case Sha256:
+    case ArincChecksum::CheckValueType::Sha256:
       return "checksum_6";
 
-    case Sha512:
+    case ArincChecksum::CheckValueType::Sha512:
       return "checksum_7";
 
-    case Crc64:
+    case ArincChecksum::CheckValueType::Crc64:
       return "checksum_8";
 
     default:
@@ -129,17 +128,17 @@ std::string Arinc615aOptions_toString( const Arinc615aOptions &options )
 
   if ( options.port )
   {
-    retStr += std::format( "[{}:{}]", Arinc615aOptions_name( KnownOptions::Port ), std::to_string( *options.port ) );
+    retStr += ArincSupport::format( "[{}:{}]", Arinc615aOptions_name( KnownOptions::Port ), std::to_string( *options.port ) );
   }
 
   if ( !options.partNumber.empty() )
   {
-    retStr += std::format( "[{}:{}]", Arinc615aOptions_name( KnownOptions::PartNumber ), options.partNumber );
+    retStr += ArincSupport::format( "[{}:{}]", Arinc615aOptions_name( KnownOptions::PartNumber ), options.partNumber );
   }
 
   if ( options.checksum.type() != ArincChecksum::CheckValueType::NotUsed )
   {
-    retStr += std::format( "[{}:{}]", Arinc615aOptions_name( options.checksum.type() ), options.checksum.toString() );
+    retStr += ArincSupport::format( "[{}:{}]", Arinc615aOptions_name( options.checksum.type() ), options.checksum.toString() );
   }
 
   return retStr;

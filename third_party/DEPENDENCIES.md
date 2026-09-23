@@ -21,9 +21,10 @@ Official source SHA256 (verified before creating the header archive):
 Header archive SHA256:
 `e166e0cdc01b18c9852c59bad215e6e7d1cdb6532543ccec80a3fa43c80387b6`
 
-Required development platform: licensed Wind River Workbench 4, VxWorks 26.03
-VSB/BSP and its LLVM C++ compiler/library with C++20 support including
-`std::format`, `std::span`, ranges and filesystem. These proprietary
-components are supplied by the office installation and are not bundled.
+Required development platform: licensed Wind River Workbench 4, VxWorks 24.03
+VSB/BSP and its LLVM 17.0.6.1 C++ compiler/library in C++17 mode. The target
+source no longer requires `std::format`, `std::span`, concepts, or ranges.
+These proprietary components are supplied by the office installation and are
+not bundled.
 The target image also supplies C++ initialization/exceptions/RTTI, POSIX
 threads, sockets, clocks, and file-system services used by the application.

@@ -23,7 +23,7 @@ MediumNumber::MediumNumber( const uint8_t mediumNumber ) noexcept :
 
 std::string MediumNumber::toString() const
 {
-  return std::format( "{:03d}", mediumNumberV );
+  return ArincSupport::format( "{:03d}", mediumNumberV );
 }
 
 MediumNumber MediumNumber::operator+( uint8_t const increment ) const noexcept

@@ -24,41 +24,40 @@ void PacketHandler::packet( const boost::asio::ip::udp::endpoint &remote, ArincS
 {
   switch ( Packet::packetType( rawPacket ) )
   {
-    using enum Opcode;
 
-    case InformationRequest:
+    case Opcode::InformationRequest:
       try
       {
         informationRequestPacket( remote, Packet{ rawPacket } );
 
         // Update statistic
-        PacketStatistic::globalReceive().packet( InformationRequest, rawPacket.size() );
+        PacketStatistic::globalReceive().packet( Opcode::InformationRequest, rawPacket.size() );
       }
       catch ( const InvalidFindPacket &e )
       {
         ARINC_LOG_ERROR( "Error decoding/ handling IRQ packet: {}", e.what() );
 
         // Update statistic
-        PacketStatistic::globalReceive().packet( Invalid, rawPacket.size() );
+        PacketStatistic::globalReceive().packet( Opcode::Invalid, rawPacket.size() );
 
         invalidPacket( remote, rawPacket );
       }
       break;
 
-    case InformationAnswer:
+    case Opcode::InformationAnswer:
       try
       {
         informationAnswerPacket( remote, Packet{ rawPacket } );
 
         // Update statistic
-        PacketStatistic::globalReceive().packet( InformationAnswer, rawPacket.size() );
+        PacketStatistic::globalReceive().packet( Opcode::InformationAnswer, rawPacket.size() );
       }
       catch ( const InvalidFindPacket &e )
       {
         ARINC_LOG_ERROR( "Error decoding/ handling IAN packet: {}", e.what() );
 
         // Update statistic
-        PacketStatistic::globalReceive().packet( Invalid, rawPacket.size() );
+        PacketStatistic::globalReceive().packet( Opcode::Invalid, rawPacket.size() );
 
         invalidPacket( remote, rawPacket );
       }
@@ -66,7 +65,7 @@ void PacketHandler::packet( const boost::asio::ip::udp::endpoint &remote, ArincS
 
     default:
       // Update statistic
-      PacketStatistic::globalReceive().packet( Invalid, rawPacket.size() );
+      PacketStatistic::globalReceive().packet( Opcode::Invalid, rawPacket.size() );
 
       invalidPacket( remote, rawPacket );
       break;

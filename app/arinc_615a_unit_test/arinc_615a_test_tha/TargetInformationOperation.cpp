@@ -100,7 +100,7 @@ void TargetInformationOperation::initialised()
   assert( operationV );
 
   // send configuration
-  boost::asio::post( ioContext(), std::bind_front( &TargetInformationOperation::transmitConfiguration, this ) );
+  boost::asio::post( ioContext(), ArincSupport::bindFront( &TargetInformationOperation::transmitConfiguration, this ) );
 }
 
 void TargetInformationOperation::finished( const Arinc615a::FinalStatus finalStatus, std::string_view description )

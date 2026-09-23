@@ -32,7 +32,7 @@ ServerImpl::ServerImpl( boost::asio::io_context &ioContext ):
   baseTftpServerV{ ::Tftp::Servers::Server::instance( ioContext ) }
 {
   assert( baseTftpServerV );
-  baseTftpServerV->requestHandler( std::bind_front( &ServerImpl::tftpRequestHandler, this ) );
+  baseTftpServerV->requestHandler( ArincSupport::bindFront( &ServerImpl::tftpRequestHandler, this ) );
 }
 
 ServerImpl::~ServerImpl() = default;

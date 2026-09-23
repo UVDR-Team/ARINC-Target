@@ -15,7 +15,7 @@
 #include <arinc_615a/files/ProtocolFileTypeDescription.hpp>
 
 #include <algorithm>
-#include <format>
+#include <arinc_support/Format.hpp>
 #include <mutex>
 #include <ostream>
 
@@ -38,8 +38,8 @@ size_t ProtocolFileStatistic::total( const Statistic &statistic )
   size_t total{ 0 };
 
   // accumulate all values
-  std::ranges::for_each(
-    statistic,
+  std::for_each(
+    statistic.begin(), statistic.end(),
     [ &total ]( auto value ){
       total += value.second;
     } );
@@ -73,7 +73,7 @@ std::string ProtocolFileStatistic::toString() const
 
   for ( const auto &[ packetType, statistic ] : statistic() )
   {
-    str += std::format(
+    str += ArincSupport::format(
       "{:22}: Count: {}\n",
       ProtocolFileTypeDescription::instance().name( packetType ),
       statistic );
@@ -81,7 +81,7 @@ std::string ProtocolFileStatistic::toString() const
     count += statistic;
   }
 
-  str += std::format( "{:22}: Count: {}\n", "Total", count );
+  str += ArincSupport::format( "{:22}: Count: {}\n", "Total", count );
 
   return str;
 }

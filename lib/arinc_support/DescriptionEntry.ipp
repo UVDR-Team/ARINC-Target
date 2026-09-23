@@ -16,7 +16,7 @@
 
 namespace ArincSupport {
 
-template< Enumeration EnumT, Value ValueT >
+template< typename EnumT, typename ValueT >
 DescriptionEntry< EnumT, ValueT >::DescriptionEntry( std::string name, const EnumType enumeration ) :
   name{ std::move( name ) },
   enumeration{ enumeration },
@@ -24,7 +24,7 @@ DescriptionEntry< EnumT, ValueT >::DescriptionEntry( std::string name, const Enu
 {
 }
 
-template< Enumeration EnumT, Value ValueT >
+template< typename EnumT, typename ValueT >
 DescriptionEntry< EnumT, ValueT >::DescriptionEntry(
   std::string name,
   const EnumType enumeration,
@@ -35,19 +35,19 @@ DescriptionEntry< EnumT, ValueT >::DescriptionEntry(
 {
 }
 
-template< Enumeration EnumT, Value ValueT >
+template< typename EnumT, typename ValueT >
 bool DescriptionEntry< EnumT, ValueT >::operator==( const EnumType compareValue ) const
 {
   return enumeration == compareValue;
 }
 
-template< Enumeration EnumT, Value ValueT >
+template< typename EnumT, typename ValueT >
 bool DescriptionEntry< EnumT, ValueT >::operator==( const ValueType compareValue ) const
 {
   return value == compareValue;
 }
 
-template< Enumeration EnumT, Value ValueT >
+template< typename EnumT, typename ValueT >
 bool DescriptionEntry< EnumT, ValueT >::operator==( std::string_view compareValue ) const
 {
   return ( this->name == compareValue );

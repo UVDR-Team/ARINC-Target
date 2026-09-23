@@ -88,7 +88,7 @@ boost::program_options::options_description TftpOptionsConfiguration::options()
           BOOST_THROW_EXCEPTION( boost::program_options::invalid_option_value{ std::to_string( blockSizeOption.value() ) } );
         }
       } ),
-    std::format(
+    ArincSupport::format(
       "Negotiates the TFTP block size for transfers.\n"
       "Valid values between [{},{}].",
       Packets::BlockSizeOptionMin,
@@ -107,7 +107,7 @@ boost::program_options::options_description TftpOptionsConfiguration::options()
         }
         timeoutOption = std::chrono::seconds{ timeoutOptionInt };
       } ),
-    std::format(
+    ArincSupport::format(
       "Handles the TFTP timeout option negotiation with the given timeout in seconds.\n"
       "Valid values between [{},{}].",
       Packets::TimeoutOptionMin,

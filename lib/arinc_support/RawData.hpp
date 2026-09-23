@@ -20,12 +20,11 @@
 #include <arinc_support/Support.hpp>
 
 #include <boost/endian.hpp>
+#include <boost/core/span.hpp>
 
 #include <array>
-#include <concepts>
 #include <cstdint>
 #include <cstddef>
-#include <span>
 #include <string>
 #include <string_view>
 #include <tuple>
@@ -48,10 +47,10 @@ namespace ArincSupport {
 using RawData = std::vector< std::byte >;
 
 //! Raw Data View
-using RawDataSpan =  std::span< std::byte >;
+using RawDataSpan = boost::span< std::byte >;
 
 //! Const Raw Data View
-using ConstRawDataSpan =  std::span< const std::byte >;
+using ConstRawDataSpan = boost::span< const std::byte >;
 
 /**
  * @brief Extracts an integer of a specified type from a raw data span and returns the remaining data.
@@ -59,7 +58,7 @@ using ConstRawDataSpan =  std::span< const std::byte >;
  * The extracted integer is converted to the native byte order if @p RawOrder differs from the system's native order.
  *
  * @tparam IntT
- *   The type of the integer to extract. Must satisfy the @p std::integral concept.
+ *   The type of the integer to extract. Must be an integral type.
  * @tparam RawOrder
  *   The byte order of the raw data.
  *   Defaults to big-endian (@p boost::endian::order::big).
@@ -72,7 +71,7 @@ using ConstRawDataSpan =  std::span< const std::byte >;
  * @throws std::out_of_range
  *   if the size of the input span is less than the size of the integer type `IntT`.
  **/
-template< std::integral IntT, boost::endian::order RawOrder = boost::endian::order::big >
+template< typename IntT, boost::endian::order RawOrder = boost::endian::order::big >
 [[nodiscard]] constexpr std::tuple< ConstRawDataSpan, IntT > RawData_getInt( ConstRawDataSpan raw );
 
 /**
@@ -81,7 +80,7 @@ template< std::integral IntT, boost::endian::order RawOrder = boost::endian::ord
  * The extracted integer is converted to the native byte order if @p rawOrder differs from the system's native order.
  *
  * @tparam IntT
- *   The type of the integer to extract. Must satisfy the @p std::integral concept.
+ *   The type of the integer to extract. Must be an integral type.
  *
  * @param[in] raw
  *   A constant span of raw data (`ConstRawDataSpan`) from which to extract the integer.
@@ -93,7 +92,7 @@ template< std::integral IntT, boost::endian::order RawOrder = boost::endian::ord
  * @throws std::out_of_range
  *   if the size of the input span is less than the size of the integer type `IntT`.
  **/
-template< std::integral IntT >
+template< typename IntT >
 [[nodiscard]] constexpr std::tuple< ConstRawDataSpan, IntT > RawData_getInt(
   ConstRawDataSpan raw,
   boost::endian::order rawOrder );
@@ -126,7 +125,7 @@ template< std::integral IntT >
  * @throws std::out_of_range
  *   If the provided span does not have enough space to store the value.
  **/
-template< std::integral IntT, boost::endian::order RawOrder = boost::endian::order::big >
+template< typename IntT, boost::endian::order RawOrder = boost::endian::order::big >
 constexpr RawDataSpan RawData_setInt( RawDataSpan raw, IntT value );
 
 /**
@@ -156,7 +155,7 @@ constexpr RawDataSpan RawData_setInt( RawDataSpan raw, IntT value );
  * @throws std::out_of_range
  *   If the provided span does not have enough space to store the value.
  **/
-template< std::integral IntT >
+template< typename IntT >
 constexpr RawDataSpan RawData_setInt( RawDataSpan raw, IntT value, boost::endian::order rawOrder );
 
 /**
@@ -177,7 +176,7 @@ constexpr RawDataSpan RawData_setInt( RawDataSpan raw, IntT value, boost::endian
  * @sa @ref RawData_setInt(RawDataSpan,IntT)
  * @sa @ref RawData_asRaw(std::string_view)
  **/
-template< std::integral IntT, boost::endian::order RawOrder = boost::endian::order::big >
+template< typename IntT, boost::endian::order RawOrder = boost::endian::order::big >
 [[nodiscard]] constexpr std::array< std::byte, sizeof( IntT ) > RawData_toRaw( IntT value );
 
 /**
@@ -197,7 +196,7 @@ template< std::integral IntT, boost::endian::order RawOrder = boost::endian::ord
  * @sa @ref RawData_setInt(RawDataSpan,IntT)
  * @sa @ref RawData_asRaw(std::string_view)
  **/
-template< std::integral IntT >
+template< typename IntT >
 [[nodiscard]] constexpr std::array< std::byte, sizeof( IntT ) > RawData_toRaw(
   IntT value,
   boost::endian::order rawOrder );
@@ -318,7 +317,7 @@ inline RawDataSpan RawData_setString( RawDataSpan raw, std::string_view string )
 [[nodiscard]] inline std::string_view RawData_asString( ConstRawDataSpan raw, std::size_t stringLength );
 
 /**
- * Converts a @p std::span of constant objects of type @p T into a @p std::span of constant raw byte data.
+ * Converts a @p boost::span of constant objects of type @p T into a @p boost::span of constant raw byte data.
  *
  * @tparam T
  *   The type of elements contained in the input span.
@@ -329,7 +328,7 @@ inline RawDataSpan RawData_setString( RawDataSpan raw, std::string_view string )
  * @return A span of constant raw byte data representing the input span.
  **/
 template< typename T >
-constexpr ConstRawDataSpan RawData_asRawData( std::span< const T > data ) noexcept;
+constexpr ConstRawDataSpan RawData_asRawData( boost::span< const T > data ) noexcept;
 
 /**
  * Converts the given data of type @p T into a @p ConstRawDataSpan representation.

@@ -58,12 +58,12 @@ void ErrorOperationImpl::start(
     std::make_shared< ::Tftp::Files::MemoryFile >( static_cast< ArincSupport::RawData >( initialisationFile ) ) };
   assert( file );
 
-  protocolFileLoggerV.transmitProtocolFile( std::format( "{}.INIT", configurationV.targetId ), file->data() );
+  protocolFileLoggerV.transmitProtocolFile( ArincSupport::format( "{}.INIT", configurationV.targetId ), file->data() );
 
   initialisationFileOperationV
     ->tftpTimeout( dlConfigurationV.tftpConfiguration.tftpTimeout )
     .tftpRetries( dlConfigurationV.tftpConfiguration.tftpRetries )
-    .completionHandler( std::bind_front( &ErrorOperationImpl::initialisationFileCompleted, this ) )
+    .completionHandler( ArincSupport::bindFront( &ErrorOperationImpl::initialisationFileCompleted, this ) )
     .dataHandler( file )
     .remote( std::move( hostAddress ) )
     .local( dlConfigurationV.localInterfaceAddress )

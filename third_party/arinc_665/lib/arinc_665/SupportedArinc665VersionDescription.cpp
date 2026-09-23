@@ -35,7 +35,7 @@ std::string SupportedArinc665VersionDescription::allValues( std::string_view pre
   "- '" + std::string{ name( SupportedArinc665Version::Supplement2 ) } +   "': ARINC 665-2\n" +
   "- '" + std::string{ name( SupportedArinc665Version::Supplement345 ) } +  "': ARINC 665-3/4/5" };
 
-  return std::format( "{}\n{}", prefix, versionValues );
+  return ArincSupport::format( "{}\n{}", prefix, versionValues );
 }
 
 std::ostream& operator<<( std::ostream &stream, const SupportedArinc665Version version )

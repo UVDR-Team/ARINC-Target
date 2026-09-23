@@ -17,7 +17,6 @@
 
 #include <arinc_support/RawData.hpp>
 
-#include <concepts>
 #include <limits>
 #include <optional>
 #include <string_view>
@@ -95,7 +94,7 @@ namespace Tftp::Packets {
  *
  * @return std::pair Option was valid (not present or decoded correctly) and Option Value
  **/
-template< std::unsigned_integral IntT >
+template< typename IntT >
 [[nodiscard]] std::pair< bool, std::optional< IntT > > Options_getOption(
   Options &options,
   std::string_view name,

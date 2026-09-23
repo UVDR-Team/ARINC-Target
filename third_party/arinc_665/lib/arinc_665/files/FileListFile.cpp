@@ -105,7 +105,8 @@ bool FileListFile::belongsToSameMediaSet( const FileListFile &other ) const
 
   if ( ( mediaSetPn() != other.mediaSetPn() )
     || ( numberOfMediaSetMembers() != other.numberOfMediaSetMembers() )
-    || !std::ranges::equal( userDefinedDataV, other.userDefinedData() ) )
+    || !std::equal( userDefinedDataV.begin(), userDefinedDataV.end(),
+      other.userDefinedData().begin(), other.userDefinedData().end() ) )
   {
     return false;
   }
@@ -259,7 +260,7 @@ ArincSupport::RawData FileListFile::encode() const
     const auto rawCheckValue{ CheckValueUtils_encode(
       ArincChecksum::CheckValueGenerator::checkValue(
         checkValueTypeV,
-        std::as_bytes( ArincSupport::ConstRawDataSpan{ rawFile } ) ).value_or( ArincChecksum::CheckValue::NoCheckValue ) ) };
+        ArincSupport::ConstRawDataSpan{ rawFile } ).value_or( ArincChecksum::CheckValue::NoCheckValue ) ) };
     assert( rawCheckValue.size() % 2 == 0 );
 
     rawFile.insert( rawFile.end(), rawCheckValue.begin(), rawCheckValue.end() );
@@ -366,7 +367,7 @@ void FileListFile::decodeBody( ArincSupport::ConstRawDataSpan rawFile )
       // calculate Check Value
       const auto calcCheckValue{ ArincChecksum::CheckValueGenerator::checkValue(
         checkValueTypeV,
-        std::as_bytes( rawFile.first( 2U * static_cast< std::size_t >( fileCheckValuePtr ) ) ) ) };
+        rawFile.first( 2U * static_cast< std::size_t >( fileCheckValuePtr ) ) ) };
 
       if ( checkValue != calcCheckValue )
       {

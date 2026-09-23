@@ -11,7 +11,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include <cstdio>
 #include <exception>
-#include <span>
 #include <string_view>
 
 extern "C" int arinc615aDemo(void)
@@ -59,7 +58,7 @@ extern "C" int arinc615aSelfTest(void)
     if (decoded.response().code() != Arinc615a::OperationAcceptanceStatusCode::OperationAccepted) return 2;
     const std::string_view input{"abc"};
     const auto hash = ArincChecksum::CheckValueGenerator::create(ArincChecksum::CheckValueType::Sha256);
-    hash->process(std::as_bytes(std::span{input.data(), input.size()}));
+    hash->process(ArincSupport::RawData_asRawData(input));
     if (hash->checkValue().toString() != "BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD") return 3;
     std::puts("ARINC self-test PASS (codecs and SHA256; network/storage tested separately)");
     return 0;

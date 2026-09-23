@@ -56,7 +56,7 @@ CheckValue CheckValueGenerator::checkValue( const CheckValueType checkValueType,
   {
     BOOST_THROW_EXCEPTION( Arinc645Exception()
       << ArincSupport::AdditionalInfo{
-        std::format(
+        ArincSupport::format(
           "No check value generator for check value '{}'",
           CheckValueTypeDescription::instance().name( checkValueType ) ) } );
   }
@@ -96,7 +96,7 @@ CheckValue CheckValueGenerator::checkValue( const CheckValueType checkValueType,
           << boost::errinfo_file_name{ file.string() } );
     }
 
-    generator->process( { data.begin(), static_cast< std::size_t >( fileStream.gcount() ) } );
+    generator->process( { data.data(), static_cast< std::size_t >( fileStream.gcount() ) } );
   }
 
   return generator->checkValue();
@@ -106,33 +106,31 @@ CheckValueGeneratorPtr CheckValueGenerator::create( const CheckValueType type )
 {
   switch ( type )
   {
-    using enum CheckValueType;
-
-    case NotUsed:
+    case CheckValueType::NotUsed:
       return std::make_shared< NopCheckValueGenerator >();
 
-    case Crc8:
+    case CheckValueType::Crc8:
       return std::make_shared< Crc8CheckValueGenerator >();
 
-    case Crc16:
+    case CheckValueType::Crc16:
       return std::make_shared< Crc16CheckValueGenerator >();
 
-    case Crc32:
+    case CheckValueType::Crc32:
       return std::make_shared< Crc32CheckValueGenerator >();
 
-    case Md5:
-      return std::make_shared< HashCheckValueGenerator< Md5, boost::hash2::md5_128 > >();
+    case CheckValueType::Md5:
+      return std::make_shared< HashCheckValueGenerator< CheckValueType::Md5, boost::hash2::md5_128 > >();
 
-    case Sha1:
-      return std::make_shared< HashCheckValueGenerator< Sha1, boost::hash2::sha1_160 > >();
+    case CheckValueType::Sha1:
+      return std::make_shared< HashCheckValueGenerator< CheckValueType::Sha1, boost::hash2::sha1_160 > >();
 
-    case Sha256:
-      return std::make_shared< HashCheckValueGenerator< Sha256, boost::hash2::sha2_256 > >();
+    case CheckValueType::Sha256:
+      return std::make_shared< HashCheckValueGenerator< CheckValueType::Sha256, boost::hash2::sha2_256 > >();
 
-    case Sha512:
-      return std::make_shared< HashCheckValueGenerator< Sha512, boost::hash2::sha2_512 > >();
+    case CheckValueType::Sha512:
+      return std::make_shared< HashCheckValueGenerator< CheckValueType::Sha512, boost::hash2::sha2_512 > >();
 
-    case Crc64:
+    case CheckValueType::Crc64:
       return std::make_shared< Crc64CheckValueGenerator >();
 
     default:

@@ -12,7 +12,7 @@
 
 #include "TftpOptions.hpp"
 
-#include <format>
+#include <arinc_support/Format.hpp>
 
 namespace Tftp::Packets {
 
@@ -45,7 +45,7 @@ std::string TftpOptions_toString( const TftpOptions &options )
 
   if ( options.blockSize )
   {
-    retStr+= std::format(
+    retStr+= ArincSupport::format(
       "[{}:{}]",
       TftpOptions_name( KnownOptions::BlockSize ),
       std::to_string( *options.blockSize ) );
@@ -53,7 +53,7 @@ std::string TftpOptions_toString( const TftpOptions &options )
 
   if ( options.timeout )
   {
-    retStr+= std::format(
+    retStr+= ArincSupport::format(
       "[{}:{}]",
       TftpOptions_name( KnownOptions::Timeout ),
       *options.timeout );
@@ -61,7 +61,7 @@ std::string TftpOptions_toString( const TftpOptions &options )
 
   if ( options.transferSize )
   {
-    retStr+= std::format(
+    retStr+= ArincSupport::format(
       "[{}:{}]",
       TftpOptions_name( KnownOptions::TransferSize ),
       *options.transferSize );

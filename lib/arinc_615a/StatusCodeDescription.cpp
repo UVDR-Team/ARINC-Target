@@ -66,12 +66,14 @@ StatusCodeDescription::StatusCodeDescription():
 
 std::ostream& operator<<( std::ostream &stream, StatusCode status )
 {
-  return stream << std::format( "{}", status );
+  return stream << StatusCodeDescription::instance().name( status )
+    << " (" << ArincSupport::format( "{:04X}", static_cast< uint16_t >( status ) ) << ')';
 }
 
 std::ostream& operator<<( std::ostream &stream, const OperationAcceptanceStatusCode status )
 {
-  return stream << std::format( "{}", status );
+  return stream << StatusCodeDescription::instance().name( static_cast< StatusCode >( status ) )
+    << " (" << ArincSupport::format( "{:04X}", static_cast< uint16_t >( status ) ) << ')';
 }
 
 }

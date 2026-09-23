@@ -22,7 +22,7 @@
 
 #include <boost/exception/all.hpp>
 
-#include <format>
+#include <arinc_support/Format.hpp>
 
 namespace Arinc615a::Find::Packets {
 
@@ -71,7 +71,7 @@ Packet::Packet( ArincSupport::ConstRawDataSpan rawPacket )
   if ( rawPacket.size() <= sizeof( uint16_t ) )
   {
     BOOST_THROW_EXCEPTION( InvalidFindPacket{}
-      << ArincSupport::AdditionalInfo{ std::format( "Packet to small: {}", rawPacket.size() ) } );
+      << ArincSupport::AdditionalInfo{ ArincSupport::format( "Packet to small: {}", rawPacket.size() ) } );
   }
 
   auto remainingData{ rawPacket };

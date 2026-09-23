@@ -67,7 +67,7 @@ DownloadFileStatus& DownloadStatus::file( std::string filename )
 
 DownloadFileStatus& DownloadStatus::file( std::string_view filename )
 {
-  const auto fileIt = std::ranges::find_if( filesStatusV, [ &filename ]( const DownloadFileStatus &file ) {
+  const auto fileIt = std::find_if( filesStatusV.begin(), filesStatusV.end(), [ &filename ]( const DownloadFileStatus &file ) {
     return file.filename() == filename;
   } );
 

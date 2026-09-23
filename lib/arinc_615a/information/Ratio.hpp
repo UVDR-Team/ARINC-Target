@@ -94,33 +94,4 @@ ARINC_615A_EXPORT std::ostream &operator<<( std::ostream &stream, const Ratio &r
 
 }
 
-namespace std {
-
-/**
- * @brief Specialisation of @p std::formatter for @ref Arinc615a::Information::Ratio
- **/
-template <>
-struct formatter< Arinc615a::Information::Ratio > : std::formatter< std::string_view >
-{
-  /**
-   * @brief Arinc615a::Information::Ratio format routine.
-   *
-   * @tparam FmtContext
-   *   Formatting Context
-   * @param[in] ratio
-   *   Ratio
-   * @param[in,out] ctx
-   *   Formatting Context
-   *
-   * @return Iterator to the end of output.
-   **/
-  template< class FmtContext >
-  FmtContext::iterator format( const Arinc615a::Information::Ratio &ratio, FmtContext &ctx ) const
-  {
-    return std::formatter< string_view >::format( std::format( "{}%", ratio.value() ), ctx );
-  }
-};
-
-}
-
 #endif

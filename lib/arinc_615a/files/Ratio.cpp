@@ -12,6 +12,8 @@
 
 #include "Ratio.hpp"
 
+#include <arinc_support/Format.hpp>
+
 #include <arinc_615a/information/Ratio.hpp>
 
 #include <arinc_615a/Arinc615aException.hpp>
@@ -52,7 +54,7 @@ std::tuple< ArincSupport::ConstRawDataSpan, Information::Ratio > Ratio_decode( c
 {
   assert( ratio.value() <= 100U );
 
-  const auto ratioString{ std::format( "{:3}", ratio.value() ) };
+  const auto ratioString{ ArincSupport::format( "{:3}", ratio.value() ) };
   assert( ratioString.size() == 3U );
 
   ArincSupport::RawData rawRatio( 3 );
