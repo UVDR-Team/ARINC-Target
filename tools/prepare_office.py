@@ -61,6 +61,7 @@ def main():
     for name in ('START_HERE.md', 'BUILD_OPTIONS.txt', 'target-config.json'):
         copy(repo / 'workbench' / name, Path(name))
     copy(repo / 'third_party/DEPENDENCIES.md', Path('DEPENDENCIES.md'))
+    copy(repo / 'DEPENDENCY_REPORT.md', Path('DEPENDENCY_REPORT.md'))
     if (repo / 'VALIDATION.md').exists():
         copy(repo / 'VALIDATION.md', Path('VALIDATION.md'))
     copy(repo / 'tests/HostRunner.cpp', Path('tests/HostRunner.cpp'))
