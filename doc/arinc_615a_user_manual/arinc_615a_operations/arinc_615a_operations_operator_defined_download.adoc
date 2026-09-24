@@ -1,5 +1,0 @@
-== Operator Defined Download Operation
-The **ARINC 615A Operator Defined Download Operation** is used to transfer (download) files from the target to the host.
-The files available are advertised by the target hardware to the host.
-This information contains a list of available files with additional description.
-The operator selects the files to be downloaded and this list is transferred to the target.

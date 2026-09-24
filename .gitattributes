@@ -1,2 +1,0 @@
-# set *.ipp files to C++
-*.ipp gitlab-language=cpp

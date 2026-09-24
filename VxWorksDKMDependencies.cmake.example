@@ -1,8 +1,0 @@
-# No external ARINC dependency file is required.
-#
-# The offline build compiles TFTP, ARINC 665, and checksum code from the local
-# source tree. Configure only the matching VxWorks Boost header location:
-#
-#   -DARINC_BOOST_INCLUDE_DIR=/absolute/path/containing/boost/version.hpp
-#
-# See VxWorksDKM.md for the complete VxWorks 26.03 DKM procedure.

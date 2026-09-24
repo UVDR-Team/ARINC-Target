@@ -1,7 +1,0 @@
-== Media Defined Download Operation
-The **ARINC 615A Media Defined Download Operation** is used to transfer (download) files from the target to the host.
-The files to be downloaded are provided via the transfer of the _Download Request File_.
-The file contains:
-
-- a list of files to be downloaded, and
-- target specific _User Defined Data_.
