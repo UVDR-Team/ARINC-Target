@@ -123,9 +123,10 @@ bool TargetId::isCompliant( const std::string_view stringToCheck, const size_t m
   }
 
   // Check string for alphanumeric content
-
   const std::function< bool( std::string::value_type ) > compareFunction{
-    std::bind( &std::isalnum< std::string::value_type >, std::placeholders::_1, std::locale::classic() ) };
+    []( std::string::value_type ch ) {
+      return std::isalnum( static_cast<unsigned char>( ch ) );
+    } };
 
   return std::ranges::all_of( stringToCheck, compareFunction );
 }
