@@ -71,7 +71,6 @@ TargetMediaDefinedDownloadOperation::TargetMediaDefinedDownloadOperation(
     std::error_code errorCode{};
     for ( const auto &file : std::filesystem::recursive_directory_iterator(
       directory,
-      std::filesystem::directory_options::skip_permission_denied,
       errorCode ) )
     {
       if ( file.is_regular_file() )
